@@ -838,6 +838,12 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 .cmt-compose input { flex: 1; border: 1px solid var(--beige-border); background: var(--cream-warm); border-radius: 12px; padding: 10px 14px; font-size: 14px; outline: none; }
 .cmt-compose button { padding: 0 16px; border-radius: 12px; background: var(--sage-dark); color: #fff; font-size: 13px; font-weight: 600; flex-shrink: 0; }
 .cmt-compose button:active { background: var(--sage-darker); }
+.cmt.reply { margin-left: 42px; padding-top: 8px; }
+.cmt-acts { display: flex; gap: 16px; margin-top: 5px; }
+.cmt-act { background: none; font-size: 12px; color: var(--ink-mute); display: inline-flex; align-items: center; gap: 3px; }
+.cmt-act.on { color: var(--terracotta); font-weight: 600; }
+.reply-hint { display: flex; justify-content: space-between; align-items: center; margin: 0 20px 6px; font-size: 12px; color: var(--sage-dark); background: var(--cream-warm); border-radius: 10px; padding: 7px 12px; }
+.reply-hint span { color: var(--ink-mute); cursor: pointer; padding: 0 4px; }
 .post-card .pstats { display: flex; gap: 16px; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--beige-border); }
 .post-card .pstats span { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--ink-mute); }
 .post-card .pstats span svg { width: 14px; height: 14px; }
@@ -2206,7 +2212,7 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
       <button class="av avatar-initial" id="profAvatar" style="background: var(--sage-dark); color: #fff; font-size: 26px;" onclick="openUserEdit()">S</button>
       <div>
         <div class="n"><span id="profName">Skylark 用户</span> <span class="lv">Lv.1</span></div>
-        <div class="s">与爱鸟一起记录生活的美好</div>
+        <div class="s" id="profFollowers">0 粉丝 · 关注 0</div>
       </div>
     </div>
   </div>
@@ -2241,6 +2247,15 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
 </section>
 
 <!-- ============ 设置 (SETTINGS) ============ -->
+<!-- ============ 粉丝 (FOLLOWERS) ============ -->
+<section id="screen-followers" class="screen">
+  <div class="guide-head">
+    <button class="g-back" onclick="goBackSub()"><svg><use href="#i-arrow-left"/></svg></button>
+    <div class="g-title">我的粉丝</div>
+  </div>
+  <div id="followersArea" style="padding:0 16px;"></div>
+</section>
+
 <!-- ============ 用户主页 (USER PROFILE) ============ -->
 <section id="screen-user" class="screen">
   <div class="guide-head">
@@ -3669,6 +3684,7 @@ const DEFAULT_STATE = {
   drafts: {},
   draftList: [],
   bookmarks: [],
+  likedComments: [],
   posts: [],
   user: { name: 'Skylark 用户', avatar: null },
   recordDays: 6,
@@ -3735,7 +3751,7 @@ async function syncCloudPosts() {
     const likedSet = new Set((likes || []).map(l => l.post_id));
     const commentsBy = {};
     (comments || []).forEach(c => {
-      (commentsBy[c.post_id] = commentsBy[c.post_id] || []).push({ author: c.author || '鸟友', text: c.text, time: fmtCloudTime(c.created_at) });
+      (commentsBy[c.post_id] = commentsBy[c.post_id] || []).push({ id: c.id, author: c.author || '鸟友', author_id: c.author_id || '', text: c.text, time: fmtCloudTime(c.created_at), likes: c.likes || 0, parent_id: c.parent_id || null });
     });
     state.posts = (posts || []).map(p => cloudPostToLocal(p, likedSet, commentsBy));
     renderDiscover(); renderHome();
@@ -3876,6 +3892,7 @@ function showScreen(name) {
   if (name === 'notifications') { renderNotifications(); markNotifsRead(); if (CLOUD) syncNotifications(); }
   if (name === 'likes') { renderLikes(); if (CLOUD) syncNotifications(); }
   if (name === 'following') { renderFollowing(); if (CLOUD) syncFollows(); }
+  if (name === 'followers') { renderFollowers(); if (CLOUD) syncFollows(); }
   if (CLOUD && (name === 'discover' || name === 'home')) { syncCloudPosts(); syncNotifications(); }
 }
 function enterRecordsTab() {
@@ -4127,9 +4144,14 @@ function postDetailHTML(p) {
   const likes = p.likes || 0;
   const bk = isBookmarked(p.id);
   const comments = p.comments || [];
+  const tops = comments.filter(c => !c.parent_id);
+  const repliesByParent = {};
+  comments.filter(c => c.parent_id).forEach(c => (repliesByParent[c.parent_id] = repliesByParent[c.parent_id] || []).push(c));
   const cmtList = comments.length
-    ? comments.map(c => `<div class="cmt"><div class="cmt-av">${esc((c.author || '友')[0])}</div><div class="cmt-bd"><div class="cmt-top"><span class="cmt-au">${esc(c.author || '鸟友')}</span><span class="cmt-tm">${esc(c.time || '')}</span></div><div class="cmt-tx">${esc(c.text)}</div></div></div>`).join('')
+    ? tops.map(c => commentHTML(c, p.id, false) + (repliesByParent[c.id] || []).map(r => commentHTML(r, p.id, true)).join('')).join('')
     : `<div class="cmt-empty">还没有评论，来说点什么吧～</div>`;
+  const replyHint = (replyTarget && activePostId === p.id)
+    ? `<div class="reply-hint">回复 @${esc(replyTarget.author)} <span onclick="cancelReply()">✕</span></div>` : '';
   return postCardHTML(p, false) + `
     ${guideLink}
     <div class="pd-actions">
@@ -4143,8 +4165,9 @@ function postDetailHTML(p) {
       <button class="del" onclick="deletePost(${p.id})">✕ 删除</button>
     </div>` : ''}
     <div class="pd-comments">${cmtList}</div>
+    ${replyHint}
     <div class="cmt-compose">
-      <input id="cmtInput" placeholder="写下你的评论…" maxlength="200" onkeydown="if(event.key==='Enter'){event.preventDefault();submitComment(${p.id});}">
+      <input id="cmtInput" placeholder="${replyTarget && activePostId === p.id ? '回复 @' + esc(replyTarget.author) + '…' : '写下你的评论…'}" maxlength="200" onkeydown="if(event.key==='Enter'){event.preventDefault();submitComment(${p.id});}">
       <button onclick="submitComment(${p.id})">发送</button>
     </div>`;
 }
@@ -4154,6 +4177,48 @@ function findPost(id) { return (state.posts || []).find(x => x.id === id); }
 function rerenderPostDetail(p) {
   const detail = document.getElementById('postDetail');
   if (detail) detail.innerHTML = postDetailHTML(p);
+}
+let replyTarget = null;
+function isCommentLiked(cid) { return (state.likedComments || []).includes(cid); }
+function commentHTML(c, postId, isReply) {
+  const canInteract = c.id != null && CLOUD;
+  const liked = isCommentLiked(c.id);
+  const safeAuthor = String(c.author || '鸟友').replace(/'/g, "\\'");
+  const likeBtn = canInteract ? `<button class="cmt-act${liked ? ' on' : ''}" onclick="event.stopPropagation();likeComment(${c.id},${postId})">♥ ${c.likes || 0}</button>` : '';
+  const replyBtn = (canInteract && !isReply) ? `<button class="cmt-act" onclick="event.stopPropagation();startReply(${c.id},'${safeAuthor}')">回复</button>` : '';
+  return `<div class="cmt${isReply ? ' reply' : ''}">
+    <div class="cmt-av" onclick="event.stopPropagation();openUser('${c.author_id || ''}')">${esc((c.author || '友')[0])}</div>
+    <div class="cmt-bd">
+      <div class="cmt-top"><span class="cmt-au">${esc(c.author || '鸟友')}</span><span class="cmt-tm">${esc(c.time || '')}</span></div>
+      <div class="cmt-tx">${esc(c.text)}</div>
+      ${(likeBtn || replyBtn) ? `<div class="cmt-acts">${likeBtn}${replyBtn}</div>` : ''}
+    </div>
+  </div>`;
+}
+function startReply(cid, author) {
+  replyTarget = { id: cid, author };
+  const p = findPost(activePostId);
+  if (p) rerenderPostDetail(p);
+  const el = document.getElementById('cmtInput');
+  if (el) el.focus();
+}
+function cancelReply() {
+  replyTarget = null;
+  const p = findPost(activePostId);
+  if (p) rerenderPostDetail(p);
+}
+async function likeComment(cid, pid) {
+  if (!CLOUD) return;
+  const p = findPost(pid);
+  const c = p && (p.comments || []).find(x => x.id === cid);
+  if (!c) return;
+  const liked = isCommentLiked(cid);
+  if (!state.likedComments) state.likedComments = [];
+  c.likes = Math.max(0, (c.likes || 0) + (liked ? -1 : 1));
+  state.likedComments = liked ? state.likedComments.filter(x => x !== cid) : state.likedComments.concat(cid);
+  saveState();
+  rerenderPostDetail(p);
+  try { await sb.from('comments').update({ likes: c.likes }).eq('id', cid); } catch (e) { console.warn(e); }
 }
 async function toggleLike(id) {
   const p = findPost(id); if (!p) return;
@@ -4177,16 +4242,26 @@ async function submitComment(id) {
   const el = document.getElementById('cmtInput');
   const text = (el && el.value || '').trim();
   if (!text) { toast('写点什么再发送吧'); return; }
+  const parent = (replyTarget && activePostId === id) ? replyTarget.id : null;
   if (CLOUD) {
-    const { error } = await sb.from('comments').insert({ post_id: id, author: myName(), author_id: DEVICE_ID, text });
+    const row = { post_id: id, author: myName(), author_id: DEVICE_ID, text };
+    if (parent) row.parent_id = parent;
+    const { error } = await sb.from('comments').insert(row);
     if (error) { toast('评论失败：' + error.message); return; }
     if (p.author_id && p.author_id !== DEVICE_ID) {
       sb.from('notifications').insert({ recipient_id: p.author_id, actor: myName(), actor_id: DEVICE_ID, type: 'comment', post_id: id, post_title: p.title || '', comment_text: text }).then(() => {}, () => {});
     }
+    replyTarget = null;
+    await syncCloudPosts();
+    const np = findPost(id);
+    if (np) rerenderPostDetail(np);
+    toast(parent ? '回复已发布 💬' : '评论已发布 💬');
+    return;
   }
   if (!p.comments) p.comments = [];
-  p.comments.push({ author: myName(), text, time: nowDateTime() });
-  if (!CLOUD) saveState();
+  p.comments.push({ id: Date.now(), author: myName(), author_id: DEVICE_ID, text, time: nowDateTime(), likes: 0, parent_id: parent });
+  replyTarget = null;
+  saveState();
   rerenderPostDetail(p); renderDiscover(); renderHome();
   toast('评论已发布 💬');
 }
@@ -4343,6 +4418,7 @@ function onImportFile(ev) {
 
 /* ============ Social layer: notifications, follows, user profiles ============ */
 let myFollowing = new Set();
+let followersCount = 0;
 let unreadNotif = 0;
 let activeUserId = null;
 
@@ -4386,21 +4462,35 @@ async function markNotifsRead() {
   } catch (e) { console.warn(e); }
 }
 function renderLikes() {
-  const list = (state.notifs || []).filter(n => n.type === 'like');
   const area = document.getElementById('likesArea');
   if (!area) return;
-  area.innerHTML = list.length
-    ? list.map(n => `<button class="notif-row" onclick="openPost(${n.post_id})"><div class="nt-av">${esc((n.actor || '友')[0])}</div><div class="nt-bd"><div class="nt-tx"><b>${esc(n.actor || '鸟友')}</b> 赞了你的动态${n.post_title ? ' 《' + esc(n.post_title) + '》' : ''}</div><div class="nt-tm">${fmtCloudTime(n.created_at)}</div></div></button>`).join('')
-    : `<div class="empty-card" style="margin-top:6px;"><div class="eico"><svg><use href="#i-heart"/></svg></div><div class="et">还没有收到赞</div><div class="es">在社区发布动态后，<br/>鸟友们的喜欢会展示在这里。</div></div>`;
+  const liked = (state.posts || []).filter(p => isMine(p) && (p.likes || 0) > 0).sort((a, b) => (b.likes || 0) - (a.likes || 0));
+  if (!liked.length) {
+    area.innerHTML = `<div class="empty-card" style="margin-top:6px;"><div class="eico"><svg><use href="#i-heart"/></svg></div><div class="et">还没有收到赞</div><div class="es">在社区发布动态后，<br/>鸟友们的喜欢会展示在这里。</div></div>`;
+    return;
+  }
+  area.innerHTML = liked.map(p => {
+    const preview = esc(p.title || p.body || '（图片动态）').slice(0, 30);
+    // recent likers (by name) from notifications, if any
+    const likers = (state.notifs || []).filter(n => n.type === 'like' && n.post_id === p.id).map(n => n.actor).filter(Boolean);
+    const who = likers.length ? esc([...new Set(likers)].slice(0, 3).join('、')) + ' 等' : '';
+    return `<button class="notif-row" onclick="openPost(${p.id})"><div class="nt-av" style="background:var(--terracotta);">♥</div><div class="nt-bd"><div class="nt-tx">你的动态 <b>${preview}</b></div><div class="nt-tm">收到 ${p.likes} 个赞${who ? ' · ' + who : ''}</div></div></button>`;
+  }).join('');
 }
 
 async function syncFollows() {
   if (!CLOUD) return;
   try {
-    const { data } = await sb.from('follows').select('following_id, following_name').eq('follower_id', DEVICE_ID);
+    const [{ data }, { data: followers }] = await Promise.all([
+      sb.from('follows').select('following_id, following_name').eq('follower_id', DEVICE_ID),
+      sb.from('follows').select('follower_id').eq('following_id', DEVICE_ID)
+    ]);
     state.follows = data || [];
+    state.followersList = followers || [];
     myFollowing = new Set((data || []).map(f => f.following_id));
+    followersCount = (followers || []).length;
     updateProfileStats();
+    if (document.getElementById('screen-followers').classList.contains('active')) renderFollowers();
     if (document.getElementById('screen-following').classList.contains('active')) renderFollowing();
   } catch (e) { console.warn('follows sync failed', e); }
 }
@@ -4425,6 +4515,15 @@ async function toggleFollow(id, name) {
     if (activeUserId === id && document.getElementById('screen-user').classList.contains('active')) renderUserPage(id);
     if (document.getElementById('screen-following').classList.contains('active')) renderFollowing();
   } catch (e) { toast('操作失败'); console.warn(e); }
+}
+function openFollowers() { showScreen('followers'); if (CLOUD) syncFollows(); renderFollowers(); }
+function renderFollowers() {
+  const area = document.getElementById('followersArea');
+  if (!area) return;
+  const list = state.followersList || [];
+  area.innerHTML = list.length
+    ? list.map(f => { const id = f.follower_id; const nm = userName(id); return `<button class="notif-row" onclick="openUser('${id}')"><div class="nt-av">${esc((nm || '友')[0])}</div><div class="nt-bd"><div class="nt-tx"><b>${esc(nm)}</b></div></div>${isFollowing(id) ? '<span style="font-size:12px;color:var(--sage-dark);align-self:center;">已回关</span>' : ''}</button>`; }).join('')
+    : `<div class="empty-card" style="margin-top:6px;"><div class="eico"><svg><use href="#i-user"/></svg></div><div class="et">还没有粉丝</div><div class="es">多发动态、和鸟友互动，<br/>粉丝会慢慢来的。</div></div>`;
 }
 function renderFollowing() {
   const list = state.follows || [];
@@ -4472,6 +4571,8 @@ function updateProfileStats() {
   }
   const folEl = document.getElementById('myFollowingCount');
   if (folEl) folEl.textContent = myFollowing.size;
+  const pf = document.getElementById('profFollowers');
+  if (pf) pf.innerHTML = `<span onclick="openFollowers()" style="cursor:pointer;"><b>${followersCount}</b> 粉丝</span>　·　<span onclick="showScreen('following')" style="cursor:pointer;">关注 <b>${myFollowing.size}</b></span>`;
 }
 
 /* ============ Discover rendering ============ */
@@ -5889,7 +5990,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.8.0';
+const APP_VERSION = '0.9.0';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
