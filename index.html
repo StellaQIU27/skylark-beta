@@ -2233,8 +2233,8 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
     <div class="g-title">设置</div>
   </div>
   <div class="menu-card" style="margin-top:6px;">
-    <button class="menu-row" onclick="toast('个人资料编辑即将推出')"><div class="mi"><svg><use href="#i-user"/></svg></div><div class="ml">个人资料</div><div class="mc">›</div></button>
-    <button class="menu-row" onclick="toast('通知设置即将推出')"><div class="mi"><svg><use href="#i-bell"/></svg></div><div class="ml">通知提醒</div><div class="mc">›</div></button>
+    <button class="menu-row" onclick="openUserEdit()"><div class="mi"><svg><use href="#i-user"/></svg></div><div class="ml">个人资料</div><div class="mc">›</div></button>
+    <button class="menu-row" onclick="showScreen('notifications')"><div class="mi"><svg><use href="#i-bell"/></svg></div><div class="ml">通知提醒</div><div class="mc">›</div></button>
     <button class="menu-row" onclick="toast('隐私设置即将推出')"><div class="mi"><svg><use href="#i-info"/></svg></div><div class="ml">隐私设置</div><div class="mc">›</div></button>
     <button class="menu-row" onclick="toast('数据备份即将推出')"><div class="mi"><svg><use href="#i-refresh"/></svg></div><div class="ml">数据备份</div><div class="mc">›</div></button>
     <button class="menu-row" onclick="aboutTap()"><div class="mi"><svg><use href="#i-info"/></svg></div><div class="ml">关于 Skylark · 雀跃</div><div class="mc" id="appVerMc">v0.0.0</div></button>
@@ -3563,6 +3563,7 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
   }
 ]
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* ============ Date helpers ============ */
 // Uses the user's actual local date so the calendar tracks today correctly
@@ -3647,6 +3648,64 @@ function saveState() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
 }
 let state = loadState();
+
+/* ============ Cloud backend (Supabase) — shared community ============ */
+const SUPABASE_URL = 'https://wxqgionqtzdjwwidkmzo.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4cWdpb25xdHpkand3aWRrbXpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNDI0NTAsImV4cCI6MjA5NTcxODQ1MH0.dnC1ei_kjUynfOBT-Z2Voc1S0mO6-nQIalAIjWanuFg';
+const sb = (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase)
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
+const CLOUD = !!sb;
+function myDeviceId() {
+  let id = null;
+  try { id = localStorage.getItem('skylark_device_id'); } catch (_) {}
+  if (!id) { id = 'dev_' + Math.random().toString(36).slice(2) + Date.now().toString(36); try { localStorage.setItem('skylark_device_id', id); } catch (_) {} }
+  return id;
+}
+const DEVICE_ID = myDeviceId();
+function myName() { return (state.user && state.user.name) || '鸟友'; }
+function isMine(p) { return CLOUD ? (p.author_id === DEVICE_ID) : ((p.author || '我') === '我'); }
+function fmtCloudTime(ts) {
+  if (!ts) return '';
+  const d = new Date(ts);
+  return `${d.getMonth() + 1}月${d.getDate()}日 ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+}
+function cloudPostToLocal(p, likedSet, commentsBy) {
+  return {
+    id: p.id, channel: p.channel, domain: p.domain,
+    title: p.title || '', body: p.body || '', photo: p.photo || null,
+    species: p.species || null, speciesName: p.species_name || '',
+    fields: p.fields || {}, author: p.author || '鸟友', author_id: p.author_id || '',
+    time: fmtCloudTime(p.created_at),
+    likes: p.likes || 0, likedByMe: likedSet ? likedSet.has(p.id) : false,
+    comments: (commentsBy && commentsBy[p.id]) ? commentsBy[p.id] : []
+  };
+}
+let cloudSyncing = false;
+async function syncCloudPosts() {
+  if (!CLOUD || cloudSyncing) return;
+  cloudSyncing = true;
+  try {
+    const [{ data: posts }, { data: likes }, { data: comments }] = await Promise.all([
+      sb.from('posts').select('*').order('created_at', { ascending: false }),
+      sb.from('post_likes').select('post_id').eq('device_id', DEVICE_ID),
+      sb.from('comments').select('*').order('created_at', { ascending: true })
+    ]);
+    const likedSet = new Set((likes || []).map(l => l.post_id));
+    const commentsBy = {};
+    (comments || []).forEach(c => {
+      (commentsBy[c.post_id] = commentsBy[c.post_id] || []).push({ author: c.author || '鸟友', text: c.text, time: fmtCloudTime(c.created_at) });
+    });
+    state.posts = (posts || []).map(p => cloudPostToLocal(p, likedSet, commentsBy));
+    renderDiscover(); renderHome();
+    const postScreen = document.getElementById('screen-post');
+    if (activePostId != null && postScreen && postScreen.classList.contains('active')) {
+      const p = findPost(activePostId);
+      if (p) document.getElementById('postDetail').innerHTML = postDetailHTML(p);
+    }
+  } catch (e) { console.warn('cloud sync failed', e); }
+  cloudSyncing = false;
+}
 
 // Keep the cached counters in sync with the actual stored records on load,
 // so the profile never shows a streak/record count that disagrees with the data.
@@ -3773,6 +3832,7 @@ function showScreen(name) {
   if (name === 'profile') renderProfile();
   if (name === 'discover') { renderDiscover(); carGo(carIndex); carStart(); }
   else carStop();
+  if (CLOUD && (name === 'discover' || name === 'home')) syncCloudPosts();
 }
 function enterRecordsTab() {
   // Always reset to pet list view, regardless of pet count
@@ -3940,7 +4000,7 @@ function renderHome() {
     if (chipsEl) chipsEl.innerHTML = `<span class="chip paper">${pet.species}</span><span class="chip paper">${petAge(pet)}</span>`;
   }
   // My posts (synced from the same store as the community feed)
-  const posts = (state.posts || []).filter(p => (p.author || '我') === '我');
+  const posts = (state.posts || []).filter(p => isMine(p));
   const area = document.getElementById('homePostsArea');
   if (posts.length === 0) {
     area.innerHTML = `
@@ -4006,9 +4066,11 @@ function postCardHTML(p, clickable) {
 }
 
 /* ============ Single post detail ============ */
+let activePostId = null;
 function openPost(id) {
   const p = (state.posts || []).find(x => x.id === id);
   if (!p) { toast('动态不存在'); return; }
+  activePostId = id;
   document.getElementById('postDetail').innerHTML = postDetailHTML(p);
   showScreen('post');
 }
@@ -4043,24 +4105,37 @@ function postDetailHTML(p) {
 
 /* ============ Post interactions: like / comment / share / edit / delete ============ */
 function findPost(id) { return (state.posts || []).find(x => x.id === id); }
-function toggleLike(id) {
-  const p = findPost(id); if (!p) return;
-  p.likedByMe = !p.likedByMe;
-  p.likes = Math.max(0, (p.likes || 0) + (p.likedByMe ? 1 : -1));
-  saveState();
-  document.getElementById('postDetail').innerHTML = postDetailHTML(p);
-  renderDiscover(); renderHome();
+function rerenderPostDetail(p) {
+  const detail = document.getElementById('postDetail');
+  if (detail) detail.innerHTML = postDetailHTML(p);
 }
-function submitComment(id) {
+async function toggleLike(id) {
+  const p = findPost(id); if (!p) return;
+  const willLike = !p.likedByMe;
+  p.likedByMe = willLike;
+  p.likes = Math.max(0, (p.likes || 0) + (willLike ? 1 : -1));
+  rerenderPostDetail(p); renderDiscover(); renderHome();
+  if (CLOUD) {
+    try {
+      if (willLike) await sb.from('post_likes').insert({ post_id: id, device_id: DEVICE_ID });
+      else await sb.from('post_likes').delete().eq('post_id', id).eq('device_id', DEVICE_ID);
+      await sb.from('posts').update({ likes: p.likes }).eq('id', id);
+    } catch (e) { console.warn('like failed', e); }
+  } else { saveState(); }
+}
+async function submitComment(id) {
   const p = findPost(id); if (!p) return;
   const el = document.getElementById('cmtInput');
   const text = (el && el.value || '').trim();
   if (!text) { toast('写点什么再发送吧'); return; }
+  if (CLOUD) {
+    const { error } = await sb.from('comments').insert({ post_id: id, author: myName(), author_id: DEVICE_ID, text });
+    if (error) { toast('评论失败：' + error.message); return; }
+  }
   if (!p.comments) p.comments = [];
-  p.comments.push({ author: (state.user && state.user.name) || '我', text, time: nowDateTime() });
-  saveState();
-  document.getElementById('postDetail').innerHTML = postDetailHTML(p);
-  renderDiscover(); renderHome();
+  p.comments.push({ author: myName(), text, time: nowDateTime() });
+  if (!CLOUD) saveState();
+  rerenderPostDetail(p); renderDiscover(); renderHome();
   toast('评论已发布 💬');
 }
 function sharePost(id) {
@@ -4074,10 +4149,19 @@ function sharePost(id) {
     toast('当前环境不支持分享');
   }
 }
-function deletePost(id) {
+async function deletePost(id) {
   const p = findPost(id); if (!p) return;
-  if ((p.author || '我') !== '我') { toast('只能删除自己的动态'); return; }
+  if (!isMine(p)) { toast('只能删除自己的动态'); return; }
   if (!confirm('确定删除这条动态吗？\n删除后无法恢复。')) return;
+  if (CLOUD) {
+    const { error } = await sb.from('posts').delete().eq('id', id);
+    if (error) { toast('删除失败：' + error.message); return; }
+    activePostId = null;
+    toast('动态已删除');
+    showScreen('discover');
+    await syncCloudPosts();
+    return;
+  }
   state.posts = (state.posts || []).filter(x => x.id !== id);
   saveState();
   toast('动态已删除');
@@ -4086,7 +4170,7 @@ function deletePost(id) {
 }
 function editPost(id) {
   const p = findPost(id); if (!p) return;
-  if ((p.author || '我') !== '我') { toast('只能编辑自己的动态'); return; }
+  if (!isMine(p)) { toast('只能编辑自己的动态'); return; }
   openCompose({ editId: id });
 }
 
@@ -4238,7 +4322,7 @@ function removeComposePhoto() {
   composePhoto = null;
   document.getElementById('composePhotoPreview').innerHTML = '';
 }
-function publishPost() {
+async function publishPost() {
   const title = document.getElementById('composeTitle').value.trim();
   const body = document.getElementById('composeBody').value.trim();
   readComposeFields();
@@ -4247,6 +4331,37 @@ function publishPost() {
   const hasFields = Object.keys(fields).length > 0;
   if (!title && !body && !composePhoto && !hasFields) { toast('写点什么再发布吧 ✨'); return; }
   if (!state.posts) state.posts = [];
+  const domain = (CHAN[composeChannel] || {}).domain || 'general';
+  // Cloud mode: write to the shared backend so every tester sees it
+  if (CLOUD) {
+    const row = {
+      author: myName(), author_id: DEVICE_ID,
+      channel: composeChannel, domain,
+      title, body, photo: composePhoto || null,
+      species: composeSpecies || null, species_name: composeSpeciesName || '',
+      fields
+    };
+    if (editingPostId != null) {
+      const eid = editingPostId; editingPostId = null;
+      const { error } = await sb.from('posts').update(row).eq('id', eid);
+      if (error) { toast('更新失败：' + error.message); return; }
+      closeSheet();
+      await syncCloudPosts();
+      const p = findPost(eid);
+      if (p && activePostId === eid) rerenderPostDetail(p);
+      toast('已更新 ✓');
+      return;
+    }
+    row.likes = 0;
+    const { error } = await sb.from('posts').insert(row);
+    if (error) { toast('发布失败：' + error.message); return; }
+    closeSheet();
+    discoverFilter = composeChannel;
+    showScreen('discover');
+    await syncCloudPosts();
+    toast('已发布 🌿');
+    return;
+  }
   // Edit mode: update the existing post in place
   if (editingPostId != null) {
     const p = findPost(editingPostId);
@@ -5473,14 +5588,14 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.5.0';
+const APP_VERSION = '0.6.0';
 const APP_BUILD = '2026-05-30';
-function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD); }
+function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
   const mc = document.getElementById('appVerMc');
   if (mc) mc.textContent = 'v' + APP_VERSION;
   const ft = document.getElementById('appVerFooter');
-  if (ft) ft.textContent = 'Skylark · 雀跃  v' + APP_VERSION + ' beta  ·  ' + APP_BUILD;
+  if (ft) ft.textContent = 'Skylark · 雀跃  v' + APP_VERSION + ' beta  ·  ' + APP_BUILD + '  ·  社区' + (CLOUD ? '云端' : '本地');
 }
 
 /* ============ Init ============ */
@@ -5490,6 +5605,16 @@ renderRecords();
 renderProfile();
 renderDiscover();
 renderVersion();
+if (CLOUD) {
+  syncCloudPosts();
+  // light polling so testers see each other's posts without a manual refresh
+  setInterval(() => {
+    if (document.visibilityState !== 'visible') return;
+    const active = document.querySelector('.screen.active');
+    const id = active && active.id;
+    if (id === 'screen-discover' || id === 'screen-home' || id === 'screen-post') syncCloudPosts();
+  }, 15000);
+}
 </script>
 </body>
 </html>
