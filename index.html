@@ -842,6 +842,20 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 .post-card .pstats span { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--ink-mute); }
 .post-card .pstats span svg { width: 14px; height: 14px; }
 .post-card .pstats span.on { color: var(--terracotta); }
+/* Notifications / likes / following rows */
+.notif-row { display: flex; gap: 12px; width: 100%; text-align: left; padding: 13px 8px; border-bottom: 1px solid var(--beige-border); background: none; align-items: flex-start; }
+.notif-row.unread { background: var(--cream-warm); border-radius: 12px; }
+.notif-row .nt-av { width: 38px; height: 38px; border-radius: 50%; background: var(--sage-dark); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 15px; flex-shrink: 0; font-family: 'Fraunces','Noto Sans SC',serif; }
+.notif-row .nt-bd { flex: 1; min-width: 0; }
+.notif-row .nt-tx { font-size: 14px; color: var(--ink); line-height: 1.5; }
+.notif-row .nt-tx b { font-weight: 600; }
+.notif-row .nt-cmt { font-size: 13px; color: var(--ink-soft); background: var(--paper); border-radius: 8px; padding: 6px 10px; margin: 5px 0; }
+.notif-row .nt-tm { font-size: 11px; color: var(--ink-mute); margin-top: 3px; }
+/* User profile page */
+.user-hero { text-align: center; padding: 20px 0 16px; }
+.user-hero .user-av { width: 76px; height: 76px; border-radius: 50%; background: var(--sage-dark); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 32px; margin: 0 auto 10px; font-family: 'Fraunces','Noto Sans SC',serif; }
+.user-hero .user-name { font-family: 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 19px; color: var(--ink); }
+.user-hero .user-sub { font-size: 13px; color: var(--ink-soft); margin-top: 4px; }
 .post-card .ptag.general { background: var(--paper-dark); color: var(--ink-soft); }
 .post-card .ptype { display: inline-block; font-size: 11px; font-weight: 600; color: var(--terracotta); background: var(--terracotta-soft); padding: 2px 8px; border-radius: 7px; margin-bottom: 6px; }
 .post-card .pfields { margin-top: 8px; display: flex; flex-direction: column; gap: 5px; }
@@ -1852,7 +1866,7 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
         <div class="home-tagline">记录 · 分享 · 发现 · 守护</div>
       </div>
     </div>
-    <button class="home-bell" aria-label="通知" onclick="showScreen('notifications')"><svg><use href="#i-bell"/></svg></button>
+    <button class="home-bell" aria-label="通知" onclick="showScreen('notifications')" style="position:relative;"><svg><use href="#i-bell"/></svg><span class="notif-badge" style="display:none;"></span></button>
   </div>
 
   <div class="hero-bg">
@@ -2114,7 +2128,7 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
       <svg><use href="#i-search"/></svg>
       <span>搜索鸟种 / 话题 / 用户</span>
     </button>
-    <button class="bell-btn" onclick="showScreen('notifications')"><svg><use href="#i-bell"/></svg></button>
+    <button class="bell-btn" onclick="showScreen('notifications')" style="position:relative;"><svg><use href="#i-bell"/></svg><span class="notif-badge" style="display:none;"></span></button>
   </div>
 
   <div class="disc-carousel" id="discCarousel">
@@ -2186,7 +2200,7 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
   <div class="prof-top">
     <div class="prof-actions">
       <button onclick="showScreen('settings')" aria-label="设置"><svg><use href="#i-settings"/></svg></button>
-      <button class="bell-btn" onclick="showScreen('notifications')" aria-label="通知"><svg><use href="#i-bell"/></svg></button>
+      <button class="bell-btn" onclick="showScreen('notifications')" aria-label="通知" style="position:relative;"><svg><use href="#i-bell"/></svg><span class="notif-badge" style="display:none;"></span></button>
     </div>
     <div class="prof-me">
       <button class="av avatar-initial" id="profAvatar" style="background: var(--sage-dark); color: #fff; font-size: 26px;" onclick="openUserEdit()">S</button>
@@ -2200,8 +2214,8 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
   <div class="stats-card">
     <button class="st" onclick="enterRecordsTab()"><div class="si"><img src="icon-stat-bird.png" alt=""></div><div class="sv" id="myPetsCount">1</div><div class="sl">我的爱鸟</div></button>
     <button class="st" onclick="enterRecordsTab()"><div class="si"><img src="icon-stat-book.png" alt=""></div><div class="sv" id="myRecordsCount">0</div><div class="sl">记录日记</div></button>
-    <button class="st" onclick="showScreen('likes')"><div class="si"><img src="icon-stat-heart.png" alt=""></div><div class="sv">0</div><div class="sl">收到的赞</div></button>
-    <button class="st" onclick="showScreen('following')"><div class="si"><img src="icon-stat-users.png" alt=""></div><div class="sv">0</div><div class="sl">关注的人</div></button>
+    <button class="st" onclick="showScreen('likes')"><div class="si"><img src="icon-stat-heart.png" alt=""></div><div class="sv" id="myLikesCount">0</div><div class="sl">收到的赞</div></button>
+    <button class="st" onclick="showScreen('following')"><div class="si"><img src="icon-stat-users.png" alt=""></div><div class="sv" id="myFollowingCount">0</div><div class="sl">关注的人</div></button>
   </div>
 
   <div class="streak-card">
@@ -2227,6 +2241,15 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
 </section>
 
 <!-- ============ 设置 (SETTINGS) ============ -->
+<!-- ============ 用户主页 (USER PROFILE) ============ -->
+<section id="screen-user" class="screen">
+  <div class="guide-head">
+    <button class="g-back" onclick="goBackSub()"><svg><use href="#i-arrow-left"/></svg></button>
+    <div class="g-title">鸟友主页</div>
+  </div>
+  <div id="userProfileArea" style="padding:0 16px;"></div>
+</section>
+
 <!-- ============ 我的收藏 (FAVORITES) ============ -->
 <section id="screen-favorites" class="screen">
   <div class="guide-head">
@@ -2267,11 +2290,7 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
     <button class="g-back" onclick="goBackSub()"><svg><use href="#i-arrow-left"/></svg></button>
     <div class="g-title">通知</div>
   </div>
-  <div class="empty-card" style="margin-top:6px;">
-    <div class="eico"><svg><use href="#i-bell"/></svg></div>
-    <div class="et">暂无新通知</div>
-    <div class="es">鸟友的点赞、评论和关注<br/>会出现在这里。</div>
-  </div>
+  <div id="notifsArea" style="padding:0 16px;"></div>
 </section>
 
 <!-- ============ 收到的赞 (LIKES) ============ -->
@@ -2280,12 +2299,7 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
     <button class="g-back" onclick="goBackSub()"><svg><use href="#i-arrow-left"/></svg></button>
     <div class="g-title">收到的赞</div>
   </div>
-  <div class="empty-card" style="margin-top:6px;">
-    <div class="eico"><svg><use href="#i-heart"/></svg></div>
-    <div class="et">还没有收到赞</div>
-    <div class="es">在社区发布动态后，<br/>鸟友们的喜欢会展示在这里。</div>
-    <button class="btn" onclick="showScreen('discover')">去发布动态 →</button>
-  </div>
+  <div id="likesArea" style="padding:0 16px;"></div>
 </section>
 
 <!-- ============ 动态详情 (POST DETAIL) ============ -->
@@ -2303,12 +2317,7 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
     <button class="g-back" onclick="goBackSub()"><svg><use href="#i-arrow-left"/></svg></button>
     <div class="g-title">关注的人</div>
   </div>
-  <div class="empty-card" style="margin-top:6px;">
-    <div class="eico"><svg><use href="#i-user"/></svg></div>
-    <div class="et">还没有关注的人</div>
-    <div class="es">去发现页认识更多鸟友，<br/>关注 TA 们的爱鸟日常。</div>
-    <button class="btn" onclick="showScreen('discover')">去发现 →</button>
-  </div>
+  <div id="followingArea" style="padding:0 16px;"></div>
 </section>
 
 </main>
@@ -3864,7 +3873,10 @@ function showScreen(name) {
   if (name === 'profile') renderProfile();
   if (name === 'discover') { renderDiscover(); carGo(carIndex); carStart(); }
   else carStop();
-  if (CLOUD && (name === 'discover' || name === 'home')) syncCloudPosts();
+  if (name === 'notifications') { renderNotifications(); markNotifsRead(); if (CLOUD) syncNotifications(); }
+  if (name === 'likes') { renderLikes(); if (CLOUD) syncNotifications(); }
+  if (name === 'following') { renderFollowing(); if (CLOUD) syncFollows(); }
+  if (CLOUD && (name === 'discover' || name === 'home')) { syncCloudPosts(); syncNotifications(); }
 }
 function enterRecordsTab() {
   // Always reset to pet list view, regardless of pet count
@@ -4084,8 +4096,8 @@ function postCardHTML(p, clickable) {
   const fieldRows = Object.keys(fields).map(k => `<div class="pf"><span class="pfk">${esc(FIELD_LABEL[k] || k)}</span><span class="pfv">${esc(fields[k])}</span></div>`).join('');
   return `<div class="post-card"${clickable ? ` onclick="openPost(${p.id})"` : ''}>
     <div class="ph">
-      <div class="pav">${esc(author[0] || '我')}</div>
-      <div class="pmeta"><div class="pauthor">${esc(author)}</div><div class="ptime">${esc(p.time || '')}</div></div>
+      <div class="pav" onclick="event.stopPropagation();openUser('${p.author_id || ''}')">${esc(author[0] || '我')}</div>
+      <div class="pmeta" onclick="event.stopPropagation();openUser('${p.author_id || ''}')" style="cursor:pointer;"><div class="pauthor">${esc(author)}</div><div class="ptime">${esc(p.time || '')}</div></div>
       <div class="ptag ${ch.domain}">${esc(ch.name)}</div>
     </div>
     ${p.title ? `<div class="ptitle">${esc(p.title)}</div>` : ''}
@@ -4154,6 +4166,9 @@ async function toggleLike(id) {
       if (willLike) await sb.from('post_likes').insert({ post_id: id, device_id: DEVICE_ID });
       else await sb.from('post_likes').delete().eq('post_id', id).eq('device_id', DEVICE_ID);
       await sb.from('posts').update({ likes: p.likes }).eq('id', id);
+      if (willLike && p.author_id && p.author_id !== DEVICE_ID) {
+        sb.from('notifications').insert({ recipient_id: p.author_id, actor: myName(), actor_id: DEVICE_ID, type: 'like', post_id: id, post_title: p.title || '' }).then(() => {}, () => {});
+      }
     } catch (e) { console.warn('like failed', e); }
   } else { saveState(); }
 }
@@ -4165,6 +4180,9 @@ async function submitComment(id) {
   if (CLOUD) {
     const { error } = await sb.from('comments').insert({ post_id: id, author: myName(), author_id: DEVICE_ID, text });
     if (error) { toast('评论失败：' + error.message); return; }
+    if (p.author_id && p.author_id !== DEVICE_ID) {
+      sb.from('notifications').insert({ recipient_id: p.author_id, actor: myName(), actor_id: DEVICE_ID, type: 'comment', post_id: id, post_title: p.title || '', comment_text: text }).then(() => {}, () => {});
+    }
   }
   if (!p.comments) p.comments = [];
   p.comments.push({ author: myName(), text, time: nowDateTime() });
@@ -4321,6 +4339,139 @@ function onImportFile(ev) {
     toast('备份已导入 ✓');
   };
   reader.readAsText(file);
+}
+
+/* ============ Social layer: notifications, follows, user profiles ============ */
+let myFollowing = new Set();
+let unreadNotif = 0;
+let activeUserId = null;
+
+async function syncNotifications() {
+  if (!CLOUD) return;
+  try {
+    const { data } = await sb.from('notifications').select('*').eq('recipient_id', DEVICE_ID).order('created_at', { ascending: false }).limit(100);
+    state.notifs = data || [];
+    unreadNotif = state.notifs.filter(n => !n.read).length;
+    renderNotifBadge();
+    if (document.getElementById('screen-notifications').classList.contains('active')) renderNotifications();
+    if (document.getElementById('screen-likes').classList.contains('active')) renderLikes();
+    updateProfileStats();
+  } catch (e) { console.warn('notif sync failed', e); }
+}
+function renderNotifBadge() { updateNotificationDots(); }
+function renderNotifications() {
+  const area = document.getElementById('notifsArea');
+  const list = state.notifs || [];
+  if (!list.length) {
+    area.innerHTML = `<div class="empty-card" style="margin-top:6px;"><div class="eico"><svg><use href="#i-bell"/></svg></div><div class="et">暂无新通知</div><div class="es">鸟友的点赞、评论<br/>会出现在这里。</div></div>`;
+    return;
+  }
+  area.innerHTML = list.map(n => {
+    const act = n.type === 'like' ? '赞了你的动态' : '评论了你的动态';
+    const title = n.post_title ? ` 《${esc(n.post_title)}》` : '';
+    const extra = (n.type === 'comment' && n.comment_text) ? `<div class="nt-cmt">“${esc(n.comment_text)}”</div>` : '';
+    return `<button class="notif-row${n.read ? '' : ' unread'}" onclick="openPost(${n.post_id})">
+      <div class="nt-av">${esc((n.actor || '友')[0])}</div>
+      <div class="nt-bd"><div class="nt-tx"><b>${esc(n.actor || '鸟友')}</b> ${act}${title}</div>${extra}<div class="nt-tm">${fmtCloudTime(n.created_at)}</div></div>
+    </button>`;
+  }).join('');
+}
+async function markNotifsRead() {
+  if (!CLOUD || unreadNotif === 0) return;
+  try {
+    await sb.from('notifications').update({ read: true }).eq('recipient_id', DEVICE_ID).eq('read', false);
+    (state.notifs || []).forEach(n => n.read = true);
+    unreadNotif = 0;
+    renderNotifBadge();
+  } catch (e) { console.warn(e); }
+}
+function renderLikes() {
+  const list = (state.notifs || []).filter(n => n.type === 'like');
+  const area = document.getElementById('likesArea');
+  if (!area) return;
+  area.innerHTML = list.length
+    ? list.map(n => `<button class="notif-row" onclick="openPost(${n.post_id})"><div class="nt-av">${esc((n.actor || '友')[0])}</div><div class="nt-bd"><div class="nt-tx"><b>${esc(n.actor || '鸟友')}</b> 赞了你的动态${n.post_title ? ' 《' + esc(n.post_title) + '》' : ''}</div><div class="nt-tm">${fmtCloudTime(n.created_at)}</div></div></button>`).join('')
+    : `<div class="empty-card" style="margin-top:6px;"><div class="eico"><svg><use href="#i-heart"/></svg></div><div class="et">还没有收到赞</div><div class="es">在社区发布动态后，<br/>鸟友们的喜欢会展示在这里。</div></div>`;
+}
+
+async function syncFollows() {
+  if (!CLOUD) return;
+  try {
+    const { data } = await sb.from('follows').select('following_id, following_name').eq('follower_id', DEVICE_ID);
+    state.follows = data || [];
+    myFollowing = new Set((data || []).map(f => f.following_id));
+    updateProfileStats();
+    if (document.getElementById('screen-following').classList.contains('active')) renderFollowing();
+  } catch (e) { console.warn('follows sync failed', e); }
+}
+function isFollowing(id) { return myFollowing.has(id); }
+async function toggleFollow(id, name) {
+  if (!id || id === DEVICE_ID) return;
+  if (!CLOUD) { toast('关注需要云端社区'); return; }
+  const following = isFollowing(id);
+  try {
+    if (following) {
+      await sb.from('follows').delete().eq('follower_id', DEVICE_ID).eq('following_id', id);
+      myFollowing.delete(id);
+      state.follows = (state.follows || []).filter(f => f.following_id !== id);
+      toast('已取消关注');
+    } else {
+      await sb.from('follows').insert({ follower_id: DEVICE_ID, following_id: id, following_name: name || '鸟友' });
+      myFollowing.add(id);
+      (state.follows = state.follows || []).push({ following_id: id, following_name: name || '鸟友' });
+      toast('已关注 ✓');
+    }
+    updateProfileStats();
+    if (activeUserId === id && document.getElementById('screen-user').classList.contains('active')) renderUserPage(id);
+    if (document.getElementById('screen-following').classList.contains('active')) renderFollowing();
+  } catch (e) { toast('操作失败'); console.warn(e); }
+}
+function renderFollowing() {
+  const list = state.follows || [];
+  const area = document.getElementById('followingArea');
+  if (!area) return;
+  area.innerHTML = list.length
+    ? list.map(f => `<button class="notif-row" onclick="openUser('${f.following_id}')"><div class="nt-av">${esc((f.following_name || '友')[0])}</div><div class="nt-bd"><div class="nt-tx"><b>${esc(f.following_name || '鸟友')}</b></div></div><span style="font-size:12px;color:var(--sage-dark);align-self:center;">已关注</span></button>`).join('')
+    : `<div class="empty-card" style="margin-top:6px;"><div class="eico"><svg><use href="#i-bird-sm"/></svg></div><div class="et">还没有关注的人</div><div class="es">在鸟友主页点「关注」，<br/>TA 们会出现在这里。</div></div>`;
+}
+
+function userName(id) {
+  const p = (state.posts || []).find(x => x.author_id === id);
+  if (p) return p.author;
+  const f = (state.follows || []).find(x => x.following_id === id);
+  return (f && f.following_name) || '鸟友';
+}
+function openUser(id) {
+  if (!id || id === DEVICE_ID) { showScreen('profile'); return; }
+  activeUserId = id;
+  showScreen('user');
+  renderUserPage(id);
+}
+function renderUserPage(id) {
+  const area = document.getElementById('userProfileArea');
+  const name = userName(id);
+  const posts = (state.posts || []).filter(p => p.author_id === id);
+  const following = isFollowing(id);
+  const totalLikes = posts.reduce((s, p) => s + (p.likes || 0), 0);
+  const safeName = String(name).replace(/'/g, "\\'");
+  area.innerHTML = `
+    <div class="user-hero">
+      <div class="user-av">${esc((name || '友')[0])}</div>
+      <div class="user-name">${esc(name)}</div>
+      <div class="user-sub">${posts.length} 条动态 · 获赞 ${totalLikes}</div>
+      <button class="btn ${following ? 'ghost' : 'accent'}" style="margin-top:12px;padding:9px 28px;" onclick="toggleFollow('${id}', '${safeName}')">${following ? '✓ 已关注' : '+ 关注'}</button>
+    </div>
+    ${posts.length ? posts.map(p => postCardHTML(p)).join('') : '<div class="empty-card" style="margin-top:6px;"><div class="et">TA 还没有发布动态</div></div>'}`;
+}
+
+function updateProfileStats() {
+  const likeEl = document.getElementById('myLikesCount');
+  if (likeEl) {
+    const myPosts = (state.posts || []).filter(p => isMine(p));
+    likeEl.textContent = myPosts.reduce((s, p) => s + (p.likes || 0), 0);
+  }
+  const folEl = document.getElementById('myFollowingCount');
+  if (folEl) folEl.textContent = myFollowing.size;
 }
 
 /* ============ Discover rendering ============ */
@@ -5010,6 +5161,7 @@ function renderDateStrip() {
 function renderProfile() {
   renderUserProfile();
   updateNotificationDots();
+  updateProfileStats();
   document.getElementById('myPetsCount').textContent = state.pets.length;
   document.getElementById('myRecordsCount').textContent = state.recordDays;
   const days = state.streakDays;
@@ -5671,7 +5823,7 @@ function nowHHmm() {
 }
 
 /* ============ Notifications (dots only show when unread) ============ */
-function unreadCount() { return (state.notifications || []).length; }
+function unreadCount() { return (typeof unreadNotif === 'number' ? unreadNotif : 0); }
 function updateNotificationDots() {
   const on = unreadCount() > 0;
   document.querySelectorAll('.home-bell, .disc-head .bell-btn, .prof-actions .bell-btn').forEach(b => b.classList.toggle('unread', on));
@@ -5737,7 +5889,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.7.0';
+const APP_VERSION = '0.8.0';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
@@ -5756,12 +5908,15 @@ renderDiscover();
 renderVersion();
 if (CLOUD) {
   syncCloudPosts();
-  // light polling so testers see each other's posts without a manual refresh
+  syncNotifications();
+  syncFollows();
+  // light polling so testers see each other's posts & notifications without a manual refresh
   setInterval(() => {
     if (document.visibilityState !== 'visible') return;
     const active = document.querySelector('.screen.active');
     const id = active && active.id;
     if (id === 'screen-discover' || id === 'screen-home' || id === 'screen-post') syncCloudPosts();
+    syncNotifications();
   }, 15000);
 }
 </script>
