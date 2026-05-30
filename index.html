@@ -813,8 +813,35 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 }
 .pd-actions button svg { width: 16px; height: 16px; }
 .pd-actions button:active { background: var(--paper); }
-.pd-comments { margin: 0 20px 24px; }
+.pd-actions button.on { background: var(--terracotta-soft); color: var(--terracotta); border-color: var(--terracotta-soft); font-weight: 600; }
+.pd-actions button.on svg { color: var(--terracotta); }
+.pd-owner { display: flex; gap: 10px; margin: -6px 20px 14px; }
+.pd-owner button {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px;
+  padding: 9px; border-radius: 12px; background: var(--paper);
+  border: 1px solid var(--beige-border); font-size: 13px; color: var(--ink-soft); font-weight: 500;
+}
+.pd-owner button svg { width: 15px; height: 15px; }
+.pd-owner button.del { color: var(--terracotta); }
+.pd-owner button:active { background: var(--paper-dark); }
+.pd-comments { margin: 0 20px 16px; }
 .cmt-empty { text-align: center; color: var(--ink-mute); font-size: 13px; padding: 26px 10px; background: var(--cream-warm); border: 1px dashed var(--beige-border); border-radius: 14px; }
+.cmt { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--beige-border); }
+.cmt:last-child { border-bottom: none; }
+.cmt-av { width: 32px; height: 32px; border-radius: 50%; background: var(--sage-dark); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 13px; flex-shrink: 0; font-family: 'Fraunces','Noto Sans SC',serif; }
+.cmt-bd { flex: 1; min-width: 0; }
+.cmt-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.cmt-au { font-weight: 600; font-size: 13px; color: var(--ink); }
+.cmt-tm { font-size: 11px; color: var(--ink-mute); flex-shrink: 0; }
+.cmt-tx { font-size: 14px; color: var(--ink); margin-top: 2px; line-height: 1.5; word-break: break-word; }
+.cmt-compose { display: flex; gap: 8px; margin: 0 20px 24px; }
+.cmt-compose input { flex: 1; border: 1px solid var(--beige-border); background: var(--cream-warm); border-radius: 12px; padding: 10px 14px; font-size: 14px; outline: none; }
+.cmt-compose button { padding: 0 16px; border-radius: 12px; background: var(--sage-dark); color: #fff; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+.cmt-compose button:active { background: var(--sage-darker); }
+.post-card .pstats { display: flex; gap: 16px; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--beige-border); }
+.post-card .pstats span { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--ink-mute); }
+.post-card .pstats span svg { width: 14px; height: 14px; }
+.post-card .pstats span.on { color: var(--terracotta); }
 .post-card .ptag.general { background: var(--paper-dark); color: var(--ink-soft); }
 .post-card .ptype { display: inline-block; font-size: 11px; font-weight: 600; color: var(--terracotta); background: var(--terracotta-soft); padding: 2px 8px; border-radius: 7px; margin-bottom: 6px; }
 .post-card .pfields { margin-top: 8px; display: flex; flex-direction: column; gap: 5px; }
@@ -1416,7 +1443,7 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
   box-shadow: 0 4px 10px rgba(107, 122, 76, 0.12);
 }
 .pet-list-card .pav img {
-  width: 92%; height: 92%; object-fit: contain;
+  width: 100%; height: 100%; object-fit: cover;
   display: block;
 }
 .pet-list-card .pname {
@@ -1541,7 +1568,7 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
   overflow: hidden;
 }
 .tl-header .tlav img {
-  width: 88%; height: 88%; object-fit: contain;
+  width: 100%; height: 100%; object-fit: cover;
 }
 .tl-header .tlname {
   font-family: 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 20px;
@@ -3945,6 +3972,7 @@ function postCardHTML(p, clickable) {
     ${fieldRows ? `<div class="pfields">${fieldRows}</div>` : ''}
     ${p.photo ? `<div class="pphoto"><img src="${p.photo}" alt=""></div>` : ''}
     ${p.speciesName ? `<div class="pspecies">🔖 ${esc(p.speciesName)}</div>` : ''}
+    <div class="pstats"><span class="${p.likedByMe ? 'on' : ''}"><svg><use href="#i-heart"/></svg>${p.likes || 0}</span><span><svg><use href="#i-feed"/></svg>${(p.comments || []).length}</span></div>
   </div>`;
 }
 
@@ -3959,16 +3987,78 @@ function postDetailHTML(p) {
   const guideLink = p.species
     ? `<button class="pd-guidelink" onclick="showScreen('guide');openSpecies('${p.species}')">查看「${esc(p.speciesName)}」图鉴 ›</button>`
     : '';
+  const mine = (p.author || '我') === '我';
+  const liked = !!p.likedByMe;
+  const likes = p.likes || 0;
+  const comments = p.comments || [];
+  const cmtList = comments.length
+    ? comments.map(c => `<div class="cmt"><div class="cmt-av">${esc((c.author || '友')[0])}</div><div class="cmt-bd"><div class="cmt-top"><span class="cmt-au">${esc(c.author || '鸟友')}</span><span class="cmt-tm">${esc(c.time || '')}</span></div><div class="cmt-tx">${esc(c.text)}</div></div></div>`).join('')
+    : `<div class="cmt-empty">还没有评论，来说点什么吧～</div>`;
   return postCardHTML(p, false) + `
     ${guideLink}
     <div class="pd-actions">
-      <button onclick="toast('点赞功能开发中')"><svg><use href="#i-heart"/></svg> 赞</button>
-      <button onclick="toast('评论功能开发中')"><svg><use href="#i-feed"/></svg> 评论</button>
-      <button onclick="toast('分享功能开发中')"><svg><use href="#i-arrow-right"/></svg> 分享</button>
+      <button class="${liked ? 'on' : ''}" onclick="toggleLike(${p.id})"><svg><use href="#i-heart"/></svg> ${liked ? '已赞' : '赞'}${likes ? ` · ${likes}` : ''}</button>
+      <button onclick="document.getElementById('cmtInput').focus()"><svg><use href="#i-feed"/></svg> 评论${comments.length ? ` · ${comments.length}` : ''}</button>
+      <button onclick="sharePost(${p.id})"><svg><use href="#i-arrow-right"/></svg> 分享</button>
     </div>
-    <div class="pd-comments">
-      <div class="cmt-empty">还没有评论，来说点什么吧～</div>
+    ${mine ? `<div class="pd-owner">
+      <button onclick="editPost(${p.id})"><svg><use href="#i-pen"/></svg> 编辑</button>
+      <button class="del" onclick="deletePost(${p.id})">✕ 删除</button>
+    </div>` : ''}
+    <div class="pd-comments">${cmtList}</div>
+    <div class="cmt-compose">
+      <input id="cmtInput" placeholder="写下你的评论…" maxlength="200" onkeydown="if(event.key==='Enter'){event.preventDefault();submitComment(${p.id});}">
+      <button onclick="submitComment(${p.id})">发送</button>
     </div>`;
+}
+
+/* ============ Post interactions: like / comment / share / edit / delete ============ */
+function findPost(id) { return (state.posts || []).find(x => x.id === id); }
+function toggleLike(id) {
+  const p = findPost(id); if (!p) return;
+  p.likedByMe = !p.likedByMe;
+  p.likes = Math.max(0, (p.likes || 0) + (p.likedByMe ? 1 : -1));
+  saveState();
+  document.getElementById('postDetail').innerHTML = postDetailHTML(p);
+  renderDiscover(); renderHome();
+}
+function submitComment(id) {
+  const p = findPost(id); if (!p) return;
+  const el = document.getElementById('cmtInput');
+  const text = (el && el.value || '').trim();
+  if (!text) { toast('写点什么再发送吧'); return; }
+  if (!p.comments) p.comments = [];
+  p.comments.push({ author: (state.user && state.user.name) || '我', text, time: nowDateTime() });
+  saveState();
+  document.getElementById('postDetail').innerHTML = postDetailHTML(p);
+  renderDiscover(); renderHome();
+  toast('评论已发布 💬');
+}
+function sharePost(id) {
+  const p = findPost(id); if (!p) return;
+  const txt = `${p.title ? p.title + '\n' : ''}${p.body || ''}\n—— 来自 Skylark · 雀跃`;
+  if (navigator.share) {
+    navigator.share({ title: p.title || 'Skylark 动态', text: txt }).catch(() => {});
+  } else if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(() => toast('已复制内容，去粘贴分享吧 🔗')).catch(() => toast('复制失败，请手动复制'));
+  } else {
+    toast('当前环境不支持分享');
+  }
+}
+function deletePost(id) {
+  const p = findPost(id); if (!p) return;
+  if ((p.author || '我') !== '我') { toast('只能删除自己的动态'); return; }
+  if (!confirm('确定删除这条动态吗？\n删除后无法恢复。')) return;
+  state.posts = (state.posts || []).filter(x => x.id !== id);
+  saveState();
+  toast('动态已删除');
+  showScreen('discover');
+  renderDiscover(); renderHome();
+}
+function editPost(id) {
+  const p = findPost(id); if (!p) return;
+  if ((p.author || '我') !== '我') { toast('只能编辑自己的动态'); return; }
+  openCompose({ editId: id });
 }
 
 /* ============ Discover rendering ============ */
@@ -4008,9 +4098,30 @@ function carStop() { if (carTimer) { clearInterval(carTimer); carTimer = null; }
 
 /* ============ Post composer ============ */
 let composeChannel = 'care', composePhoto = null,
-    composeSpecies = null, composeSpeciesName = '', composeFieldVals = {};
+    composeSpecies = null, composeSpeciesName = '', composeFieldVals = {}, editingPostId = null;
 function openCompose(opts) {
   opts = opts || {};
+  editingPostId = null;
+  // Edit mode: prefill the sheet from an existing post
+  if (opts.editId != null) {
+    const p = findPost(opts.editId);
+    if (p) {
+      editingPostId = p.id;
+      composeChannel = postChannelKey(p);
+      composeSpecies = p.species || null;
+      composeSpeciesName = p.speciesName || '';
+      composePhoto = p.photo || null;
+      composeFieldVals = Object.assign({}, p.fields || {});
+      document.getElementById('composeTitle').value = p.title || '';
+      document.getElementById('composeBody').value = p.body || '';
+      document.getElementById('composePhotoPreview').innerHTML = composePhoto ? `<img src="${composePhoto}" alt="">` : '';
+      renderComposeChannels();
+      renderComposeFields();   // prefills cf_ inputs from composeFieldVals
+      updateComposeSpeciesUI();
+      showSheet('composeSheet');
+      return;
+    }
+  }
   composeChannel = opts.channel || 'share';
   composeSpecies = opts.speciesId || null;
   composeSpeciesName = opts.speciesName || '';
@@ -4107,6 +4218,28 @@ function publishPost() {
   const hasFields = Object.keys(fields).length > 0;
   if (!title && !body && !composePhoto && !hasFields) { toast('写点什么再发布吧 ✨'); return; }
   if (!state.posts) state.posts = [];
+  // Edit mode: update the existing post in place
+  if (editingPostId != null) {
+    const p = findPost(editingPostId);
+    editingPostId = null;
+    if (p) {
+      p.channel = composeChannel;
+      p.domain = (CHAN[composeChannel] || {}).domain || 'general';
+      p.title = title; p.body = body;
+      p.photo = composePhoto || null;
+      p.species = composeSpecies || null;
+      p.speciesName = composeSpeciesName || '';
+      p.fields = fields;
+      p.edited = true;
+      saveState();
+      closeSheet();
+      renderDiscover(); renderHome();
+      const detail = document.getElementById('postDetail');
+      if (detail) detail.innerHTML = postDetailHTML(p);
+      toast('已更新 ✓');
+      return;
+    }
+  }
   state.posts.unshift({
     id: Date.now(),
     channel: composeChannel,
@@ -4115,7 +4248,8 @@ function publishPost() {
     species: composeSpecies || null,
     speciesName: composeSpeciesName || '',
     fields,
-    time: nowDateTime(), author: '我'
+    time: nowDateTime(), author: '我',
+    likes: 0, likedByMe: false, comments: []
   });
   saveState();
   closeSheet();
@@ -4253,7 +4387,7 @@ function renderPetsList() {
     return `
       <button class="pet-list-card${manageMode ? ' shake' : ''}" onclick="${manageMode ? `openEditPet('${p.id}')` : `openPetTimeline('${p.id}')`}">
         ${manageMode ? `<span class="pet-del" onclick="event.stopPropagation();deletePet('${p.id}')">✕</span>` : ''}
-        <div class="pav" style="background:${p.color};">
+        <div class="pav" style="background:${p.photo ? '#EDE6DA' : p.color};">
           <img src="${src}" alt="${p.species}" style="${imgStyle}" onerror="this.style.display='none';this.parentElement.style.fontSize='40px';this.parentElement.style.color='#fff';this.parentElement.textContent='${p.initial}';">
         </div>
         <div class="pname">${p.name} <span class="gender ${p.gender}">${p.gender==='m'?'♂':'♀'}</span></div>
@@ -4282,7 +4416,7 @@ function renderPetTimeline() {
   const avgW = weights.length ? (weights.reduce((a, b) => a + b, 0) / weights.length).toFixed(1) : '—';
   const src = avatarSrc(pet);
   document.getElementById('tlHeader').innerHTML = `
-    <div class="tlav" style="background:${pet.color};">
+    <div class="tlav" style="background:${pet.photo ? '#EDE6DA' : pet.color};">
       <img src="${src}" alt="${pet.species}" style="${pet.photo ? 'width:100%;height:100%;object-fit:cover;' : ''}" onerror="this.style.display='none';this.parentElement.style.fontSize='28px';this.parentElement.style.color='#fff';this.parentElement.textContent='${pet.initial}';">
     </div>
     <div style="flex:1; min-width: 0;">
@@ -5246,7 +5380,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.3.0';
+const APP_VERSION = '0.4.0';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD); }
 function renderVersion() {
