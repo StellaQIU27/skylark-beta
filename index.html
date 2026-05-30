@@ -1877,6 +1877,7 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
 
   <div class="section-head">
     <div class="h"><svg><use href="#i-feed"/></svg>我的动态</div>
+    <button class="rec-manage-btn" onclick="openCompose({channel:'share'})"><svg><use href="#i-pen"/></svg><span>发帖</span></button>
   </div>
   <div id="homePostsArea"></div>
 </section>
@@ -3894,7 +3895,7 @@ function renderHome() {
         <button class="btn" onclick="openCompose({channel:'share'})">发布第一条 →</button>
       </div>`;
   } else {
-    area.innerHTML = posts.map(postCardHTML).join('');
+    area.innerHTML = posts.map(p => postCardHTML(p)).join('');
   }
 }
 
@@ -3989,7 +3990,7 @@ function renderDiscover() {
         <button class="btn" onclick="openCompose({channel:'${seedChan}'})">发布动态 →</button>
       </div>`;
   } else {
-    area.innerHTML = posts.map(postCardHTML).join('');
+    area.innerHTML = posts.map(p => postCardHTML(p)).join('');
   }
 }
 
@@ -5245,7 +5246,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.2.0';
+const APP_VERSION = '0.3.0';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD); }
 function renderVersion() {
