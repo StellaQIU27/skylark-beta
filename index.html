@@ -1134,6 +1134,15 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 }
 .sheet.active { display: block; }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+/* Avatar cropper */
+.crop-stage { position: relative; width: 280px; height: 280px; margin: 6px auto 14px; border-radius: 16px; overflow: hidden; background: #2b2b28; touch-action: none; }
+.crop-stage canvas { display: block; width: 280px; height: 280px; touch-action: none; cursor: grab; }
+.crop-stage canvas:active { cursor: grabbing; }
+.crop-mask { position: absolute; inset: 0; pointer-events: none; box-shadow: 0 0 0 2000px rgba(43,43,40,0.55); border-radius: 50%; }
+.crop-mask::after { content: ''; position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(255,255,255,0.85); }
+.crop-zoom { display: flex; align-items: center; gap: 12px; margin: 0 8px 6px; }
+.crop-zoom .cz-s, .crop-zoom .cz-l { font-size: 12px; color: var(--ink-soft); flex-shrink: 0; }
+.crop-zoom input[type=range] { flex: 1; accent-color: var(--sage-dark); }
 .sheet .handle {
   width: 44px; height: 5px; background: var(--beige-border);
   border-radius: 5px; margin: 0 auto 14px;
@@ -2416,6 +2425,26 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
   <div class="row-actions">
     <button class="btn ghost" onclick="closeSheet()">取消</button>
     <button class="btn accent" onclick="saveEditPet()">保存</button>
+  </div>
+</div>
+
+<!-- ============ Avatar cropper sheet ============ -->
+<div class="sheet" id="cropSheet">
+  <div class="handle"></div>
+  <h3>调整头像</h3>
+  <div class="crop-stage">
+    <canvas id="cropCanvas" width="280" height="280"></canvas>
+    <div class="crop-mask"></div>
+  </div>
+  <div class="crop-zoom">
+    <span class="cz-s">小</span>
+    <input type="range" id="cropZoom" min="0" max="100" value="0" oninput="onCropZoom()">
+    <span class="cz-l">大</span>
+  </div>
+  <div style="text-align:center; font-size:12px; color:var(--ink-soft); margin:2px 0 4px;">拖动照片调整位置，滑动条缩放</div>
+  <div class="row-actions">
+    <button class="btn ghost" onclick="cancelCrop()">取消</button>
+    <button class="btn accent" onclick="confirmCrop()">确定</button>
   </div>
 </div>
 
@@ -5222,24 +5251,88 @@ function onPetPhoto(ev) {
   const file = ev.target.files && ev.target.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = e => {
-    const img = new Image();
-    img.onload = () => {
-      const max = 400;
-      let w = img.width, h = img.height;
-      const scale = Math.min(1, max / Math.max(w, h));
-      w = Math.round(w * scale); h = Math.round(h * scale);
-      const cv = document.createElement('canvas');
-      cv.width = w; cv.height = h;
-      cv.getContext('2d').drawImage(img, 0, 0, w, h);
-      try { editPetPhoto = cv.toDataURL('image/jpeg', 0.85); }
-      catch (err) { editPetPhoto = e.target.result; }
-      updateEditAvatarPreview();
-    };
-    img.src = e.target.result;
-  };
+  reader.onload = e => openCropper(e.target.result);
   reader.readAsDataURL(file);
   ev.target.value = '';
+}
+
+/* ============ Avatar cropper (drag + zoom → square avatar) ============ */
+const CROP_S = 280;     // on-screen stage size
+const CROP_OUT = 400;   // exported avatar size
+let cropImg = null, cropScale = 1, cropMinScale = 1, cropOffX = 0, cropOffY = 0, cropBound = false;
+
+function openCropper(dataURL) {
+  const img = new Image();
+  img.onload = () => {
+    cropImg = img;
+    cropMinScale = Math.max(CROP_S / img.width, CROP_S / img.height);
+    cropScale = cropMinScale;
+    cropOffX = (CROP_S - img.width * cropScale) / 2;
+    cropOffY = (CROP_S - img.height * cropScale) / 2;
+    document.getElementById('cropZoom').value = 0;
+    bindCropper();
+    showSheet('cropSheet');
+    requestAnimationFrame(drawCrop);
+  };
+  img.src = dataURL;
+}
+function clampCropOffsets() {
+  const w = cropImg.width * cropScale, h = cropImg.height * cropScale;
+  cropOffX = Math.min(0, Math.max(CROP_S - w, cropOffX));
+  cropOffY = Math.min(0, Math.max(CROP_S - h, cropOffY));
+}
+function drawCrop() {
+  if (!cropImg) return;
+  const ctx = document.getElementById('cropCanvas').getContext('2d');
+  ctx.clearRect(0, 0, CROP_S, CROP_S);
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(cropImg, cropOffX, cropOffY, cropImg.width * cropScale, cropImg.height * cropScale);
+}
+function onCropZoom() {
+  if (!cropImg) return;
+  const v = +document.getElementById('cropZoom').value;       // 0..100
+  const newScale = cropMinScale * (1 + v / 100 * 2);          // up to 3×
+  const cx = CROP_S / 2, cy = CROP_S / 2;
+  const imgX = (cx - cropOffX) / cropScale, imgY = (cy - cropOffY) / cropScale;
+  cropScale = newScale;
+  cropOffX = cx - imgX * cropScale;
+  cropOffY = cy - imgY * cropScale;
+  clampCropOffsets();
+  drawCrop();
+}
+function bindCropper() {
+  if (cropBound) return;
+  cropBound = true;
+  const cv = document.getElementById('cropCanvas');
+  let dragging = false, lastX = 0, lastY = 0;
+  cv.addEventListener('pointerdown', e => { dragging = true; lastX = e.clientX; lastY = e.clientY; try { cv.setPointerCapture(e.pointerId); } catch (_) {} });
+  cv.addEventListener('pointermove', e => {
+    if (!dragging || !cropImg) return;
+    cropOffX += e.clientX - lastX; cropOffY += e.clientY - lastY;
+    lastX = e.clientX; lastY = e.clientY;
+    clampCropOffsets(); drawCrop();
+  });
+  const end = () => { dragging = false; };
+  cv.addEventListener('pointerup', end);
+  cv.addEventListener('pointercancel', end);
+}
+function confirmCrop() {
+  if (!cropImg) { cancelCrop(); return; }
+  const ratio = CROP_OUT / CROP_S;
+  const out = document.createElement('canvas');
+  out.width = CROP_OUT; out.height = CROP_OUT;
+  const ctx = out.getContext('2d');
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(cropImg, cropOffX * ratio, cropOffY * ratio, cropImg.width * cropScale * ratio, cropImg.height * cropScale * ratio);
+  try { editPetPhoto = out.toDataURL('image/jpeg', 0.88); }
+  catch (err) { editPetPhoto = cropImg.src; }
+  cropImg = null;
+  showSheet('editPetSheet');
+  updateEditAvatarPreview();
+}
+function cancelCrop() {
+  cropImg = null;
+  showSheet('editPetSheet');
 }
 function saveEditPet() {
   const name = document.getElementById('editPetName').value.trim();
@@ -5380,7 +5473,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.4.0';
+const APP_VERSION = '0.5.0';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD); }
 function renderVersion() {
