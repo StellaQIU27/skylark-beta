@@ -795,6 +795,26 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 }
 .cc-species-chip .x { width: 18px; height: 18px; border-radius: 50%; background: rgba(74,122,184,0.25); display: grid; place-items: center; font-size: 12px; }
 .post-card .pspecies { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 8px; background: #DCE6EC; color: #4A7AB8; margin-top: 6px; display: inline-block; }
+.post-card { cursor: pointer; transition: transform 120ms, box-shadow 120ms; }
+.post-card:active { transform: scale(0.99); }
+
+/* Post detail */
+#postDetail .post-card { cursor: default; }
+.pd-guidelink {
+  display: block; width: calc(100% - 40px); margin: 0 20px 14px;
+  padding: 11px 14px; border-radius: 12px;
+  background: #DCE6EC; color: #4A7AB8; font-size: 13px; font-weight: 600; text-align: center;
+}
+.pd-actions { display: flex; gap: 10px; margin: 4px 20px 14px; }
+.pd-actions button {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px; border-radius: 12px; background: var(--cream-warm);
+  border: 1px solid var(--beige-border); font-size: 13px; color: var(--ink-soft); font-weight: 500;
+}
+.pd-actions button svg { width: 16px; height: 16px; }
+.pd-actions button:active { background: var(--paper); }
+.pd-comments { margin: 0 20px 24px; }
+.cmt-empty { text-align: center; color: var(--ink-mute); font-size: 13px; padding: 26px 10px; background: var(--cream-warm); border: 1px dashed var(--beige-border); border-radius: 14px; }
 .post-card .ptag.general { background: var(--paper-dark); color: var(--ink-soft); }
 .post-card .ptype { display: inline-block; font-size: 11px; font-weight: 600; color: var(--terracotta); background: var(--terracotta-soft); padding: 2px 8px; border-radius: 7px; margin-bottom: 6px; }
 .post-card .pfields { margin-top: 8px; display: flex; flex-direction: column; gap: 5px; }
@@ -2211,6 +2231,15 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
     <div class="es">在社区发布动态后，<br/>鸟友们的喜欢会展示在这里。</div>
     <button class="btn" onclick="showScreen('discover')">去发布动态 →</button>
   </div>
+</section>
+
+<!-- ============ 动态详情 (POST DETAIL) ============ -->
+<section id="screen-post" class="screen">
+  <div class="guide-head">
+    <button class="g-back" onclick="goBackSub()"><svg><use href="#i-arrow-left"/></svg></button>
+    <div class="g-title">动态</div>
+  </div>
+  <div id="postDetail"></div>
 </section>
 
 <!-- ============ 关注的人 (FOLLOWING) ============ -->
@@ -3898,12 +3927,13 @@ const CHANNEL_FIELDS = {
 const FIELD_LABEL = { age: '年龄', symptoms: '症状', diet: '饮食', weightChange: '体重变化', place: '地点', time: '时间', confidence: '置信度' };
 function postChannelKey(p) { return p.channel || (p.cat === 'wild' ? 'birding' : 'share'); }
 
-function postCardHTML(p) {
+function postCardHTML(p, clickable) {
+  if (clickable === undefined) clickable = true;
   const ch = CHAN[postChannelKey(p)] || { name: '讨论', domain: 'general' };
   const author = p.author || '我';
   const fields = p.fields || {};
   const fieldRows = Object.keys(fields).map(k => `<div class="pf"><span class="pfk">${esc(FIELD_LABEL[k] || k)}</span><span class="pfv">${esc(fields[k])}</span></div>`).join('');
-  return `<div class="post-card">
+  return `<div class="post-card"${clickable ? ` onclick="openPost(${p.id})"` : ''}>
     <div class="ph">
       <div class="pav">${esc(author[0] || '我')}</div>
       <div class="pmeta"><div class="pauthor">${esc(author)}</div><div class="ptime">${esc(p.time || '')}</div></div>
@@ -3915,6 +3945,29 @@ function postCardHTML(p) {
     ${p.photo ? `<div class="pphoto"><img src="${p.photo}" alt=""></div>` : ''}
     ${p.speciesName ? `<div class="pspecies">🔖 ${esc(p.speciesName)}</div>` : ''}
   </div>`;
+}
+
+/* ============ Single post detail ============ */
+function openPost(id) {
+  const p = (state.posts || []).find(x => x.id === id);
+  if (!p) { toast('动态不存在'); return; }
+  document.getElementById('postDetail').innerHTML = postDetailHTML(p);
+  showScreen('post');
+}
+function postDetailHTML(p) {
+  const guideLink = p.species
+    ? `<button class="pd-guidelink" onclick="showScreen('guide');openSpecies('${p.species}')">查看「${esc(p.speciesName)}」图鉴 ›</button>`
+    : '';
+  return postCardHTML(p, false) + `
+    ${guideLink}
+    <div class="pd-actions">
+      <button onclick="toast('点赞功能开发中')"><svg><use href="#i-heart"/></svg> 赞</button>
+      <button onclick="toast('评论功能开发中')"><svg><use href="#i-feed"/></svg> 评论</button>
+      <button onclick="toast('分享功能开发中')"><svg><use href="#i-arrow-right"/></svg> 分享</button>
+    </div>
+    <div class="pd-comments">
+      <div class="cmt-empty">还没有评论，来说点什么吧～</div>
+    </div>`;
 }
 
 /* ============ Discover rendering ============ */
