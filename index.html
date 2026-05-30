@@ -4212,8 +4212,9 @@ function renderPetTimeline() {
   if (!pet) return;
   state.activePetId = pet.id;
 
-  // Back button visible only if 2+ pets (user could drill back to list)
-  document.getElementById('tlBack').style.display = state.pets.length > 1 ? '' : 'none';
+  // Back button always visible: the pet timeline is always entered from the
+  // pet list, so the user can always drill back to it.
+  document.getElementById('tlBack').style.display = '';
 
   // Header
   const recs = state.records[pet.id] || {};
