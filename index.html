@@ -2217,16 +2217,34 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
   </div>
 
   <div class="menu-card">
-    <button class="menu-row" onclick="toast('收藏即将推出')"><div class="mi"><svg><use href="#i-star"/></svg></div><div class="ml">我的收藏</div><div class="mc">›</div></button>
+    <button class="menu-row" onclick="openFavorites()"><div class="mi"><svg><use href="#i-star"/></svg></div><div class="ml">我的收藏</div><div class="mc">›</div></button>
     <button class="menu-row" onclick="toast('离线记录即将推出')"><div class="mi"><svg><use href="#i-offline"/></svg></div><div class="ml">离线记录</div><div class="mc">›</div></button>
-    <button class="menu-row" onclick="toast('草稿即将推出')"><div class="mi"><svg><use href="#i-folder"/></svg></div><div class="ml">我的草稿</div><div class="mc">›</div></button>
-    <button class="menu-row" onclick="toast('备份即将推出')"><div class="mi"><svg><use href="#i-refresh"/></svg></div><div class="ml">数据备份</div><div class="mc">›</div></button>
+    <button class="menu-row" onclick="openDrafts()"><div class="mi"><svg><use href="#i-folder"/></svg></div><div class="ml">我的草稿</div><div class="mc">›</div></button>
+    <button class="menu-row" onclick="showSheet('backupSheet')"><div class="mi"><svg><use href="#i-refresh"/></svg></div><div class="ml">数据备份</div><div class="mc">›</div></button>
     <button class="menu-row" onclick="toast('帮助即将推出')"><div class="mi"><svg><use href="#i-help"/></svg></div><div class="ml">帮助与反馈</div><div class="mc">›</div></button>
-    <button class="menu-row" onclick="toast('Skylark · 雀跃 v0.1.0 beta')"><div class="mi"><svg><use href="#i-info"/></svg></div><div class="ml">关于 Skylark · 雀跃</div><div class="mc">›</div></button>
+    <button class="menu-row" onclick="aboutTap()"><div class="mi"><svg><use href="#i-info"/></svg></div><div class="ml">关于 Skylark · 雀跃</div><div class="mc">›</div></button>
   </div>
 </section>
 
 <!-- ============ 设置 (SETTINGS) ============ -->
+<!-- ============ 我的收藏 (FAVORITES) ============ -->
+<section id="screen-favorites" class="screen">
+  <div class="guide-head">
+    <button class="g-back" onclick="goBackSub()"><svg><use href="#i-arrow-left"/></svg></button>
+    <div class="g-title">我的收藏</div>
+  </div>
+  <div id="favoritesArea" style="padding:0 16px;"></div>
+</section>
+
+<!-- ============ 我的草稿 (DRAFTS) ============ -->
+<section id="screen-drafts" class="screen">
+  <div class="guide-head">
+    <button class="g-back" onclick="goBackSub()"><svg><use href="#i-arrow-left"/></svg></button>
+    <div class="g-title">我的草稿</div>
+  </div>
+  <div id="draftsArea" style="padding:0 16px;"></div>
+</section>
+
 <section id="screen-settings" class="screen">
   <div class="guide-head">
     <button class="g-back" onclick="goBackSub()"><svg><use href="#i-arrow-left"/></svg></button>
@@ -2378,6 +2396,7 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
   <button class="cc-add-photo" onclick="document.getElementById('composePhotoInput').click()"><span class="ic"><svg><use href="#i-camera"/></svg></span>添加配图</button>
   <div class="row-actions">
     <button class="btn ghost" onclick="closeSheet()">取消</button>
+    <button class="btn ghost" onclick="saveDraft()">存草稿</button>
     <button class="btn accent" onclick="publishPost()">发布</button>
   </div>
 </div>
@@ -2426,6 +2445,17 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
     <button class="btn ghost" onclick="closeSheet()">取消</button>
     <button class="btn accent" onclick="saveEditPet()">保存</button>
   </div>
+</div>
+
+<!-- ============ Data backup sheet ============ -->
+<div class="sheet" id="backupSheet">
+  <div class="handle"></div>
+  <h3>数据备份</h3>
+  <p style="font-size:13px;color:var(--ink-soft);margin:0 0 16px;line-height:1.6;">你的爱鸟和记录都保存在这台设备本地。导出一份备份文件，换设备或清除数据后可以再导入恢复。</p>
+  <button class="btn" style="width:100%;margin-bottom:10px;" onclick="exportData()">⬇　导出备份文件</button>
+  <button class="btn ghost" style="width:100%;" onclick="triggerImport()">⬆　从备份文件导入</button>
+  <input type="file" id="backupFileInput" accept="application/json,.json" onchange="onImportFile(event)" style="display:none;">
+  <div class="row-actions"><button class="btn ghost" onclick="closeSheet()">关闭</button></div>
 </div>
 
 <!-- ============ Avatar cropper sheet ============ -->
@@ -3628,6 +3658,8 @@ const DEFAULT_STATE = {
   selectedDate: todayISO(),
   records: { 'pipi': seededRecords() },
   drafts: {},
+  draftList: [],
+  bookmarks: [],
   posts: [],
   user: { name: 'Skylark 用户', avatar: null },
   recordDays: 6,
@@ -4068,7 +4100,7 @@ function postCardHTML(p, clickable) {
 /* ============ Single post detail ============ */
 let activePostId = null;
 function openPost(id) {
-  const p = (state.posts || []).find(x => x.id === id);
+  const p = (state.posts || []).find(x => x.id === id) || (state.bookmarks || []).find(x => x.id === id);
   if (!p) { toast('动态不存在'); return; }
   activePostId = id;
   document.getElementById('postDetail').innerHTML = postDetailHTML(p);
@@ -4078,9 +4110,10 @@ function postDetailHTML(p) {
   const guideLink = p.species
     ? `<button class="pd-guidelink" onclick="showScreen('guide');openSpecies('${p.species}')">查看「${esc(p.speciesName)}」图鉴 ›</button>`
     : '';
-  const mine = (p.author || '我') === '我';
+  const mine = isMine(p);
   const liked = !!p.likedByMe;
   const likes = p.likes || 0;
+  const bk = isBookmarked(p.id);
   const comments = p.comments || [];
   const cmtList = comments.length
     ? comments.map(c => `<div class="cmt"><div class="cmt-av">${esc((c.author || '友')[0])}</div><div class="cmt-bd"><div class="cmt-top"><span class="cmt-au">${esc(c.author || '鸟友')}</span><span class="cmt-tm">${esc(c.time || '')}</span></div><div class="cmt-tx">${esc(c.text)}</div></div></div>`).join('')
@@ -4091,6 +4124,7 @@ function postDetailHTML(p) {
       <button class="${liked ? 'on' : ''}" onclick="toggleLike(${p.id})"><svg><use href="#i-heart"/></svg> ${liked ? '已赞' : '赞'}${likes ? ` · ${likes}` : ''}</button>
       <button onclick="document.getElementById('cmtInput').focus()"><svg><use href="#i-feed"/></svg> 评论${comments.length ? ` · ${comments.length}` : ''}</button>
       <button onclick="sharePost(${p.id})"><svg><use href="#i-arrow-right"/></svg> 分享</button>
+      <button class="${bk ? 'on' : ''}" onclick="toggleBookmark(${p.id})"><svg><use href="#i-star"/></svg> ${bk ? '已藏' : '收藏'}</button>
     </div>
     ${mine ? `<div class="pd-owner">
       <button onclick="editPost(${p.id})"><svg><use href="#i-pen"/></svg> 编辑</button>
@@ -4172,6 +4206,121 @@ function editPost(id) {
   const p = findPost(id); if (!p) return;
   if (!isMine(p)) { toast('只能编辑自己的动态'); return; }
   openCompose({ editId: id });
+}
+
+/* ============ Favorites (local bookmarks) ============ */
+function isBookmarked(id) { return (state.bookmarks || []).some(b => b.id === id); }
+function toggleBookmark(id) {
+  const p = findPost(id) || (state.bookmarks || []).find(b => b.id === id);
+  if (!p) return;
+  if (!state.bookmarks) state.bookmarks = [];
+  if (isBookmarked(id)) { state.bookmarks = state.bookmarks.filter(b => b.id !== id); toast('已取消收藏'); }
+  else { state.bookmarks.unshift(JSON.parse(JSON.stringify(p))); toast('已收藏 ⭐'); }
+  saveState();
+  if (activePostId === id) rerenderPostDetail(p);
+  const favScreen = document.getElementById('screen-favorites');
+  if (favScreen && favScreen.classList.contains('active')) renderFavorites();
+}
+function openFavorites() { showScreen('favorites'); renderFavorites(); }
+function renderFavorites() {
+  const area = document.getElementById('favoritesArea');
+  const list = state.bookmarks || [];
+  if (!list.length) {
+    area.innerHTML = `<div class="empty-card" style="margin-top:6px;"><div class="eico"><svg><use href="#i-star"/></svg></div><div class="et">还没有收藏</div><div class="es">在动态详情页点「收藏」，<br/>喜欢的帖子会保存在这里。</div><button class="btn" onclick="showScreen('discover')">去逛逛社区 →</button></div>`;
+    return;
+  }
+  area.innerHTML = list.map(p => postCardHTML(p)).join('');
+}
+
+/* ============ Drafts ============ */
+function saveDraft() {
+  const title = document.getElementById('composeTitle').value.trim();
+  const body = document.getElementById('composeBody').value.trim();
+  readComposeFields();
+  if (!title && !body && !composePhoto) { toast('草稿是空的'); return; }
+  if (!state.draftList) state.draftList = [];
+  state.draftList.unshift({
+    id: 'draft_' + Date.now(), channel: composeChannel,
+    title, body, photo: composePhoto || null,
+    species: composeSpecies || null, speciesName: composeSpeciesName || '',
+    fields: Object.assign({}, composeFieldVals), time: nowDateTime()
+  });
+  editingPostId = null;
+  saveState();
+  closeSheet();
+  toast('已存到草稿箱 📝');
+}
+function openDrafts() { showScreen('drafts'); renderDrafts(); }
+function renderDrafts() {
+  const area = document.getElementById('draftsArea');
+  const list = state.draftList || [];
+  if (!list.length) {
+    area.innerHTML = `<div class="empty-card" style="margin-top:6px;"><div class="eico"><svg><use href="#i-folder"/></svg></div><div class="et">草稿箱是空的</div><div class="es">发帖时点「存草稿」，<br/>没写完的内容会保存在这里。</div></div>`;
+    return;
+  }
+  area.innerHTML = list.map(d => {
+    const ch = CHAN[d.channel] || { name: '讨论' };
+    const preview = esc(d.title || d.body || '（无文字）').slice(0, 60);
+    return `<div class="post-card" onclick="openDraft('${d.id}')">
+      <div class="ph"><div class="pmeta" style="flex:1;"><div class="pauthor">${esc(ch.name)} · 草稿</div><div class="ptime">${esc(d.time || '')}</div></div>
+      <button onclick="event.stopPropagation();deleteDraft('${d.id}')" style="background:none;color:var(--terracotta);font-size:13px;font-weight:500;">删除</button></div>
+      <div class="pbody">${preview}</div>
+      ${d.photo ? `<div class="pphoto"><img src="${d.photo}" alt=""></div>` : ''}
+    </div>`;
+  }).join('');
+}
+function openDraft(id) {
+  const d = (state.draftList || []).find(x => x.id === id);
+  if (!d) return;
+  state.draftList = state.draftList.filter(x => x.id !== id);
+  saveState();
+  openCompose({ channel: d.channel, speciesId: d.species, speciesName: d.speciesName, title: d.title });
+  document.getElementById('composeBody').value = d.body || '';
+  composePhoto = d.photo || null;
+  composeFieldVals = Object.assign({}, d.fields || {});
+  if (composePhoto) document.getElementById('composePhotoPreview').innerHTML = `<div class="pw"><img src="${composePhoto}" alt=""><button class="rm" onclick="removeComposePhoto()">×</button></div>`;
+  renderComposeFields();
+}
+function deleteDraft(id) {
+  state.draftList = (state.draftList || []).filter(x => x.id !== id);
+  saveState();
+  renderDrafts();
+  toast('草稿已删除');
+}
+
+/* ============ Data backup (export / import) ============ */
+function exportData() {
+  try {
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const d = new Date();
+    a.href = url;
+    a.download = `skylark-backup-${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    toast('备份已导出 ✓');
+  } catch (e) { toast('导出失败'); }
+}
+function triggerImport() { document.getElementById('backupFileInput').click(); }
+function onImportFile(ev) {
+  const file = ev.target.files && ev.target.files[0];
+  ev.target.value = '';
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    let data;
+    try { data = JSON.parse(e.target.result); } catch (err) { toast('文件无法识别，请选择正确的备份文件'); return; }
+    if (!data || typeof data !== 'object' || !data.pets) { toast('这不是有效的 Skylark 备份文件'); return; }
+    if (!confirm('导入将覆盖当前设备上的爱鸟与记录，确定继续吗？')) return;
+    state = Object.assign(JSON.parse(JSON.stringify(DEFAULT_STATE)), data);
+    saveState();
+    closeSheet();
+    renderHome(); renderRecords(); renderProfile(); renderDiscover();
+    showScreen('home');
+    toast('备份已导入 ✓');
+  };
+  reader.readAsText(file);
 }
 
 /* ============ Discover rendering ============ */
@@ -5588,7 +5737,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.6.0';
+const APP_VERSION = '0.7.0';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
