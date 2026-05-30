@@ -9,6 +9,10 @@
 <meta name="apple-mobile-web-app-title" content="Skylark">
 <meta name="theme-color" content="#F5EDDE">
 <meta name="format-detection" content="telephone=no">
+<!-- Anti-cache: make sure phones pull the latest version on each open -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <link rel="apple-touch-icon" href="skylark-logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -2176,9 +2180,10 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
     <button class="menu-row" onclick="toast('通知设置即将推出')"><div class="mi"><svg><use href="#i-bell"/></svg></div><div class="ml">通知提醒</div><div class="mc">›</div></button>
     <button class="menu-row" onclick="toast('隐私设置即将推出')"><div class="mi"><svg><use href="#i-info"/></svg></div><div class="ml">隐私设置</div><div class="mc">›</div></button>
     <button class="menu-row" onclick="toast('数据备份即将推出')"><div class="mi"><svg><use href="#i-refresh"/></svg></div><div class="ml">数据备份</div><div class="mc">›</div></button>
-    <button class="menu-row" onclick="toast('Skylark · 雀跃 v0.1.0 beta')"><div class="mi"><svg><use href="#i-info"/></svg></div><div class="ml">关于 Skylark · 雀跃</div><div class="mc">v0.1.0</div></button>
+    <button class="menu-row" onclick="aboutTap()"><div class="mi"><svg><use href="#i-info"/></svg></div><div class="ml">关于 Skylark · 雀跃</div><div class="mc" id="appVerMc">v0.0.0</div></button>
     <button class="menu-row" style="color:var(--terracotta);" onclick="clearLocalData()"><div class="mi" style="color:var(--terracotta);"><svg><use href="#i-no-bath"/></svg></div><div class="ml">清除本地数据</div><div class="mc">›</div></button>
   </div>
+  <div id="appVerFooter" style="text-align:center; margin:16px 0 8px; font-size:12px; color:var(--ink-soft); letter-spacing:.02em;"></div>
 </section>
 
 <!-- ============ 通知 (NOTIFICATIONS) ============ -->
@@ -5186,12 +5191,24 @@ function clearLocalData() {
   toast('已清除本地数据');
 }
 
+/* ============ Version ============ */
+const APP_VERSION = '0.2.0';
+const APP_BUILD = '2026-05-30';
+function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD); }
+function renderVersion() {
+  const mc = document.getElementById('appVerMc');
+  if (mc) mc.textContent = 'v' + APP_VERSION;
+  const ft = document.getElementById('appVerFooter');
+  if (ft) ft.textContent = 'Skylark · 雀跃  v' + APP_VERSION + ' beta  ·  ' + APP_BUILD;
+}
+
 /* ============ Init ============ */
 setupSunSlider();
 renderHome();
 renderRecords();
 renderProfile();
 renderDiscover();
+renderVersion();
 </script>
 </body>
 </html>
