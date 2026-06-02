@@ -132,7 +132,7 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 
 /* =========== 首页 (HOME) =========== */
 .home-head {
-  padding: 22px 20px 0; position: relative; z-index: 2;
+  padding: 22px 20px 16px; position: relative; z-index: 2;
 }
 .home-head-row { display: flex; align-items: center; gap: 12px; }
 .home-head-logo {
@@ -6050,7 +6050,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.11.2';
+const APP_VERSION = '0.11.3';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
