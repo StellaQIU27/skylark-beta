@@ -651,8 +651,9 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 
 /* Post card */
 .post-card {
-  margin: 0 20px 12px; background: var(--cream-warm);
+  margin: 0 16px 12px; background: var(--paper);
   border: 1px solid var(--beige-border); border-radius: 18px; padding: 14px 16px;
+  box-shadow: 0 3px 12px rgba(107, 122, 76, 0.07);
 }
 .post-card .ph { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .post-card .pav {
@@ -2147,18 +2148,23 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
 
 <!-- ============ 发现 (DISCOVER) ============ -->
 <section id="screen-discover" class="screen">
-  <div class="rec-head">
-    <div class="tabs-inline">
-      <div class="t on">首页</div>
-      <div class="t" onclick="openCommunity()">社区</div>
+  <div class="home-head">
+    <div class="home-head-row">
+      <div class="home-head-logo">
+        <img src="skylark-logo.png" alt="Skylark" onerror="this.style.background='var(--sage-tint)';this.style.display='flex';this.style.alignItems='center';this.style.justifyContent='center';this.outerHTML='<div style=\'background:var(--sage-tint);color:var(--sage-dark);width:54px;height:54px;border-radius:16px;display:grid;place-items:center;font-family:Fraunces,serif;font-weight:700;font-size:24px;\'>S</div>';">
+      </div>
+      <div>
+        <div class="home-title">Skylark<span class="ch">· 雀跃</span></div>
+        <div class="home-tagline">记录 · 分享 · 发现 · 守护</div>
+      </div>
     </div>
+    <button class="home-bell" aria-label="通知" onclick="showScreen('notifications')" style="position:relative;"><svg><use href="#i-bell"/></svg><span class="notif-badge" style="display:none;"></span></button>
   </div>
   <div class="disc-head">
-    <button class="searchbox" onclick="openGuide()">
+    <button class="searchbox" onclick="openGuide()" style="width:100%;">
       <svg><use href="#i-search"/></svg>
       <span>搜索鸟种 / 话题 / 用户</span>
     </button>
-    <button class="bell-btn" onclick="showScreen('notifications')" style="position:relative;"><svg><use href="#i-bell"/></svg><span class="notif-badge" style="display:none;"></span></button>
   </div>
 
   <div class="feature-row">
@@ -2182,16 +2188,8 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
     </button>
   </div>
 
-  <div class="cat-grid">
-    <button class="cat-item" onclick="toast('观鸟指南 - 即将推出')"><div class="ci"><img src="icon-cat-guide.png" alt="观鸟指南"></div>观鸟指南</button>
-    <button class="cat-item" onclick="toast('热门地点 - 即将推出')"><div class="ci"><img src="icon-cat-place.png" alt="热门地点"></div>热门地点</button>
-    <button class="cat-item" onclick="toast('活动 - 即将推出')"><div class="ci"><img src="icon-cat-event.png" alt="活动"></div>活动</button>
-    <button class="cat-item" onclick="toast('排行榜 - 即将推出')"><div class="ci"><img src="icon-cat-rank.png" alt="排行榜"></div>排行榜</button>
-    <button class="cat-item" onclick="openGuide()"><div class="ci"><img src="icon-cat-book.png" alt="鸟种图鉴"></div>鸟种图鉴</button>
-  </div>
-
   <div class="section-head">
-    <div class="h"><svg><use href="#i-feed"/></svg>社区动态</div>
+    <div class="h"><svg><use href="#i-feed"/></svg>最新动态</div>
   </div>
   <div class="feed-filter" id="feedFilter">
     <button class="ff on" data-f="all" onclick="setDiscoverFilter('all')">全部</button>
@@ -2268,11 +2266,21 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
 <!-- ============ 设置 (SETTINGS) ============ -->
 <!-- ============ 社区圈子 (COMMUNITY / CIRCLES) ============ -->
 <section id="screen-community" class="screen">
-  <div class="guide-head">
-    <button class="g-back" onclick="goBackSub()"><svg><use href="#i-arrow-left"/></svg></button>
-    <div class="g-title">社区圈子</div>
+  <div class="rec-head">
+    <div class="tabs-inline"><div class="t on">社区</div></div>
+    <button class="bell-btn" onclick="showScreen('notifications')" style="position:relative;"><svg><use href="#i-bell"/></svg><span class="notif-badge" style="display:none;"></span></button>
   </div>
-  <div style="padding:4px 16px 10px; font-size:13px; color:var(--ink-soft);">进入感兴趣的圈子，和同好深入交流</div>
+  <div class="cat-grid">
+    <button class="cat-item" onclick="toast('观鸟指南 - 即将推出')"><div class="ci"><img src="icon-cat-guide.png" alt="观鸟指南"></div>观鸟指南</button>
+    <button class="cat-item" onclick="toast('热门地点 - 即将推出')"><div class="ci"><img src="icon-cat-place.png" alt="热门地点"></div>热门地点</button>
+    <button class="cat-item" onclick="toast('活动 - 即将推出')"><div class="ci"><img src="icon-cat-event.png" alt="活动"></div>活动</button>
+    <button class="cat-item" onclick="toast('排行榜 - 即将推出')"><div class="ci"><img src="icon-cat-rank.png" alt="排行榜"></div>排行榜</button>
+    <button class="cat-item" onclick="openGuide()"><div class="ci"><img src="icon-cat-book.png" alt="鸟种图鉴"></div>鸟种图鉴</button>
+  </div>
+  <div class="section-head">
+    <div class="h"><svg><use href="#i-feed"/></svg>圈子</div>
+    <div style="font-size:12px; color:var(--ink-soft);">进入感兴趣的圈子深入交流</div>
+  </div>
   <div id="communityArea" style="padding:0 16px;"></div>
 </section>
 
@@ -2379,9 +2387,9 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
     <div class="center-btn" style="background:var(--sage-dark);border-color:var(--cream);"><span style="color:#fff;font-size:34px;font-weight:300;line-height:1;margin-top:-3px;">＋</span></div>
     <span class="lbl">发帖</span>
   </button>
-  <button class="tab notif-tab" data-screen="notifications" onclick="showScreen('notifications')">
-    <span class="tab-icon"><svg><use href="#i-bell"/></svg></span>
-    <span class="lbl">消息</span>
+  <button class="tab" data-screen="community" onclick="openCommunity()">
+    <span class="tab-icon"><svg><use href="#i-compass"/></svg></span>
+    <span class="lbl">社区</span>
   </button>
   <button class="tab" data-screen="profile" onclick="showScreen('profile')">
     <span class="tab-icon"><svg><use href="#i-user"/></svg></span>
@@ -3906,7 +3914,7 @@ let manageMode = false; // true when the pet list is in add/delete management mo
 let lastMainScreen = 'home';
 function goBackSub() { showScreen(lastMainScreen || 'profile'); }
 function showScreen(name) {
-  if (['home', 'records', 'discover', 'profile'].includes(name)) lastMainScreen = name;
+  if (['home', 'records', 'discover', 'profile', 'community'].includes(name)) lastMainScreen = name;
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById('screen-' + name);
   if (el) el.classList.add('active');
@@ -3920,6 +3928,7 @@ function showScreen(name) {
   else carStop();
   if (name === 'notifications') { renderNotifications(); markNotifsRead(); if (CLOUD) syncNotifications(); }
   if (name === 'likes') { renderLikes(); if (CLOUD) syncNotifications(); }
+  if (name === 'community') renderCommunity();
   if (name === 'following') { renderFollowing(); if (CLOUD) syncFollows(); }
   if (name === 'followers') { renderFollowers(); if (CLOUD) syncFollows(); }
   if (CLOUD && (name === 'discover' || name === 'home')) { syncCloudPosts(); syncNotifications(); }
@@ -6035,7 +6044,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.10.1';
+const APP_VERSION = '0.11.0';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
