@@ -1900,7 +1900,7 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
         <div class="home-tagline">记录 · 分享 · 发现 · 守护</div>
       </div>
     </div>
-    <button class="home-bell" aria-label="通知" onclick="showScreen('notifications')" style="position:relative;"><svg><use href="#i-bell"/></svg><span class="notif-badge" style="display:none;"></span></button>
+    <button class="home-bell" aria-label="通知" onclick="showScreen('notifications')"><svg><use href="#i-bell"/></svg></button>
   </div>
 
   <div class="hero-bg">
@@ -2161,7 +2161,7 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
         <div class="home-tagline">记录 · 分享 · 发现 · 守护</div>
       </div>
     </div>
-    <button class="home-bell" aria-label="通知" onclick="showScreen('notifications')" style="position:relative;"><svg><use href="#i-bell"/></svg><span class="notif-badge" style="display:none;"></span></button>
+    <button class="home-bell" aria-label="通知" onclick="showScreen('notifications')"><svg><use href="#i-bell"/></svg></button>
   </div>
   <div class="disc-head">
     <button class="searchbox" onclick="openGuide()" style="width:100%;">
@@ -6050,7 +6050,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.11.1';
+const APP_VERSION = '0.11.2';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
