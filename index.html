@@ -350,6 +350,9 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
   padding: 22px 20px 10px;
   display: flex; align-items: center; justify-content: space-between;
 }
+.rec-head .bell-btn { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; color: var(--ink-soft); flex-shrink: 0; }
+.rec-head .bell-btn svg { width: 22px; height: 22px; }
+.rec-head .bell-btn.unread::after { content: ''; position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--terracotta); }
 .tabs-inline { display: flex; gap: 18px; align-items: center; }
 .tabs-inline .t {
   font-family: 'Noto Sans SC', sans-serif; font-weight: 700;
@@ -2269,6 +2272,9 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
   <div class="rec-head">
     <div class="tabs-inline"><div class="t on">社区</div></div>
     <button class="bell-btn" onclick="showScreen('notifications')" style="position:relative;"><svg><use href="#i-bell"/></svg><span class="notif-badge" style="display:none;"></span></button>
+  </div>
+  <div class="hero-bg" style="margin-top:0; margin-bottom:6px;">
+    <img src="home-background.png" alt="" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg, #E4EBDA 0%, #F5E2D1 50%, #E3ECEF 100%)';this.parentElement.style.height='120px';">
   </div>
   <div class="cat-grid">
     <button class="cat-item" onclick="toast('观鸟指南 - 即将推出')"><div class="ci"><img src="icon-cat-guide.png" alt="观鸟指南"></div>观鸟指南</button>
@@ -6044,7 +6050,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.11.0';
+const APP_VERSION = '0.11.1';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
