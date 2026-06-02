@@ -909,6 +909,35 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 .circle-card .cc-name { font-weight: 600; font-size: 15px; color: var(--ink); }
 .circle-card .cc-sub { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
 .circle-card .cc-go { color: var(--ink-mute); font-size: 18px; }
+/* Circle inner page */
+.circle-hero { margin: 4px 16px 0; padding: 18px 18px; border-radius: 18px; background: linear-gradient(135deg, #EAF0DF 0%, #F3ECDC 100%); }
+.circle-hero.wild { background: linear-gradient(135deg, #E3ECEF 0%, #DEE9D2 100%); }
+.circle-hero .ch-name { font-family: 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 20px; color: var(--ink); }
+.circle-hero .ch-blurb { font-size: 13px; color: var(--ink-soft); margin-top: 5px; line-height: 1.5; }
+.circle-hero .ch-row { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; }
+.circle-hero .ch-members { font-size: 13px; color: var(--ink-soft); }
+.circle-hero .ch-members b { color: var(--sage-dark); font-size: 15px; }
+.circle-hero .ch-join { padding: 8px 18px; border-radius: 20px; background: var(--sage-dark); color: #fff; font-size: 13px; font-weight: 600; }
+.circle-hero .ch-join.on { background: var(--paper-dark); color: var(--ink-soft); }
+.circle-hero .ch-join:active { opacity: 0.85; }
+.post-card.pinned { position: relative; border-color: var(--terracotta-soft); }
+.post-card.pinned .pin-badge { position: absolute; top: 12px; right: 14px; background: var(--terracotta); color: #fff; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 7px; }
+.post-card .pbody.clamp3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+#postDetail .post-card .pbody { white-space: pre-line; word-break: break-word; }
+/* Molt (换羽期) card */
+.molt-card { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 13px 14px; margin: 0 0 4px; background: var(--cream-warm); border: 1px solid var(--beige-border); border-radius: 16px; }
+.molt-card:active { background: var(--paper-dark); }
+.molt-card .mc-ic { width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center; font-size: 22px; background: var(--paper-dark); flex-shrink: 0; }
+.molt-card .mc-ic.on { background: #F5E0C8; }
+.molt-card .mc-ic.done { background: var(--sage-tint); }
+.molt-card .mc-bd { flex: 1; min-width: 0; }
+.molt-card .mc-t { font-weight: 600; font-size: 15px; color: var(--ink); display: flex; align-items: center; gap: 8px; }
+.molt-card .mc-s { font-size: 12.5px; color: var(--ink-soft); margin-top: 3px; }
+.molt-card .mc-go { color: var(--ink-mute); font-size: 13px; display: flex; align-items: center; }
+.molt-card .mc-go svg { width: 16px; height: 16px; }
+.molt-tag { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 7px; background: var(--paper-dark); color: var(--ink-soft); }
+.molt-tag.on { background: var(--terracotta-soft); color: var(--terracotta); }
+.molt-tag.done { background: var(--sage-tint); color: var(--sage-dark); }
 /* Notification tab red dot */
 nav.tabbar .tab.notif-tab { position: relative; }
 nav.tabbar .tab.notif-tab.unread::after { content: ''; position: absolute; top: 4px; left: calc(50% + 7px); width: 8px; height: 8px; border-radius: 50%; background: var(--terracotta); }
@@ -2034,6 +2063,8 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
       <div class="chart-labels" id="tlWeightLabels" style="margin-top: 6px;"></div>
     </div>
 
+    <div id="moltCard"></div>
+
     <div class="section-head" style="margin-top: 4px;">
       <div class="h"><svg><use href="#i-notebook"/></svg>日记</div>
       <div style="font-size:12px; color:var(--ink-soft);">共 <span id="tlRecordCount">0</span> 条</div>
@@ -2321,6 +2352,15 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
   <div id="followersArea" style="padding:0 16px;"></div>
 </section>
 
+<!-- ============ 圈子内页 (CIRCLE) ============ -->
+<section id="screen-circle" class="screen">
+  <div class="guide-head">
+    <button class="g-back" onclick="goBackSub()"><svg><use href="#i-arrow-left"/></svg></button>
+    <div class="g-title" id="circleTitle">圈子</div>
+  </div>
+  <div id="circlePage"></div>
+</section>
+
 <!-- ============ 用户主页 (USER PROFILE) ============ -->
 <section id="screen-user" class="screen">
   <div class="guide-head">
@@ -2533,6 +2573,25 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
   <div class="row-actions">
     <button class="btn ghost" onclick="closeSheet()">取消</button>
     <button class="btn accent" onclick="saveEditPet()">保存</button>
+  </div>
+</div>
+
+<!-- ============ Molt (换羽期) sheet ============ -->
+<div class="sheet" id="moltSheet">
+  <div class="handle"></div>
+  <h3>换羽期记录 🪶</h3>
+  <div style="margin-bottom:12px;">
+    <div style="font-size:11px;color:var(--ink-mute);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:6px;">开始日期</div>
+    <input id="moltStart" type="date" class="notes-input" style="min-height:auto;">
+  </div>
+  <div style="margin-bottom:6px;">
+    <div style="font-size:11px;color:var(--ink-mute);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:6px;">结束日期（换羽结束后再填）</div>
+    <input id="moltEnd" type="date" class="notes-input" style="min-height:auto;">
+  </div>
+  <button class="delete-row" id="moltClearBtn" style="margin-top:14px; display:none;" onclick="clearMolt()">清除换羽记录</button>
+  <div class="row-actions">
+    <button class="btn ghost" onclick="closeSheet()">取消</button>
+    <button class="btn accent" onclick="saveMolt()">保存</button>
   </div>
 </div>
 
@@ -4226,7 +4285,7 @@ function feedGridHTML(posts) {
 /* ============ Single post detail ============ */
 let activePostId = null;
 function openPost(id) {
-  const p = (state.posts || []).find(x => x.id === id) || (state.bookmarks || []).find(x => x.id === id);
+  const p = (state.posts || []).find(x => x.id === id) || (state.bookmarks || []).find(x => x.id === id) || PINNED_BY_ID[id];
   if (!p) { toast('动态不存在'); return; }
   activePostId = id;
   document.getElementById('postDetail').innerHTML = postDetailHTML(p);
@@ -4270,7 +4329,7 @@ function postDetailHTML(p) {
 }
 
 /* ============ Post interactions: like / comment / share / edit / delete ============ */
-function findPost(id) { return (state.posts || []).find(x => x.id === id); }
+function findPost(id) { return (state.posts || []).find(x => x.id === id) || (typeof PINNED_BY_ID !== 'undefined' && PINNED_BY_ID[id]) || null; }
 function rerenderPostDetail(p) {
   const detail = document.getElementById('postDetail');
   if (detail) detail.innerHTML = postDetailHTML(p);
@@ -4426,7 +4485,77 @@ function renderCommunity() {
     </button>`;
   }).join('');
 }
-function enterCircle(key) { setDiscoverFilter(key); showScreen('discover'); }
+/* ---- Circle inner page ---- */
+const CIRCLE_META = {
+  share:   { members: 1284, blurb: '晒娃日常、可爱瞬间，记录你和鸟宝的每一天' },
+  care:    { members: 3567, blurb: '科学喂养与护理经验，让鸟宝更健康长寿' },
+  help:    { members: 2103, blurb: '新手提问、紧急求助，老鸟友在线答疑' },
+  birding: { members: 892,  blurb: '野外观鸟、遇见记录，分享你拍到的鸟' },
+  idhelp:  { members: 1456, blurb: '这是什么鸟？发张图，大家一起来认' },
+  birdexp: { members: 678,  blurb: '观鸟技巧、装备、路线，经验交流' }
+};
+const PINNED_POSTS = {
+  care: [
+    { id: -101, channel: 'care', domain: 'pet', author: '护理经验 · 精选', time: '管理员置顶', likes: 328, comments: [],
+      title: '科学饮食：滋养丸为主，瓜子只能当零食',
+      body: '很多人以为鹦鹉就该吃瓜子，其实瓜子脂肪极高（葵花籽含脂量约 49%，是巧克力的三倍），长期吃容易肥胖、脂肪肝。\n\n禽类兽医普遍建议的日常配比：配方滋养丸（pellets）占 50–70%，新鲜蔬菜占 30–50%，瓜子/坚果/水果合计不超过 10–20%（当奖励就好）。换粮要循序渐进，最好先咨询禽鸟专科兽医。\n\n⚠️ 本文为通用护理科普，具体请以兽医诊断为准。' },
+    { id: -102, channel: 'care', domain: 'pet', author: '护理经验 · 精选', time: '管理员置顶', likes: 415, comments: [],
+      title: '这些都是生病信号，别拖！',
+      body: '鸟天生会“藏病”，等你看出明显异常时，往往已经病了好几天。出现以下信号要警惕：\n\n• 整天炸毛、缩成一团\n• 白天反常昏睡、精神不振\n• 食欲骤降（鸟代谢快，超过几小时不吃就该看医生）\n• 停在笼底不动\n• 张口呼吸 / 尾巴随呼吸一上一下\n• 鼻孔、眼睛有分泌物或结痂\n• 粪便颜色、形状明显改变\n\n其中「张口呼吸、长时间不吃、缩在笼底」属于急症，请立刻联系禽鸟专科兽医。' },
+    { id: -103, channel: 'care', domain: 'pet', author: '护理经验 · 精选', time: '管理员置顶', likes: 276, comments: [],
+      title: '绝对不能喂的食物清单',
+      body: '这些食物对鸟可能致命，千万别喂：\n\n• 牛油果（鳄梨）——含 persin，可致心脏衰竭、突然死亡\n• 巧克力——含可可碱和咖啡因，会引起呕吐、抽搐\n• 咖啡因（咖啡 / 茶 / 可乐 / 功能饮料）\n• 酒精\n• 洋葱、大蒜等葱属——伤消化道、肝脏，可致贫血\n• 含木糖醇的食品\n\n一旦误食，请尽快就医。不确定某种食物是否安全时，先问兽医再喂。' }
+  ]
+};
+const PINNED_BY_ID = {};
+Object.values(PINNED_POSTS).forEach(arr => arr.forEach(p => { PINNED_BY_ID[p.id] = p; }));
+
+let activeCircle = null;
+function enterCircle(key) { activeCircle = key; showScreen('circle'); renderCircle(key); }
+function isJoined(key) { return (state.joinedCircles || []).includes(key); }
+function toggleJoinCircle(key) {
+  if (!state.joinedCircles) state.joinedCircles = [];
+  if (isJoined(key)) state.joinedCircles = state.joinedCircles.filter(k => k !== key);
+  else { state.joinedCircles.push(key); toast('已加入圈子 🎉'); }
+  saveState();
+  renderCircle(key);
+}
+function circleMembers(key) {
+  return ((CIRCLE_META[key] && CIRCLE_META[key].members) || 0) + (isJoined(key) ? 1 : 0);
+}
+function pinnedCardHTML(p) {
+  return `<div class="post-card pinned" onclick="openPost(${p.id})">
+    <span class="pin-badge">置顶</span>
+    <div class="ph"><div class="pav" style="background:var(--terracotta);">官</div><div class="pmeta"><div class="pauthor">${esc(p.author)}</div><div class="ptime">${esc(p.time || '')}</div></div></div>
+    ${p.title ? `<div class="ptitle">${esc(p.title)}</div>` : ''}
+    <div class="pbody clamp3">${esc(p.body)}</div>
+    <div class="pstats"><span>♥ ${p.likes || 0}</span><span>📌 精华</span></div>
+  </div>`;
+}
+function renderCircle(key) {
+  const ch = CHAN[key] || { name: '圈子', domain: 'general' };
+  const meta = CIRCLE_META[key] || { blurb: '' };
+  const joined = isJoined(key);
+  const pinned = PINNED_POSTS[key] || [];
+  const feed = (state.posts || []).filter(p => postChannelKey(p) === key);
+  const titleEl = document.getElementById('circleTitle');
+  if (titleEl) titleEl.textContent = ch.name;
+  document.getElementById('circlePage').innerHTML = `
+    <div class="circle-hero ${ch.domain}">
+      <div class="ch-name">${esc(ch.name)}</div>
+      <div class="ch-blurb">${esc(meta.blurb)}</div>
+      <div class="ch-row">
+        <span class="ch-members"><b>${circleMembers(key).toLocaleString()}</b> 人已加入</span>
+        <button class="ch-join${joined ? ' on' : ''}" onclick="toggleJoinCircle('${key}')">${joined ? '✓ 已加入' : '+ 加入圈子'}</button>
+      </div>
+    </div>
+    ${pinned.length ? `<div class="section-head" style="margin-top:14px;"><div class="h">📌 置顶精华</div></div>${pinned.map(p => pinnedCardHTML(p)).join('')}` : ''}
+    <div class="section-head" style="margin-top:14px;">
+      <div class="h"><svg><use href="#i-feed"/></svg>圈内动态</div>
+      <button class="rec-manage-btn" onclick="openCompose({channel:'${key}'})"><svg><use href="#i-pen"/></svg><span>发帖</span></button>
+    </div>
+    ${feed.length ? feedGridHTML(feed) : '<div class="empty-card" style="margin:0 16px;"><div class="eico"><svg><use href="#i-feed"/></svg></div><div class="et">还没有动态</div><div class="es">来发圈里的第一条吧～</div></div>'}`;
+}
 function openFavorites() { showScreen('favorites'); renderFavorites(); }
 function renderFavorites() {
   const area = document.getElementById('favoritesArea');
@@ -5092,9 +5221,56 @@ function renderPetTimeline() {
   // Weight chart (7 days ending today)
   renderTimelineChart(pet.id);
 
+  // Molt (换羽期) card
+  renderMoltCard(pet);
+
   // Timeline list
   document.getElementById('tlRecordCount').textContent = dayCount;
   renderTimelineList(pet.id);
+}
+
+/* ============ Molt (换羽期) tracking ============ */
+function fmtMD(iso) { if (!iso) return ''; const a = iso.split('-'); return `${+a[1]}月${+a[2]}日`; }
+function moltStatus(pet) {
+  const m = pet.molt; if (!m || !m.start) return null;
+  const today = todayISO();
+  if (m.end && today > m.end) return { label: '已结束', cls: 'done' };
+  if (today < m.start) return { label: '未开始', cls: 'pre' };
+  const days = Math.floor((new Date(today) - new Date(m.start)) / 86400000) + 1;
+  return { label: `换羽中 · 第 ${days} 天`, cls: 'on' };
+}
+function renderMoltCard(pet) {
+  const el = document.getElementById('moltCard'); if (!el) return;
+  const m = pet.molt;
+  if (!m || !m.start) {
+    el.innerHTML = `<button class="molt-card" onclick="openMoltEdit()"><div class="mc-ic">🪶</div><div class="mc-bd"><div class="mc-t">换羽期记录</div><div class="mc-s">记录开始与结束时间，关注换羽状态</div></div><div class="mc-go">记录 ›</div></button>`;
+    return;
+  }
+  const st = moltStatus(pet);
+  const range = `${fmtMD(m.start)}${m.end ? ' – ' + fmtMD(m.end) : ' 起'}`;
+  el.innerHTML = `<button class="molt-card" onclick="openMoltEdit()"><div class="mc-ic ${st.cls}">🪶</div><div class="mc-bd"><div class="mc-t">换羽期 <span class="molt-tag ${st.cls}">${st.label}</span></div><div class="mc-s">${range}</div></div><div class="mc-go"><svg><use href="#i-pen"/></svg></div></button>`;
+}
+function openMoltEdit() {
+  const pet = state.pets.find(p => p.id === state.activePetId); if (!pet) return;
+  const m = pet.molt || {};
+  document.getElementById('moltStart').value = m.start || '';
+  document.getElementById('moltEnd').value = m.end || '';
+  document.getElementById('moltClearBtn').style.display = m.start ? '' : 'none';
+  showSheet('moltSheet');
+}
+function saveMolt() {
+  const pet = state.pets.find(p => p.id === state.activePetId); if (!pet) return;
+  const start = document.getElementById('moltStart').value;
+  const end = document.getElementById('moltEnd').value;
+  if (!start) { toast('请选择开始日期'); return; }
+  if (end && end < start) { toast('结束日期不能早于开始日期'); return; }
+  pet.molt = { start, end: end || '' };
+  saveState(); closeSheet(); renderMoltCard(pet); toast('换羽期已记录 🪶');
+}
+function clearMolt() {
+  const pet = state.pets.find(p => p.id === state.activePetId); if (!pet) return;
+  pet.molt = null;
+  saveState(); closeSheet(); renderMoltCard(pet); toast('已清除换羽记录');
 }
 
 function renderTimelineChart(petId) {
@@ -6103,7 +6279,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.12.0';
+const APP_VERSION = '0.13.0';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
