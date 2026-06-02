@@ -2161,18 +2161,24 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
     <button class="bell-btn" onclick="showScreen('notifications')" style="position:relative;"><svg><use href="#i-bell"/></svg><span class="notif-badge" style="display:none;"></span></button>
   </div>
 
-  <div class="home-mods">
-    <button class="hmod" onclick="enterRecordsTab()">
-      <div class="hmod-ic m1"><svg><use href="#i-bird-sm"/></svg></div>
-      <span>我的爱鸟</span>
+  <div class="feature-row">
+    <button class="feature-card fc-1" onclick="enterRecordsTab()">
+      <div class="ft">我的爱鸟</div>
+      <div class="fs">记录成长与健康</div>
+      <div class="fi"><svg><use href="#i-arrow-right"/></svg></div>
+      <div class="deco"></div>
     </button>
-    <button class="hmod" onclick="openCommunity()">
-      <div class="hmod-ic m2"><svg><use href="#i-compass"/></svg></div>
-      <span>社区</span>
+    <button class="feature-card fc-2" onclick="openCommunity()">
+      <div class="ft">社区</div>
+      <div class="fs">交流经验与心得</div>
+      <div class="fi"><svg><use href="#i-arrow-right"/></svg></div>
+      <div class="deco"></div>
     </button>
-    <button class="hmod" onclick="openCamera()">
-      <div class="hmod-ic m3"><svg><use href="#i-camera"/></svg></div>
-      <span>识鸟</span>
+    <button class="feature-card fc-3" onclick="openCamera()">
+      <div class="ft">识鸟</div>
+      <div class="fs">拍照识别鸟种</div>
+      <div class="fi"><svg><use href="#i-arrow-right"/></svg></div>
+      <div class="deco"></div>
     </button>
   </div>
 
@@ -6029,7 +6035,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.10.0';
+const APP_VERSION = '0.10.1';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
