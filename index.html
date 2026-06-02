@@ -801,6 +801,28 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 .post-card .pspecies { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 8px; background: #DCE6EC; color: #4A7AB8; margin-top: 6px; display: inline-block; }
 .post-card { cursor: pointer; transition: transform 120ms, box-shadow 120ms; }
 .post-card:active { transform: scale(0.99); }
+/* Two-column waterfall feed (小红书 style) */
+.feed-grid { display: flex; gap: 10px; padding: 0 12px; align-items: flex-start; }
+.fg-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.xcard { background: var(--paper); border: 1px solid var(--beige-border); border-radius: 14px; overflow: hidden; box-shadow: 0 3px 12px rgba(107, 122, 76, 0.07); cursor: pointer; transition: transform 120ms; }
+.xcard:active { transform: scale(0.98); }
+.xcard-cover img { width: 100%; display: block; }
+.xcard-cover.text {
+  padding: 16px 13px; min-height: 76px; font-size: 15px; font-weight: 600;
+  color: var(--ink); line-height: 1.45; letter-spacing: -0.2px;
+  background: linear-gradient(135deg, #F3EEDE 0%, #E9EFE0 100%);
+  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
+}
+.xcard-cover.text.wild { background: linear-gradient(135deg, #E6EEF1 0%, #DEE9D2 100%); }
+.xcard-body { padding: 9px 11px 11px; }
+.xcard-title { font-size: 13.5px; color: var(--ink); line-height: 1.4; font-weight: 500;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.xcard-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+.xc-author { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--ink-soft); min-width: 0; }
+.xc-author .xa-av { width: 20px; height: 20px; border-radius: 50%; background: var(--sage-dark); color: #fff; display: grid; place-items: center; font-size: 10px; font-weight: 700; flex-shrink: 0; font-family: 'Fraunces','Noto Sans SC',serif; }
+.xc-author .xa-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.xc-like { display: flex; align-items: center; gap: 3px; font-size: 12px; color: var(--ink-mute); flex-shrink: 0; }
+.xc-like.on { color: var(--terracotta); }
 
 /* Post detail */
 #postDetail .post-card { cursor: default; }
@@ -4116,7 +4138,7 @@ function renderHome() {
         <button class="btn" onclick="openCompose({channel:'share'})">发布第一条 →</button>
       </div>`;
   } else {
-    area.innerHTML = posts.map(p => postCardHTML(p)).join('');
+    area.innerHTML = feedGridHTML(posts);
   }
 }
 
@@ -4168,6 +4190,37 @@ function postCardHTML(p, clickable) {
     ${p.speciesName ? `<div class="pspecies">🔖 ${esc(p.speciesName)}</div>` : ''}
     <div class="pstats"><span class="${p.likedByMe ? 'on' : ''}"><svg><use href="#i-heart"/></svg>${p.likes || 0}</span><span><svg><use href="#i-feed"/></svg>${(p.comments || []).length}</span></div>
   </div>`;
+}
+
+/* ============ Two-column waterfall feed cards (小红书 style) ============ */
+function feedCardHTML(p) {
+  const author = p.author || '我';
+  const likes = p.likes || 0;
+  const liked = !!p.likedByMe;
+  const titleText = p.title || p.body || '';
+  let cover;
+  if (p.photo) {
+    cover = `<div class="xcard-cover"><img src="${p.photo}" alt="" loading="lazy"></div>`;
+  } else {
+    const ch = CHAN[postChannelKey(p)] || { domain: 'general' };
+    cover = `<div class="xcard-cover text ${ch.domain}">${esc(titleText) || '分享一刻'}</div>`;
+  }
+  const titleBelow = (p.photo && titleText) ? `<div class="xcard-title">${esc(titleText)}</div>` : '';
+  return `<div class="xcard" onclick="openPost(${p.id})">
+    ${cover}
+    <div class="xcard-body">
+      ${titleBelow}
+      <div class="xcard-foot">
+        <div class="xc-author" onclick="event.stopPropagation();openUser('${p.author_id || ''}')"><span class="xa-av">${esc((author || '友')[0])}</span><span class="xa-name">${esc(author)}</span></div>
+        <div class="xc-like${liked ? ' on' : ''}">♥ ${likes}</div>
+      </div>
+    </div>
+  </div>`;
+}
+function feedGridHTML(posts) {
+  const colA = [], colB = [];
+  posts.forEach((p, i) => (i % 2 === 0 ? colA : colB).push(feedCardHTML(p)));
+  return `<div class="feed-grid"><div class="fg-col">${colA.join('')}</div><div class="fg-col">${colB.join('')}</div></div>`;
 }
 
 /* ============ Single post detail ============ */
@@ -4382,7 +4435,7 @@ function renderFavorites() {
     area.innerHTML = `<div class="empty-card" style="margin-top:6px;"><div class="eico"><svg><use href="#i-star"/></svg></div><div class="et">还没有收藏</div><div class="es">在动态详情页点「收藏」，<br/>喜欢的帖子会保存在这里。</div><button class="btn" onclick="showScreen('discover')">去逛逛社区 →</button></div>`;
     return;
   }
-  area.innerHTML = list.map(p => postCardHTML(p)).join('');
+  area.innerHTML = feedGridHTML(list);
 }
 
 /* ============ Drafts ============ */
@@ -4620,7 +4673,7 @@ function renderUserPage(id) {
       <div class="user-sub">${posts.length} 条动态 · 获赞 ${totalLikes}</div>
       <button class="btn ${following ? 'ghost' : 'accent'}" style="margin-top:12px;padding:9px 28px;" onclick="toggleFollow('${id}', '${safeName}')">${following ? '✓ 已关注' : '+ 关注'}</button>
     </div>
-    ${posts.length ? posts.map(p => postCardHTML(p)).join('') : '<div class="empty-card" style="margin-top:6px;"><div class="et">TA 还没有发布动态</div></div>'}`;
+    ${posts.length ? feedGridHTML(posts) : '<div class="empty-card" style="margin-top:6px;"><div class="et">TA 还没有发布动态</div></div>'}`;
 }
 
 function updateProfileStats() {
@@ -4654,7 +4707,7 @@ function renderDiscover() {
         <button class="btn" onclick="openCompose({channel:'${seedChan}'})">发布动态 →</button>
       </div>`;
   } else {
-    area.innerHTML = posts.map(p => postCardHTML(p)).join('');
+    area.innerHTML = feedGridHTML(posts);
   }
 }
 
@@ -6050,7 +6103,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.11.3';
+const APP_VERSION = '0.12.0';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
