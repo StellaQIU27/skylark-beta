@@ -862,6 +862,30 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 .user-hero .user-av { width: 76px; height: 76px; border-radius: 50%; background: var(--sage-dark); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 32px; margin: 0 auto 10px; font-family: 'Fraunces','Noto Sans SC',serif; }
 .user-hero .user-name { font-family: 'Noto Sans SC', sans-serif; font-weight: 700; font-size: 19px; color: var(--ink); }
 .user-hero .user-sub { font-size: 13px; color: var(--ink-soft); margin-top: 4px; }
+/* Home top modules */
+.home-mods { display: flex; gap: 10px; margin: 2px 20px 16px; }
+.home-mods .hmod { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 14px 6px; background: var(--cream-warm); border: 1px solid var(--beige-border); border-radius: 16px; }
+.home-mods .hmod:active { background: var(--paper-dark); }
+.home-mods .hmod-ic { width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center; }
+.home-mods .hmod-ic svg { width: 22px; height: 22px; color: #fff; }
+.home-mods .hmod-ic.m1 { background: #D9B068; }
+.home-mods .hmod-ic.m2 { background: var(--sage-dark); }
+.home-mods .hmod-ic.m3 { background: var(--terracotta); }
+.home-mods .hmod span { font-size: 12.5px; color: var(--ink); font-weight: 500; }
+/* Community circle cards */
+.circle-card { display: flex; align-items: center; gap: 13px; width: 100%; text-align: left; padding: 14px 14px; margin-bottom: 10px; background: var(--cream-warm); border: 1px solid var(--beige-border); border-radius: 16px; }
+.circle-card:active { background: var(--paper-dark); }
+.circle-card .cc-ic { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; background: var(--sage-tint); flex-shrink: 0; }
+.circle-card .cc-ic svg { width: 21px; height: 21px; color: var(--sage-dark); }
+.circle-card .cc-ic.wild { background: #DCE6EC; }
+.circle-card .cc-ic.wild svg { color: #4A7AB8; }
+.circle-card .cc-bd { flex: 1; min-width: 0; }
+.circle-card .cc-name { font-weight: 600; font-size: 15px; color: var(--ink); }
+.circle-card .cc-sub { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+.circle-card .cc-go { color: var(--ink-mute); font-size: 18px; }
+/* Notification tab red dot */
+nav.tabbar .tab.notif-tab { position: relative; }
+nav.tabbar .tab.notif-tab.unread::after { content: ''; position: absolute; top: 4px; left: calc(50% + 7px); width: 8px; height: 8px; border-radius: 50%; background: var(--terracotta); }
 .post-card .ptag.general { background: var(--paper-dark); color: var(--ink-soft); }
 .post-card .ptype { display: inline-block; font-size: 11px; font-weight: 600; color: var(--terracotta); background: var(--terracotta-soft); padding: 2px 8px; border-radius: 7px; margin-bottom: 6px; }
 .post-card .pfields { margin-top: 8px; display: flex; flex-direction: column; gap: 5px; }
@@ -2125,8 +2149,8 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
 <section id="screen-discover" class="screen">
   <div class="rec-head">
     <div class="tabs-inline">
-      <div class="t on">发现</div>
-      <div class="t" onclick="toast('附近功能即将推出')">附近</div>
+      <div class="t on">首页</div>
+      <div class="t" onclick="openCommunity()">社区</div>
     </div>
   </div>
   <div class="disc-head">
@@ -2137,30 +2161,19 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
     <button class="bell-btn" onclick="showScreen('notifications')" style="position:relative;"><svg><use href="#i-bell"/></svg><span class="notif-badge" style="display:none;"></span></button>
   </div>
 
-  <div class="disc-carousel" id="discCarousel">
-    <div class="disc-track" id="discTrack">
-      <div class="disc-banner b1">
-        <div class="deco"></div>
-        <div class="bt">春日观鸟季</div>
-        <div class="bsub">记录你遇见的每一只野鸟</div>
-        <button class="bbtn" onclick="openCompose({channel:'birding'})">去发帖 <svg style="width:12px;height:12px;"><use href="#i-arrow-right"/></svg></button>
-      </div>
-      <div class="disc-banner b2">
-        <div class="deco"></div>
-        <div class="bt">晒晒你的小鸟</div>
-        <div class="bsub">分享家养鸟的日常趣事</div>
-        <button class="bbtn" onclick="openCompose({channel:'share'})">去发帖 <svg style="width:12px;height:12px;"><use href="#i-arrow-right"/></svg></button>
-      </div>
-      <div class="disc-banner b3">
-        <div class="deco"></div>
-        <div class="bt">加入观鸟讨论</div>
-        <div class="bsub">和鸟友交流野外见闻</div>
-        <button class="bbtn" onclick="openCompose({channel:'birding'})">去发帖 <svg style="width:12px;height:12px;"><use href="#i-arrow-right"/></svg></button>
-      </div>
-    </div>
-    <div class="dots" id="discDots">
-      <span class="on" onclick="carGo(0)"></span><span onclick="carGo(1)"></span><span onclick="carGo(2)"></span>
-    </div>
+  <div class="home-mods">
+    <button class="hmod" onclick="enterRecordsTab()">
+      <div class="hmod-ic m1"><svg><use href="#i-bird-sm"/></svg></div>
+      <span>我的爱鸟</span>
+    </button>
+    <button class="hmod" onclick="openCommunity()">
+      <div class="hmod-ic m2"><svg><use href="#i-compass"/></svg></div>
+      <span>社区</span>
+    </button>
+    <button class="hmod" onclick="openCamera()">
+      <div class="hmod-ic m3"><svg><use href="#i-camera"/></svg></div>
+      <span>识鸟</span>
+    </button>
   </div>
 
   <div class="cat-grid">
@@ -2247,6 +2260,16 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
 </section>
 
 <!-- ============ 设置 (SETTINGS) ============ -->
+<!-- ============ 社区圈子 (COMMUNITY / CIRCLES) ============ -->
+<section id="screen-community" class="screen">
+  <div class="guide-head">
+    <button class="g-back" onclick="goBackSub()"><svg><use href="#i-arrow-left"/></svg></button>
+    <div class="g-title">社区圈子</div>
+  </div>
+  <div style="padding:4px 16px 10px; font-size:13px; color:var(--ink-soft);">进入感兴趣的圈子，和同好深入交流</div>
+  <div id="communityArea" style="padding:0 16px;"></div>
+</section>
+
 <!-- ============ 粉丝 (FOLLOWERS) ============ -->
 <section id="screen-followers" class="screen">
   <div class="guide-head">
@@ -2338,7 +2361,7 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
 </main>
 
 <nav class="tabbar">
-  <button class="tab active" data-screen="home" onclick="showScreen('home')">
+  <button class="tab active" data-screen="discover" onclick="showScreen('discover')">
     <span class="tab-icon"><svg><use href="#i-home"/></svg></span>
     <span class="lbl">首页</span>
   </button>
@@ -2346,13 +2369,13 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
     <span class="tab-icon"><svg><use href="#i-calendar-check"/></svg></span>
     <span class="lbl">记录</span>
   </button>
-  <button class="tab center" onclick="openCamera()">
-    <div class="center-btn"><img src="skylark-logo.png" alt="识鸟" onerror="this.style.background='var(--sage-tint)';this.style.display='flex';this.style.alignItems='center';this.style.justifyContent='center';this.parentElement.style.background='var(--sage-tint)';this.outerHTML='<div style=\'color:var(--sage-dark);font-family:Fraunces,serif;font-weight:700;font-size:22px;\'>S</div>';"></div>
-    <span class="lbl">识鸟</span>
+  <button class="tab center" onclick="openCompose({})">
+    <div class="center-btn" style="background:var(--sage-dark);border-color:var(--cream);"><span style="color:#fff;font-size:34px;font-weight:300;line-height:1;margin-top:-3px;">＋</span></div>
+    <span class="lbl">发帖</span>
   </button>
-  <button class="tab" data-screen="discover" onclick="showScreen('discover')">
-    <span class="tab-icon"><svg><use href="#i-compass"/></svg></span>
-    <span class="lbl">发现</span>
+  <button class="tab notif-tab" data-screen="notifications" onclick="showScreen('notifications')">
+    <span class="tab-icon"><svg><use href="#i-bell"/></svg></span>
+    <span class="lbl">消息</span>
   </button>
   <button class="tab" data-screen="profile" onclick="showScreen('profile')">
     <span class="tab-icon"><svg><use href="#i-user"/></svg></span>
@@ -4314,6 +4337,22 @@ function toggleBookmark(id) {
   const favScreen = document.getElementById('screen-favorites');
   if (favScreen && favScreen.classList.contains('active')) renderFavorites();
 }
+/* ============ Community circles (groups) ============ */
+function openCommunity() { showScreen('community'); renderCommunity(); }
+function renderCommunity() {
+  const area = document.getElementById('communityArea');
+  if (!area) return;
+  const blurbs = { share: '晒娃日常、可爱瞬间', care: '喂养护理、健康经验', help: '新手提问、紧急求助', birding: '野外观鸟、遇见记录', idhelp: '这是什么鸟？一起来认', birdexp: '观鸟技巧与装备交流' };
+  area.innerHTML = CHANNELS.map(c => {
+    const count = (state.posts || []).filter(p => postChannelKey(p) === c.key).length;
+    return `<button class="circle-card" onclick="enterCircle('${c.key}')">
+      <div class="cc-ic ${c.domain}"><svg><use href="#i-feed"/></svg></div>
+      <div class="cc-bd"><div class="cc-name">${esc(c.name)}</div><div class="cc-sub">${esc(blurbs[c.key] || '')} · ${count} 条</div></div>
+      <div class="cc-go">›</div>
+    </button>`;
+  }).join('');
+}
+function enterCircle(key) { setDiscoverFilter(key); showScreen('discover'); }
 function openFavorites() { showScreen('favorites'); renderFavorites(); }
 function renderFavorites() {
   const area = document.getElementById('favoritesArea');
@@ -5927,7 +5966,7 @@ function nowHHmm() {
 function unreadCount() { return (typeof unreadNotif === 'number' ? unreadNotif : 0); }
 function updateNotificationDots() {
   const on = unreadCount() > 0;
-  document.querySelectorAll('.home-bell, .disc-head .bell-btn, .prof-actions .bell-btn').forEach(b => b.classList.toggle('unread', on));
+  document.querySelectorAll('.home-bell, .disc-head .bell-btn, .prof-actions .bell-btn, .tab.notif-tab').forEach(b => b.classList.toggle('unread', on));
 }
 
 /* ============ User profile (avatar + nickname) ============ */
@@ -5990,7 +6029,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.9.0';
+const APP_VERSION = '0.10.0';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
@@ -6007,6 +6046,7 @@ renderRecords();
 renderProfile();
 renderDiscover();
 renderVersion();
+showScreen('discover');   // social-first: open to the feed
 if (CLOUD) {
   syncCloudPosts();
   syncNotifications();
