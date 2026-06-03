@@ -925,7 +925,7 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 .post-card .pbody.clamp3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 #postDetail .post-card .pbody { white-space: pre-line; word-break: break-word; }
 /* Molt (换羽期) card */
-.molt-card { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 13px 14px; margin: 0 0 4px; background: var(--cream-warm); border: 1px solid var(--beige-border); border-radius: 16px; }
+.molt-card { display: flex; align-items: center; gap: 12px; text-align: left; padding: 14px 16px; margin: 0 20px 16px; background: var(--cream-warm); border: 1px solid var(--beige-border); border-radius: 18px; }
 .molt-card:active { background: var(--paper-dark); }
 .molt-card .mc-ic { width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center; font-size: 22px; background: var(--paper-dark); flex-shrink: 0; }
 .molt-card .mc-ic.on { background: #F5E0C8; }
@@ -6279,7 +6279,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.13.0';
+const APP_VERSION = '0.13.1';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
