@@ -33,7 +33,7 @@
   --ochre: #D9B068;
   --ink: #3A3E2F;
   --ink-soft: #6F715D;
-  --ink-mute: #A39F8A;
+  --ink-mute: #8C8973;
   --tab-h: 76px;
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; }
@@ -815,7 +815,7 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 }
 .xcard-cover.text.wild { background: linear-gradient(135deg, #E6EEF1 0%, #DEE9D2 100%); }
 .xcard-body { padding: 9px 11px 11px; }
-.xcard-title { font-size: 13.5px; color: var(--ink); line-height: 1.4; font-weight: 500;
+.xcard-title { font-size: 14px; color: var(--ink); line-height: 1.4; font-weight: 500;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .xcard-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
 .xc-author { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--ink-soft); min-width: 0; }
@@ -823,6 +823,20 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 .xc-author .xa-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .xc-like { display: flex; align-items: center; gap: 3px; font-size: 12px; color: var(--ink-mute); flex-shrink: 0; }
 .xc-like.on { color: var(--terracotta); }
+/* Single-column info feed (护理问答) */
+.ifeed { padding: 0 16px; }
+.ifeed-card { display: flex; gap: 12px; align-items: flex-start; background: var(--paper); border: 1px solid var(--beige-border); border-radius: 14px; padding: 13px 14px; margin-bottom: 10px; box-shadow: 0 3px 12px rgba(107,122,76,0.06); cursor: pointer; }
+.ifeed-card:active { transform: scale(0.99); }
+.ifeed-card .if-main { flex: 1; min-width: 0; }
+.ifeed-card .if-title { font-size: 15px; font-weight: 600; color: var(--ink); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ifeed-card .if-body { font-size: 14px; color: var(--ink-soft); line-height: 1.5; margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ifeed-card .if-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 9px; font-size: 12.5px; color: var(--ink-soft); }
+.ifeed-card .if-meta { color: var(--ink-mute); flex-shrink: 0; }
+.ifeed-card .if-thumb { width: 76px; height: 76px; border-radius: 10px; overflow: hidden; flex-shrink: 0; }
+.ifeed-card .if-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ans { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 6px; margin-right: 6px; vertical-align: 1px; }
+.ans.wait { background: var(--terracotta-soft); color: var(--terracotta); }
+.ans.done { background: var(--sage-tint); color: var(--sage-dark); }
 
 /* Post detail */
 #postDetail .post-card { cursor: default; }
@@ -930,6 +944,8 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 .molt-card .mc-ic { width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center; font-size: 22px; background: var(--paper-dark); flex-shrink: 0; }
 .molt-card .mc-ic.on { background: #F5E0C8; }
 .molt-card .mc-ic.done { background: var(--sage-tint); }
+.molt-card .mc-ic svg { width: 22px; height: 22px; color: var(--sage-dark); }
+.molt-card .mc-ic.on svg { color: var(--terracotta); }
 .molt-card .mc-bd { flex: 1; min-width: 0; }
 .molt-card .mc-t { font-weight: 600; font-size: 15px; color: var(--ink); display: flex; align-items: center; gap: 8px; }
 .molt-card .mc-s { font-size: 12.5px; color: var(--ink-soft); margin-top: 3px; }
@@ -938,6 +954,31 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 .molt-tag { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 7px; background: var(--paper-dark); color: var(--ink-soft); }
 .molt-tag.on { background: var(--terracotta-soft); color: var(--terracotta); }
 .molt-tag.done { background: var(--sage-tint); color: var(--sage-dark); }
+/* Community quick entries */
+.comm-quick { display: flex; gap: 10px; padding: 2px 16px 8px; }
+.comm-quick .cq { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 12px 4px; background: var(--cream-warm); border: 1px solid var(--beige-border); border-radius: 14px; }
+.comm-quick .cq:active { background: var(--paper-dark); }
+.comm-quick .cq-n { font-size: 20px; font-weight: 700; color: var(--sage-dark); line-height: 1; }
+.comm-quick .cq-n.alert { color: var(--terracotta); }
+.comm-quick .cq-ic { height: 20px; display: grid; place-items: center; color: var(--sage-dark); }
+.comm-quick .cq-ic svg { width: 20px; height: 20px; }
+.comm-quick .cq-l { font-size: 12px; color: var(--ink-soft); }
+/* Circle extras */
+.beta-tag { font-size: 11px; font-weight: 600; color: var(--terracotta); background: var(--terracotta-soft); padding: 2px 8px; border-radius: 7px; vertical-align: 2px; }
+.link-btn { background: none; font-size: 13px; color: var(--sage-dark); font-weight: 500; }
+.pin-src { font-size: 11.5px; color: var(--ink-soft); margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--beige-border); line-height: 1.5; }
+.species-tag { display: inline-block; font-size: 12px; color: var(--sage-dark); background: var(--sage-tint); padding: 2px 9px; border-radius: 8px; margin-top: 8px; }
+/* Search results */
+.search-hint { text-align: center; color: var(--ink-soft); font-size: 14px; padding: 40px 20px; }
+.sr-h { font-size: 12px; font-weight: 600; color: var(--ink-soft); margin: 16px 0 6px; }
+.sr-row { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 10px 4px; border-bottom: 1px solid var(--beige-border); background: none; }
+.sr-row:active { background: var(--cream-warm); }
+.sr-ic { width: 40px; height: 40px; border-radius: 10px; background: var(--sage-tint); overflow: hidden; flex-shrink: 0; }
+.sr-ic img { width: 100%; height: 100%; object-fit: cover; }
+.sr-av { width: 40px; height: 40px; border-radius: 50%; background: var(--sage-dark); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 15px; flex-shrink: 0; font-family: 'Fraunces','Noto Sans SC',serif; }
+.sr-bd { flex: 1; min-width: 0; }
+.sr-t { font-size: 15px; color: var(--ink); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sr-s { font-size: 12.5px; color: var(--ink-soft); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 /* Notification tab red dot */
 nav.tabbar .tab.notif-tab { position: relative; }
 nav.tabbar .tab.notif-tab.unread::after { content: ''; position: absolute; top: 4px; left: calc(50% + 7px); width: 8px; height: 8px; border-radius: 50%; background: var(--terracotta); }
@@ -2217,9 +2258,9 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
     <button class="home-bell" aria-label="通知" onclick="showScreen('notifications')"><svg><use href="#i-bell"/></svg></button>
   </div>
   <div class="disc-head">
-    <button class="searchbox" onclick="openGuide()" style="width:100%;">
+    <button class="searchbox" onclick="openSearch()" style="width:100%;">
       <svg><use href="#i-search"/></svg>
-      <span>搜索鸟种 / 话题 / 用户</span>
+      <span>搜索鸟种 / 帖子 / 用户</span>
     </button>
   </div>
 
@@ -2249,15 +2290,11 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
   </div>
   <div class="feed-filter" id="feedFilter">
     <button class="ff on" data-f="all" onclick="setDiscoverFilter('all')">全部</button>
-    <button class="ff" data-f="share" onclick="setDiscoverFilter('share')">爱鸟分享</button>
-    <button class="ff" data-f="care" onclick="setDiscoverFilter('care')">护理经验</button>
-    <button class="ff" data-f="help" onclick="setDiscoverFilter('help')">新手求助</button>
-    <button class="ff" data-f="birding" onclick="setDiscoverFilter('birding')">观鸟记录</button>
-    <button class="ff" data-f="idhelp" onclick="setDiscoverFilter('idhelp')">鸟种识别</button>
-    <button class="ff" data-f="birdexp" onclick="setDiscoverFilter('birdexp')">观鸟经验分享</button>
+    <button class="ff" data-f="daily" onclick="setDiscoverFilter('daily')">养鸟日常</button>
+    <button class="ff" data-f="carehelp" onclick="setDiscoverFilter('carehelp')">护理问答</button>
+    <button class="ff" data-f="wild" onclick="setDiscoverFilter('wild')">观鸟交流</button>
   </div>
   <div id="discoverPostsArea"></div>
-  <button class="fab" onclick="openCompose({})">+</button>
 </section>
 
 <!-- ============ 鸟种图鉴 (FIELD GUIDE) ============ -->
@@ -2326,16 +2363,7 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
     <div class="tabs-inline"><div class="t on">社区</div></div>
     <button class="bell-btn" onclick="showScreen('notifications')" style="position:relative;"><svg><use href="#i-bell"/></svg><span class="notif-badge" style="display:none;"></span></button>
   </div>
-  <div class="hero-bg" style="margin-top:0; margin-bottom:6px;">
-    <img src="home-background.png" alt="" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg, #E4EBDA 0%, #F5E2D1 50%, #E3ECEF 100%)';this.parentElement.style.height='120px';">
-  </div>
-  <div class="cat-grid">
-    <button class="cat-item" onclick="toast('观鸟指南 - 即将推出')"><div class="ci"><img src="icon-cat-guide.png" alt="观鸟指南"></div>观鸟指南</button>
-    <button class="cat-item" onclick="toast('热门地点 - 即将推出')"><div class="ci"><img src="icon-cat-place.png" alt="热门地点"></div>热门地点</button>
-    <button class="cat-item" onclick="toast('活动 - 即将推出')"><div class="ci"><img src="icon-cat-event.png" alt="活动"></div>活动</button>
-    <button class="cat-item" onclick="toast('排行榜 - 即将推出')"><div class="ci"><img src="icon-cat-rank.png" alt="排行榜"></div>排行榜</button>
-    <button class="cat-item" onclick="openGuide()"><div class="ci"><img src="icon-cat-book.png" alt="鸟种图鉴"></div>鸟种图鉴</button>
-  </div>
+  <div class="comm-quick" id="commQuick"></div>
   <div class="section-head">
     <div class="h"><svg><use href="#i-feed"/></svg>圈子</div>
     <div style="font-size:12px; color:var(--ink-soft);">进入感兴趣的圈子深入交流</div>
@@ -2350,6 +2378,18 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
     <div class="g-title">我的粉丝</div>
   </div>
   <div id="followersArea" style="padding:0 16px;"></div>
+</section>
+
+<!-- ============ 综合搜索 (SEARCH) ============ -->
+<section id="screen-search" class="screen">
+  <div class="guide-head">
+    <button class="g-back" onclick="goBackSub()"><svg><use href="#i-arrow-left"/></svg></button>
+    <div class="guide-search" style="flex:1; margin:0;">
+      <svg><use href="#i-search"/></svg>
+      <input id="searchInput" placeholder="搜索鸟种 / 帖子 / 用户" oninput="renderSearch()" autocomplete="off">
+    </div>
+  </div>
+  <div id="searchResults" style="padding:6px 16px;"></div>
 </section>
 
 <!-- ============ 圈子内页 (CIRCLE) ============ -->
@@ -2579,7 +2619,7 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
 <!-- ============ Molt (换羽期) sheet ============ -->
 <div class="sheet" id="moltSheet">
   <div class="handle"></div>
-  <h3>换羽期记录 🪶</h3>
+  <h3>换羽期记录</h3>
   <div style="margin-bottom:12px;">
     <div style="font-size:11px;color:var(--ink-mute);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:6px;">开始日期</div>
     <input id="moltStart" type="date" class="notes-input" style="min-height:auto;">
@@ -4220,6 +4260,17 @@ const CHANNELS = [
   { key: 'birdexp', name: '观鸟经验分享', domain: 'wild' },
 ];
 const CHAN = Object.fromEntries(CHANNELS.map(c => [c.key, c]));
+/* Internal-test: collapse the 6 channels into 3 fuller groups */
+const GROUPS = [
+  { key: 'daily',    name: '养鸟日常', domain: 'pet',  members: ['share'],                     blurb: '晒娃日常、可爱瞬间，记录你和鸟宝的每一天' },
+  { key: 'carehelp', name: '护理问答', domain: 'pet',  members: ['care', 'help'],              blurb: '喂养护理、新手求助，老鸟友在线答疑' },
+  { key: 'wild',     name: '观鸟交流', domain: 'wild', members: ['birding', 'idhelp', 'birdexp'], blurb: '野外观鸟、鸟种识别、经验交流' }
+];
+const GROUP = Object.fromEntries(GROUPS.map(g => [g.key, g]));
+const GROUP_OF = {};
+GROUPS.forEach(g => g.members.forEach(k => { GROUP_OF[k] = g.key; }));
+function postGroup(p) { return GROUP_OF[postChannelKey(p)] || 'daily'; }
+function groupPrimaryChannel(gkey) { return (GROUP[gkey] && GROUP[gkey].members[0]) || 'share'; }
 // Structured fields are attached directly to each channel (channel == template).
 const CHANNEL_FIELDS = {
   help:    [['age', '年龄', '例如 1岁2个月'], ['symptoms', '症状', '例如 精神不振、拉稀'], ['diet', '饮食', '例如 主粮+滋养丸'], ['weightChange', '体重变化', '例如 一周降 3g']],
@@ -4246,7 +4297,7 @@ function postCardHTML(p, clickable) {
     ${p.body ? `<div class="pbody">${esc(p.body)}</div>` : ''}
     ${fieldRows ? `<div class="pfields">${fieldRows}</div>` : ''}
     ${p.photo ? `<div class="pphoto"><img src="${p.photo}" alt=""></div>` : ''}
-    ${p.speciesName ? `<div class="pspecies">🔖 ${esc(p.speciesName)}</div>` : ''}
+    ${p.speciesName ? `<div class="pspecies">${esc(p.speciesName)}</div>` : ''}
     <div class="pstats"><span class="${p.likedByMe ? 'on' : ''}"><svg><use href="#i-heart"/></svg>${p.likes || 0}</span><span><svg><use href="#i-feed"/></svg>${(p.comments || []).length}</span></div>
   </div>`;
 }
@@ -4473,36 +4524,43 @@ function toggleBookmark(id) {
 /* ============ Community circles (groups) ============ */
 function openCommunity() { showScreen('community'); renderCommunity(); }
 function renderCommunity() {
+  const quick = document.getElementById('commQuick');
+  if (quick) {
+    const joinedN = (state.joinedCircles || []).length;
+    const waiting = (state.posts || []).filter(p => isHelpPost(p) && (p.comments || []).length === 0).length;
+    quick.innerHTML = `
+      <button class="cq" onclick="enterCircle('carehelp')"><div class="cq-n">${joinedN}</div><div class="cq-l">我的圈子</div></button>
+      <button class="cq" onclick="enterCircle('carehelp')"><div class="cq-n${waiting ? ' alert' : ''}">${waiting}</div><div class="cq-l">待回答求助</div></button>
+      <button class="cq" onclick="openGuide()"><div class="cq-ic"><svg><use href="#i-search"/></svg></div><div class="cq-l">鸟种图鉴</div></button>
+      <button class="cq" onclick="showScreen('discover')"><div class="cq-ic"><svg><use href="#i-feed"/></svg></div><div class="cq-l">最新动态</div></button>`;
+  }
   const area = document.getElementById('communityArea');
   if (!area) return;
-  const blurbs = { share: '晒娃日常、可爱瞬间', care: '喂养护理、健康经验', help: '新手提问、紧急求助', birding: '野外观鸟、遇见记录', idhelp: '这是什么鸟？一起来认', birdexp: '观鸟技巧与装备交流' };
-  area.innerHTML = CHANNELS.map(c => {
-    const count = (state.posts || []).filter(p => postChannelKey(p) === c.key).length;
-    return `<button class="circle-card" onclick="enterCircle('${c.key}')">
-      <div class="cc-ic ${c.domain}"><svg><use href="#i-feed"/></svg></div>
-      <div class="cc-bd"><div class="cc-name">${esc(c.name)}</div><div class="cc-sub">${esc(blurbs[c.key] || '')} · ${count} 条</div></div>
+  area.innerHTML = GROUPS.map(g => {
+    const count = (state.posts || []).filter(p => postGroup(p) === g.key).length;
+    return `<button class="circle-card" onclick="enterCircle('${g.key}')">
+      <div class="cc-ic ${g.domain}"><svg><use href="#i-feed"/></svg></div>
+      <div class="cc-bd"><div class="cc-name">${esc(g.name)}</div><div class="cc-sub">${esc(g.blurb)} · 已有 ${circleMembers(g.key)} 位</div></div>
       <div class="cc-go">›</div>
     </button>`;
   }).join('');
 }
 /* ---- Circle inner page ---- */
 const CIRCLE_META = {
-  share:   { members: 1284, blurb: '晒娃日常、可爱瞬间，记录你和鸟宝的每一天' },
-  care:    { members: 3567, blurb: '科学喂养与护理经验，让鸟宝更健康长寿' },
-  help:    { members: 2103, blurb: '新手提问、紧急求助，老鸟友在线答疑' },
-  birding: { members: 892,  blurb: '野外观鸟、遇见记录，分享你拍到的鸟' },
-  idhelp:  { members: 1456, blurb: '这是什么鸟？发张图，大家一起来认' },
-  birdexp: { members: 678,  blurb: '观鸟技巧、装备、路线，经验交流' }
+  daily:    { members: 12, blurb: '晒娃日常、可爱瞬间，记录你和鸟宝的每一天' },
+  carehelp: { members: 18, blurb: '喂养护理、新手求助，老鸟友在线答疑' },
+  wild:     { members: 7,  blurb: '野外观鸟、鸟种识别、经验交流' }
 };
+const PINNED_SOURCE = '内容整理自公开兽医科普资料（VIN / Best Friends / 鹦鹉协会等）· 内测版尚未经执业兽医逐条审核 · 更新于 2026-05';
 const PINNED_POSTS = {
-  care: [
-    { id: -101, channel: 'care', domain: 'pet', author: '护理经验 · 精选', time: '管理员置顶', likes: 328, comments: [],
+  carehelp: [
+    { id: -101, channel: 'care', domain: 'pet', author: '官方护理指南', official: true, time: '更新于 2026-05', source: PINNED_SOURCE, likes: 0, comments: [],
       title: '科学饮食：滋养丸为主，瓜子只能当零食',
       body: '很多人以为鹦鹉就该吃瓜子，其实瓜子脂肪极高（葵花籽含脂量约 49%，是巧克力的三倍），长期吃容易肥胖、脂肪肝。\n\n禽类兽医普遍建议的日常配比：配方滋养丸（pellets）占 50–70%，新鲜蔬菜占 30–50%，瓜子/坚果/水果合计不超过 10–20%（当奖励就好）。换粮要循序渐进，最好先咨询禽鸟专科兽医。\n\n⚠️ 本文为通用护理科普，具体请以兽医诊断为准。' },
-    { id: -102, channel: 'care', domain: 'pet', author: '护理经验 · 精选', time: '管理员置顶', likes: 415, comments: [],
+    { id: -102, channel: 'care', domain: 'pet', author: '官方护理指南', official: true, time: '更新于 2026-05', source: PINNED_SOURCE, likes: 0, comments: [],
       title: '这些都是生病信号，别拖！',
       body: '鸟天生会“藏病”，等你看出明显异常时，往往已经病了好几天。出现以下信号要警惕：\n\n• 整天炸毛、缩成一团\n• 白天反常昏睡、精神不振\n• 食欲骤降（鸟代谢快，超过几小时不吃就该看医生）\n• 停在笼底不动\n• 张口呼吸 / 尾巴随呼吸一上一下\n• 鼻孔、眼睛有分泌物或结痂\n• 粪便颜色、形状明显改变\n\n其中「张口呼吸、长时间不吃、缩在笼底」属于急症，请立刻联系禽鸟专科兽医。' },
-    { id: -103, channel: 'care', domain: 'pet', author: '护理经验 · 精选', time: '管理员置顶', likes: 276, comments: [],
+    { id: -103, channel: 'care', domain: 'pet', author: '官方护理指南', official: true, time: '更新于 2026-05', source: PINNED_SOURCE, likes: 0, comments: [],
       title: '绝对不能喂的食物清单',
       body: '这些食物对鸟可能致命，千万别喂：\n\n• 牛油果（鳄梨）——含 persin，可致心脏衰竭、突然死亡\n• 巧克力——含可可碱和咖啡因，会引起呕吐、抽搐\n• 咖啡因（咖啡 / 茶 / 可乐 / 功能饮料）\n• 酒精\n• 洋葱、大蒜等葱属——伤消化道、肝脏，可致贫血\n• 含木糖醇的食品\n\n一旦误食，请尽快就医。不确定某种食物是否安全时，先问兽医再喂。' }
   ]
@@ -4511,7 +4569,37 @@ const PINNED_BY_ID = {};
 Object.values(PINNED_POSTS).forEach(arr => arr.forEach(p => { PINNED_BY_ID[p.id] = p; }));
 
 let activeCircle = null;
-function enterCircle(key) { activeCircle = key; showScreen('circle'); renderCircle(key); }
+function enterCircle(key) { activeCircle = key; circleShowAllPinned = false; showScreen('circle'); renderCircle(key); }
+
+/* ============ Combined search (birds / posts / users) ============ */
+function openSearch() {
+  showScreen('search');
+  const i = document.getElementById('searchInput');
+  if (i) i.value = '';
+  renderSearch();
+  setTimeout(() => { const e = document.getElementById('searchInput'); if (e) e.focus(); }, 120);
+}
+function renderSearch() {
+  const q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+  const area = document.getElementById('searchResults');
+  if (!q) { area.innerHTML = `<div class="search-hint">输入关键词，搜索鸟种、帖子和鸟友</div>`; return; }
+  const inc = (s) => (s || '').toLowerCase().includes(q);
+  const birds = (BIRD_GUIDE || []).filter(b => inc(b.name_cn) || inc(b.scientific_name) || inc(b.family_cn) || inc(b.name_en)).slice(0, 8);
+  const posts = (state.posts || []).filter(p => inc(p.title) || inc(p.body)).slice(0, 12);
+  const userMap = {};
+  (state.posts || []).forEach(p => { if (p.author_id) userMap[p.author_id] = p.author; });
+  (state.follows || []).forEach(f => { userMap[f.following_id] = f.following_name; });
+  (state.followersList || []).forEach(f => { if (!userMap[f.follower_id]) userMap[f.follower_id] = userName(f.follower_id); });
+  const users = Object.keys(userMap).filter(id => inc(userMap[id])).slice(0, 8);
+  let html = '';
+  if (birds.length) html += `<div class="sr-h">鸟种</div>` + birds.map(b =>
+    `<button class="sr-row" onclick="showScreen('guide');openSpecies('${b.id}')"><div class="sr-ic">${b.cc_image ? `<img src="${b.cc_image}" alt="">` : ''}</div><div class="sr-bd"><div class="sr-t">${esc(b.name_cn)}</div><div class="sr-s">${esc(b.scientific_name || '')} · ${esc(b.family_cn || '')}</div></div></button>`).join('');
+  if (users.length) html += `<div class="sr-h">鸟友</div>` + users.map(id =>
+    `<button class="sr-row" onclick="openUser('${id}')"><div class="sr-av">${esc((userMap[id] || '友')[0])}</div><div class="sr-bd"><div class="sr-t">${esc(userMap[id])}</div></div></button>`).join('');
+  if (posts.length) html += `<div class="sr-h">帖子</div>` + posts.map(p =>
+    `<button class="sr-row" onclick="openPost(${p.id})"><div class="sr-bd"><div class="sr-t">${esc(p.title || p.body || '（图片动态）')}</div><div class="sr-s">${esc(p.author || '')} · ♥ ${p.likes || 0} · 回复 ${(p.comments || []).length}</div></div></button>`).join('');
+  area.innerHTML = html || `<div class="search-hint">没有找到「${esc(q)}」相关内容</div>`;
+}
 function isJoined(key) { return (state.joinedCircles || []).includes(key); }
 function toggleJoinCircle(key) {
   if (!state.joinedCircles) state.joinedCircles = [];
@@ -4525,36 +4613,46 @@ function circleMembers(key) {
 }
 function pinnedCardHTML(p) {
   return `<div class="post-card pinned" onclick="openPost(${p.id})">
-    <span class="pin-badge">置顶</span>
+    <span class="pin-badge">官方指南</span>
     <div class="ph"><div class="pav" style="background:var(--terracotta);">官</div><div class="pmeta"><div class="pauthor">${esc(p.author)}</div><div class="ptime">${esc(p.time || '')}</div></div></div>
     ${p.title ? `<div class="ptitle">${esc(p.title)}</div>` : ''}
     <div class="pbody clamp3">${esc(p.body)}</div>
-    <div class="pstats"><span>♥ ${p.likes || 0}</span><span>📌 精华</span></div>
+    ${p.source ? `<div class="pin-src">${esc(p.source)}</div>` : ''}
   </div>`;
 }
+let circleShowAllPinned = false;
+function toggleAllPinned() { circleShowAllPinned = !circleShowAllPinned; renderCircle(activeCircle); }
 function renderCircle(key) {
-  const ch = CHAN[key] || { name: '圈子', domain: 'general' };
+  const g = GROUP[key] || { name: '圈子', domain: 'general' };
   const meta = CIRCLE_META[key] || { blurb: '' };
   const joined = isJoined(key);
   const pinned = PINNED_POSTS[key] || [];
-  const feed = (state.posts || []).filter(p => postChannelKey(p) === key);
+  const feed = (state.posts || []).filter(p => postGroup(p) === key);
   const titleEl = document.getElementById('circleTitle');
-  if (titleEl) titleEl.textContent = ch.name;
+  if (titleEl) titleEl.textContent = g.name;
+  const shown = circleShowAllPinned ? pinned : pinned.slice(0, 1);
+  const pinnedBlock = pinned.length ? `
+    <div class="section-head" style="margin-top:14px;">
+      <div class="h">置顶精华</div>
+      ${pinned.length > 1 ? `<button class="link-btn" onclick="toggleAllPinned()">${circleShowAllPinned ? '收起' : '查看全部 ' + pinned.length + ' 篇'}</button>` : ''}
+    </div>
+    ${shown.map(p => pinnedCardHTML(p)).join('')}` : '';
+  const feedLayout = (key === 'carehelp') ? feedListHTML(feed) : feedGridHTML(feed);
   document.getElementById('circlePage').innerHTML = `
-    <div class="circle-hero ${ch.domain}">
-      <div class="ch-name">${esc(ch.name)}</div>
+    <div class="circle-hero ${g.domain}">
+      <div class="ch-name">${esc(g.name)} <span class="beta-tag">内测圈子</span></div>
       <div class="ch-blurb">${esc(meta.blurb)}</div>
       <div class="ch-row">
-        <span class="ch-members"><b>${circleMembers(key).toLocaleString()}</b> 人已加入</span>
+        <span class="ch-members">已有 <b>${circleMembers(key)}</b> 位鸟友</span>
         <button class="ch-join${joined ? ' on' : ''}" onclick="toggleJoinCircle('${key}')">${joined ? '✓ 已加入' : '+ 加入圈子'}</button>
       </div>
     </div>
-    ${pinned.length ? `<div class="section-head" style="margin-top:14px;"><div class="h">📌 置顶精华</div></div>${pinned.map(p => pinnedCardHTML(p)).join('')}` : ''}
+    ${pinnedBlock}
     <div class="section-head" style="margin-top:14px;">
-      <div class="h"><svg><use href="#i-feed"/></svg>圈内动态</div>
-      <button class="rec-manage-btn" onclick="openCompose({channel:'${key}'})"><svg><use href="#i-pen"/></svg><span>发帖</span></button>
+      <div class="h"><svg><use href="#i-feed"/></svg>圈内最新</div>
+      <button class="rec-manage-btn" onclick="openCompose({channel:'${groupPrimaryChannel(key)}'})"><svg><use href="#i-pen"/></svg><span>在本圈发帖</span></button>
     </div>
-    ${feed.length ? feedGridHTML(feed) : '<div class="empty-card" style="margin:0 16px;"><div class="eico"><svg><use href="#i-feed"/></svg></div><div class="et">还没有动态</div><div class="es">来发圈里的第一条吧～</div></div>'}`;
+    ${feed.length ? feedLayout : '<div class="empty-card" style="margin:0 16px;"><div class="eico"><svg><use href="#i-feed"/></svg></div><div class="et">还没有动态</div><div class="es">来发圈里的第一条吧～</div></div>'}`;
 }
 function openFavorites() { showScreen('favorites'); renderFavorites(); }
 function renderFavorites() {
@@ -4824,20 +4922,38 @@ function renderDiscover() {
   document.querySelectorAll('#feedFilter .ff').forEach(b => b.classList.toggle('on', b.dataset.f === discoverFilter));
   const area = document.getElementById('discoverPostsArea');
   let posts = state.posts || [];
-  if (discoverFilter !== 'all') posts = posts.filter(p => postChannelKey(p) === discoverFilter);
+  if (discoverFilter !== 'all') posts = posts.filter(p => postGroup(p) === discoverFilter);
   if (posts.length === 0) {
-    const seedChan = discoverFilter === 'all' ? 'share' : discoverFilter;
-    const chName = CHAN[seedChan] ? CHAN[seedChan].name : '社区';
+    const g = GROUP[discoverFilter];
+    const name = g ? g.name : '社区';
+    const primary = g ? groupPrimaryChannel(discoverFilter) : 'share';
     area.innerHTML = `
       <div class="empty-card" style="margin-top: 6px;">
         <div class="eico"><svg><use href="#i-feed"/></svg></div>
-        <div class="et">${discoverFilter === 'all' ? '还没有动态' : '「' + esc(chName) + '」还没有动态'}</div>
-        <div class="es">点击右下角 ＋ 发第一条，<br/>和鸟友们交流吧。</div>
-        <button class="btn" onclick="openCompose({channel:'${seedChan}'})">发布动态 →</button>
+        <div class="et">${discoverFilter === 'all' ? '还没有动态' : '「' + esc(name) + '」还没有动态'}</div>
+        <div class="es">点底部「发帖」发第一条，<br/>和鸟友们交流吧。</div>
+        <button class="btn" onclick="openCompose({channel:'${primary}'})">发布动态 →</button>
       </div>`;
-  } else {
-    area.innerHTML = feedGridHTML(posts);
+    return;
   }
+  // 护理问答：单列信息流（标题清晰、突出回复）；其余：双列图片流
+  area.innerHTML = (discoverFilter === 'carehelp') ? feedListHTML(posts) : feedGridHTML(posts);
+}
+function isHelpPost(p) { return ['help', 'idhelp'].includes(postChannelKey(p)); }
+function feedListHTML(posts) {
+  return '<div class="ifeed">' + posts.map(p => {
+    const help = isHelpPost(p);
+    const answered = (p.comments || []).length > 0;
+    const status = help ? `<span class="ans ${answered ? 'done' : 'wait'}">${answered ? '已回答' : '待回答'}</span>` : '';
+    const thumb = p.photo ? `<div class="if-thumb"><img src="${p.photo}" alt="" loading="lazy"></div>` : '';
+    return `<div class="ifeed-card" onclick="openPost(${p.id})">
+      <div class="if-main">
+        ${(p.title || status) ? `<div class="if-title">${status}${esc(p.title || '')}</div>` : ''}
+        ${p.body ? `<div class="if-body">${esc(p.body)}</div>` : ''}
+        <div class="if-foot"><span class="if-au" onclick="event.stopPropagation();openUser('${p.author_id || ''}')">${esc(p.author || '我')}</span><span class="if-meta">♥ ${p.likes || 0} · 回复 ${(p.comments || []).length}</span></div>
+      </div>${thumb}
+    </div>`;
+  }).join('') + '</div>';
 }
 
 /* ============ Discover carousel (auto-scroll) ============ */
@@ -4892,8 +5008,9 @@ function openCompose(opts) {
   showSheet('composeSheet');
 }
 function renderComposeChannels() {
-  document.getElementById('composeChannels').innerHTML = CHANNELS.map(c =>
-    `<button class="cmp-chip ${c.key === composeChannel ? 'on' : ''}" onclick="pickComposeChannel('${c.key}')">${esc(c.name)}</button>`).join('');
+  const cur = GROUP_OF[composeChannel] || 'daily';
+  document.getElementById('composeChannels').innerHTML = GROUPS.map(g =>
+    `<button class="cmp-chip ${g.key === cur ? 'on' : ''}" onclick="pickComposeChannel('${groupPrimaryChannel(g.key)}')">${esc(g.name)}</button>`).join('');
 }
 function pickComposeChannel(k) { readComposeFields(); composeChannel = k; renderComposeChannels(); renderComposeFields(); }
 function renderComposeFields() {
@@ -4907,7 +5024,7 @@ function readComposeFields() {
 function updateComposeSpeciesUI() {
   const row = document.getElementById('ccSpeciesRow');
   if (composeSpecies || composeSpeciesName) {
-    row.innerHTML = `<span class="cc-species-chip">🔖 ${esc(composeSpeciesName)}<button class="x" onclick="clearComposeSpecies()">×</button></span>`;
+    row.innerHTML = `<span class="cc-species-chip">${esc(composeSpeciesName)}<button class="x" onclick="clearComposeSpecies()">×</button></span>`;
   } else {
     row.innerHTML = `<button class="cc-species-btn" onclick="openSpeciesPicker()">＋ 关联鸟种（选填）</button>`;
   }
@@ -5230,6 +5347,7 @@ function renderPetTimeline() {
 }
 
 /* ============ Molt (换羽期) tracking ============ */
+const FEATHER_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><path d="M16 8 2 22"/><path d="M17.5 15H9"/></svg>';
 function fmtMD(iso) { if (!iso) return ''; const a = iso.split('-'); return `${+a[1]}月${+a[2]}日`; }
 function moltStatus(pet) {
   const m = pet.molt; if (!m || !m.start) return null;
@@ -5243,12 +5361,12 @@ function renderMoltCard(pet) {
   const el = document.getElementById('moltCard'); if (!el) return;
   const m = pet.molt;
   if (!m || !m.start) {
-    el.innerHTML = `<button class="molt-card" onclick="openMoltEdit()"><div class="mc-ic">🪶</div><div class="mc-bd"><div class="mc-t">换羽期记录</div><div class="mc-s">记录开始与结束时间，关注换羽状态</div></div><div class="mc-go">记录 ›</div></button>`;
+    el.innerHTML = `<button class="molt-card" onclick="openMoltEdit()"><div class="mc-ic">${FEATHER_SVG}</div><div class="mc-bd"><div class="mc-t">换羽期记录</div><div class="mc-s">记录开始与结束时间，关注换羽状态</div></div><div class="mc-go">记录 ›</div></button>`;
     return;
   }
   const st = moltStatus(pet);
   const range = `${fmtMD(m.start)}${m.end ? ' – ' + fmtMD(m.end) : ' 起'}`;
-  el.innerHTML = `<button class="molt-card" onclick="openMoltEdit()"><div class="mc-ic ${st.cls}">🪶</div><div class="mc-bd"><div class="mc-t">换羽期 <span class="molt-tag ${st.cls}">${st.label}</span></div><div class="mc-s">${range}</div></div><div class="mc-go"><svg><use href="#i-pen"/></svg></div></button>`;
+  el.innerHTML = `<button class="molt-card" onclick="openMoltEdit()"><div class="mc-ic ${st.cls}">${FEATHER_SVG}</div><div class="mc-bd"><div class="mc-t">换羽期 <span class="molt-tag ${st.cls}">${st.label}</span></div><div class="mc-s">${range}</div></div><div class="mc-go"><svg><use href="#i-pen"/></svg></div></button>`;
 }
 function openMoltEdit() {
   const pet = state.pets.find(p => p.id === state.activePetId); if (!pet) return;
@@ -6050,7 +6168,7 @@ function updateEditAvatarPreview() {
     el.innerHTML = `<img src="${editPetPhoto}" alt="">`;
   } else {
     const av = SPECIES_AVATARS[editPetSpecies];
-    el.innerHTML = av ? `<img src="${av}" alt="" style="object-fit:contain;">` : (editPetInitial || '🐦');
+    el.innerHTML = av ? `<img src="${av}" alt="" style="object-fit:contain;">` : (editPetInitial || '鸟');
   }
 }
 function onPetPhoto(ev) {
@@ -6279,7 +6397,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.13.1';
+const APP_VERSION = '0.14.0';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
