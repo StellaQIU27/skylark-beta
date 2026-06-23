@@ -913,6 +913,50 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 .home-mods .hmod-ic.m3 { background: var(--terracotta); }
 .home-mods .hmod span { font-size: 12.5px; color: var(--ink); font-weight: 500; }
 /* Community circle cards */
+.daily-knowledge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 16px 12px;
+  padding: 12px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #F5E9D3 0%, #E7EEDB 100%);
+  border: 1px solid rgba(145, 122, 82, 0.18);
+  text-align: left;
+}
+.daily-knowledge:active { filter: brightness(0.98); }
+.daily-knowledge .dk-illu { width: 104px; height: 104px; flex-shrink: 0; }
+.daily-knowledge .dk-illu img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.daily-knowledge .dk-content { flex: 1; min-width: 0; }
+.daily-knowledge .dk-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.daily-knowledge .dk-kicker { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 700; color: var(--sage-dark); min-width: 0; }
+.daily-knowledge .dk-kicker svg { width: 15px; height: 15px; }
+.daily-knowledge .dk-date { font-size: 11.5px; color: var(--ink-soft); white-space: nowrap; }
+.daily-knowledge .dk-title { margin-top: 7px; font-size: 15px; font-weight: 700; color: var(--ink); line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.daily-knowledge .dk-body { margin-top: 4px; font-size: 12.5px; color: var(--ink-soft); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.daily-knowledge .dk-actions { display: flex; align-items: center; justify-content: space-between; margin-top: 9px; }
+.daily-knowledge .dk-tag { font-size: 11.5px; color: var(--terracotta); background: var(--terracotta-soft); padding: 3px 9px; border-radius: 8px; font-weight: 600; }
+.daily-knowledge .dk-go { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; color: var(--sage-dark); font-weight: 600; }
+.daily-knowledge .dk-go svg { width: 14px; height: 14px; }
+.hot-rank { margin: 0 16px 12px; padding: 13px 14px 10px; background: var(--cream-warm); border: 1px solid var(--beige-border); border-radius: 18px; }
+.hot-rank .hr-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.hot-rank .hr-title { display: inline-flex; align-items: center; gap: 7px; font-size: 15px; font-weight: 700; color: var(--ink); }
+.hot-rank .hr-title svg { width: 17px; height: 17px; color: var(--terracotta); }
+.hot-rank .hr-sub { font-size: 11.5px; color: var(--ink-soft); }
+.hot-rank .hr-empty { padding: 14px 2px 8px; font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+.hot-row { width: 100%; display: flex; align-items: center; gap: 10px; padding: 10px 0; text-align: left; background: none; border-top: 1px solid rgba(122, 101, 78, 0.12); }
+.hot-row:first-of-type { border-top: 0; }
+.hot-row:active { opacity: 0.75; }
+.hot-row .hr-no { width: 22px; height: 22px; border-radius: 8px; display: grid; place-items: center; flex-shrink: 0; background: var(--paper-dark); color: var(--ink-soft); font-size: 12px; font-weight: 700; }
+.hot-row:nth-of-type(2) .hr-no { background: var(--terracotta); color: #fff; }
+.hot-row:nth-of-type(3) .hr-no { background: #D9B068; color: #fff; }
+.hot-row:nth-of-type(4) .hr-no { background: var(--sage-dark); color: #fff; }
+.hot-row .hr-main { flex: 1; min-width: 0; }
+.hot-row .hr-name { font-size: 13.5px; font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hot-row .hr-meta { display: flex; align-items: center; gap: 9px; margin-top: 3px; font-size: 11.5px; color: var(--ink-soft); }
+.hot-row .hr-meta span { display: inline-flex; align-items: center; gap: 3px; }
+.hot-row .hr-meta svg { width: 12px; height: 12px; }
+.hot-row .hr-tag { flex-shrink: 0; font-size: 11px; color: var(--sage-dark); background: var(--sage-tint); padding: 2px 7px; border-radius: 7px; }
 .circle-card { display: flex; align-items: center; gap: 13px; width: 100%; text-align: left; padding: 14px 14px; margin-bottom: 10px; background: var(--cream-warm); border: 1px solid var(--beige-border); border-radius: 16px; }
 .circle-card:active { background: var(--paper-dark); }
 .circle-card .cc-ic { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; background: var(--sage-tint); flex-shrink: 0; }
@@ -2363,6 +2407,8 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
     <div class="tabs-inline"><div class="t on">社区</div></div>
     <button class="bell-btn" onclick="showScreen('notifications')" style="position:relative;"><svg><use href="#i-bell"/></svg><span class="notif-badge" style="display:none;"></span></button>
   </div>
+  <div id="dailyKnowledgeCard"></div>
+  <div id="hotRankCard"></div>
   <div class="comm-quick" id="commQuick"></div>
   <div class="section-head">
     <div class="h"><svg><use href="#i-feed"/></svg>圈子</div>
@@ -3919,6 +3965,8 @@ async function syncCloudPosts() {
     });
     state.posts = (posts || []).map(p => cloudPostToLocal(p, likedSet, commentsBy));
     renderDiscover(); renderHome();
+    const communityScreen = document.getElementById('screen-community');
+    if (communityScreen && communityScreen.classList.contains('active')) renderCommunity();
     const postScreen = document.getElementById('screen-post');
     if (activePostId != null && postScreen && postScreen.classList.contains('active')) {
       const p = findPost(activePostId);
@@ -4523,7 +4571,93 @@ function toggleBookmark(id) {
 }
 /* ============ Community circles (groups) ============ */
 function openCommunity() { showScreen('community'); renderCommunity(); }
+const DAILY_KNOWLEDGE = [
+  { tag: '饮食', title: '瓜子和坚果只适合当奖励', body: '日常主食更建议以配方粮和新鲜蔬菜为主，高脂零食少量给，避免鸟宝挑食和体重失控。', channel: 'carehelp' },
+  { tag: '安全', title: '厨房油烟和不粘锅涂层要远离鸟宝', body: '鸟的呼吸系统非常敏感，烹饪油烟、香薰、喷雾和过热涂层都可能造成风险。', channel: 'carehelp' },
+  { tag: '行为', title: '单脚站立不一定是生病', body: '放松、保暖或睡前都可能单脚站；如果同时炸毛、嗜睡、食欲下降，就要提高警惕。', channel: 'daily' },
+  { tag: '护理', title: '换羽期别频繁强行洗澡', body: '换羽时可以提供浅水或喷雾让鸟自己选择，重点是稳定环境、补足营养和观察精神状态。', channel: 'carehelp' },
+  { tag: '清洁', title: '饮水器最好每天清洗更换', body: '温暖环境里饮水容易滋生细菌。每天换水、刷洗水杯，是最便宜也最有效的护理习惯。', channel: 'carehelp' },
+  { tag: '互动', title: '训练最好短时间、多次数', body: '每次 3 到 5 分钟就够了，用小奖励建立正反馈，比一次练很久更容易让鸟保持兴趣。', channel: 'daily' },
+  { tag: '观鸟', title: '野外观鸟先听叫声再找位置', body: '很多鸟会先被听见。安静停留、顺着叫声方向找树冠或灌木边缘，更容易发现它们。', channel: 'wild' }
+];
+function todayKnowledge() {
+  const d = new Date();
+  const start = new Date(d.getFullYear(), 0, 0);
+  const day = Math.floor((d - start) / 86400000);
+  return DAILY_KNOWLEDGE[day % DAILY_KNOWLEDGE.length];
+}
+function renderDailyKnowledge() {
+  const el = document.getElementById('dailyKnowledgeCard');
+  if (!el) return;
+  const k = todayKnowledge();
+  const date = `${new Date().getMonth() + 1}月${new Date().getDate()}日`;
+  el.innerHTML = `<button class="daily-knowledge" onclick="enterCircle('${k.channel}')">
+    <div class="dk-illu"><img src="daily-knowledge-bird.png" alt="每日养鸟小知识"></div>
+    <div class="dk-content">
+      <div class="dk-top">
+        <div class="dk-kicker"><svg><use href="#i-info"/></svg>每日养鸟小知识</div>
+        <div class="dk-date">${date}</div>
+      </div>
+      <div class="dk-title">${esc(k.title)}</div>
+      <div class="dk-body">${esc(k.body)}</div>
+      <div class="dk-actions">
+        <span class="dk-tag">${esc(k.tag)}</span>
+        <span class="dk-go">去讨论 <svg><use href="#i-arrow-right"/></svg></span>
+      </div>
+    </div>
+  </button>`;
+}
+function hotPostScore(p, index) {
+  const likes = p.likes || 0;
+  const comments = (p.comments || []).length;
+  const freshness = Math.max(0, 8 - index);
+  return comments * 5 + likes * 3 + freshness;
+}
+function renderHotRank() {
+  const el = document.getElementById('hotRankCard');
+  if (!el) return;
+  const posts = (state.posts || [])
+    .filter(p => (p.title || p.body || p.photo) && !p.official)
+    .map((p, i) => ({ p, score: hotPostScore(p, i) }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3)
+    .map(x => x.p);
+  if (!posts.length) {
+    el.innerHTML = `<div class="hot-rank">
+      <div class="hr-head">
+        <div class="hr-title"><svg><use href="#i-medal"/></svg>热帖排行</div>
+        <div class="hr-sub">内测实时榜</div>
+      </div>
+      <div class="hr-empty">还没有足够的社区帖子。发布第一条养鸟经验后，这里会自动生成热帖榜。</div>
+    </div>`;
+    return;
+  }
+  el.innerHTML = `<div class="hot-rank">
+    <div class="hr-head">
+      <div class="hr-title"><svg><use href="#i-medal"/></svg>热帖排行</div>
+      <div class="hr-sub">按互动热度</div>
+    </div>
+    ${posts.map((p, i) => {
+      const ch = CHAN[postChannelKey(p)] || { name: '讨论' };
+      const title = p.title || p.body || '图片动态';
+      return `<button class="hot-row" onclick="openPost(${p.id})">
+        <div class="hr-no">${i + 1}</div>
+        <div class="hr-main">
+          <div class="hr-name">${esc(title)}</div>
+          <div class="hr-meta">
+            <span><svg><use href="#i-heart"/></svg>${p.likes || 0}</span>
+            <span><svg><use href="#i-feed"/></svg>${(p.comments || []).length}</span>
+            <span>${esc(p.author || '鸟友')}</span>
+          </div>
+        </div>
+        <div class="hr-tag">${esc(ch.name)}</div>
+      </button>`;
+    }).join('')}
+  </div>`;
+}
 function renderCommunity() {
+  renderDailyKnowledge();
+  renderHotRank();
   const quick = document.getElementById('commQuick');
   if (quick) {
     const joinedN = (state.joinedCircles || []).length;
@@ -6397,7 +6531,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.14.0';
+const APP_VERSION = '0.15.0';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
