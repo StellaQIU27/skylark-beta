@@ -963,6 +963,16 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 .circle-card .cc-ic svg { width: 21px; height: 21px; color: var(--sage-dark); }
 .circle-card .cc-ic.wild { background: #DCE6EC; }
 .circle-card .cc-ic.wild svg { color: #4A7AB8; }
+.circle-card .cc-ic { overflow: hidden; }
+.circle-card .cc-ic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* Circle hero logo */
+.circle-hero { display: flex; align-items: center; gap: 14px; }
+.circle-hero .ch-logo { width: 66px; height: 66px; flex-shrink: 0; border-radius: 16px; object-fit: cover; }
+.circle-hero .ch-info { flex: 1; min-width: 0; }
+/* Daily knowledge detail sheet */
+.dks-kicker { font-size: 12px; font-weight: 700; color: var(--sage-dark); }
+.dks-body { font-size: 15px; color: var(--ink); line-height: 1.7; white-space: pre-line; }
+.dks-src { font-size: 12px; color: var(--ink-soft); margin-top: 14px; }
 .circle-card .cc-bd { flex: 1; min-width: 0; }
 .circle-card .cc-name { font-weight: 600; font-size: 15px; color: var(--ink); }
 .circle-card .cc-sub { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
@@ -2678,6 +2688,19 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
   <div class="row-actions">
     <button class="btn ghost" onclick="closeSheet()">取消</button>
     <button class="btn accent" onclick="saveMolt()">保存</button>
+  </div>
+</div>
+
+<!-- ============ Daily knowledge detail sheet ============ -->
+<div class="sheet" id="dailyKnowledgeSheet">
+  <div class="handle"></div>
+  <div class="dks-kicker">每日养鸟小知识 · <span id="dksTag"></span></div>
+  <h3 id="dksTitle" style="margin:6px 0 10px;"></h3>
+  <div class="dks-body" id="dksBody"></div>
+  <div class="dks-src">小知识仅供参考，鸟宝出现异常请及时就医</div>
+  <div class="row-actions">
+    <button class="btn ghost" onclick="closeSheet()">关闭</button>
+    <button class="btn accent" id="dksGo">去讨论</button>
   </div>
 </div>
 
@@ -4586,12 +4609,22 @@ function todayKnowledge() {
   const day = Math.floor((d - start) / 86400000);
   return DAILY_KNOWLEDGE[day % DAILY_KNOWLEDGE.length];
 }
+function openDailyKnowledge() {
+  const k = todayKnowledge();
+  document.getElementById('dksTag').textContent = k.tag;
+  document.getElementById('dksTitle').textContent = k.title;
+  document.getElementById('dksBody').textContent = k.body;
+  const go = document.getElementById('dksGo');
+  go.textContent = '去「' + ((GROUP[k.channel] && GROUP[k.channel].name) || '社区') + '」讨论';
+  go.onclick = () => { closeSheet(); enterCircle(k.channel); };
+  showSheet('dailyKnowledgeSheet');
+}
 function renderDailyKnowledge() {
   const el = document.getElementById('dailyKnowledgeCard');
   if (!el) return;
   const k = todayKnowledge();
   const date = `${new Date().getMonth() + 1}月${new Date().getDate()}日`;
-  el.innerHTML = `<button class="daily-knowledge" onclick="enterCircle('${k.channel}')">
+  el.innerHTML = `<button class="daily-knowledge" onclick="openDailyKnowledge()">
     <div class="dk-illu"><img src="daily-knowledge-bird.png" alt="每日养鸟小知识"></div>
     <div class="dk-content">
       <div class="dk-top">
@@ -4673,7 +4706,7 @@ function renderCommunity() {
   area.innerHTML = GROUPS.map(g => {
     const count = (state.posts || []).filter(p => postGroup(p) === g.key).length;
     return `<button class="circle-card" onclick="enterCircle('${g.key}')">
-      <div class="cc-ic ${g.domain}"><svg><use href="#i-feed"/></svg></div>
+      <div class="cc-ic ${g.domain}"><img src="${CIRCLE_ICON[g.key] || ''}" alt=""></div>
       <div class="cc-bd"><div class="cc-name">${esc(g.name)}</div><div class="cc-sub">${esc(g.blurb)} · 已有 ${circleMembers(g.key)} 位</div></div>
       <div class="cc-go">›</div>
     </button>`;
@@ -4685,6 +4718,7 @@ const CIRCLE_META = {
   carehelp: { members: 18, blurb: '喂养护理、新手求助，老鸟友在线答疑' },
   wild:     { members: 7,  blurb: '野外观鸟、鸟种识别、经验交流' }
 };
+const CIRCLE_ICON = { daily: 'circle-daily.png', carehelp: 'circle-care.png', wild: 'circle-wild.png' };
 const PINNED_SOURCE = '内容整理自公开兽医科普资料（VIN / Best Friends / 鹦鹉协会等）· 内测版尚未经执业兽医逐条审核 · 更新于 2026-05';
 const PINNED_POSTS = {
   carehelp: [
@@ -4774,11 +4808,14 @@ function renderCircle(key) {
   const feedLayout = (key === 'carehelp') ? feedListHTML(feed) : feedGridHTML(feed);
   document.getElementById('circlePage').innerHTML = `
     <div class="circle-hero ${g.domain}">
+      <img class="ch-logo" src="${CIRCLE_ICON[key] || ''}" alt="">
+      <div class="ch-info">
       <div class="ch-name">${esc(g.name)} <span class="beta-tag">内测圈子</span></div>
       <div class="ch-blurb">${esc(meta.blurb)}</div>
       <div class="ch-row">
         <span class="ch-members">已有 <b>${circleMembers(key)}</b> 位鸟友</span>
         <button class="ch-join${joined ? ' on' : ''}" onclick="toggleJoinCircle('${key}')">${joined ? '✓ 已加入' : '+ 加入圈子'}</button>
+      </div>
       </div>
     </div>
     ${pinnedBlock}
@@ -6531,7 +6568,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.15.0';
+const APP_VERSION = '0.15.1';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
