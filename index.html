@@ -710,16 +710,29 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 .cc-add-photo .ic { width: 26px; height: 26px; border-radius: 50%; background: var(--cream-warm); display: grid; place-items: center; }
 .cc-add-photo .ic svg { width: 15px; height: 15px; }
 
-.cc-photo-preview { margin-bottom: 8px; }
-.cc-photo-preview .pw { position: relative; }
-.cc-photo-preview img { width: 100%; border-radius: 14px; display: block; }
+.cc-photo-preview { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 8px; padding-bottom: 2px; -webkit-overflow-scrolling: touch; }
+.cc-photo-preview:empty { display: none; }
+.cc-photo-preview .pw { position: relative; width: 96px; height: 96px; flex-shrink: 0; border-radius: 12px; overflow: hidden; }
+.cc-photo-preview .pw img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 0; }
 .cc-photo-preview .rm {
-  position: absolute; top: 8px; right: 8px;
-  width: 28px; height: 28px; border-radius: 50%;
-  background: rgba(58,62,47,0.6); color: #fff;
-  display: grid; place-items: center; font-size: 16px; line-height: 1;
-  backdrop-filter: blur(4px);
+  position: absolute; top: 4px; right: 4px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(58,62,47,0.62); color: #fff;
+  display: grid; place-items: center; font-size: 14px; line-height: 1; z-index: 2;
 }
+.cc-photo-preview .pw-ord { position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: space-between; padding: 3px 5px; background: linear-gradient(0deg, rgba(58,62,47,0.55), transparent); }
+.cc-photo-preview .pw-mv { width: 22px; height: 22px; color: #fff; font-size: 16px; line-height: 1; display: grid; place-items: center; }
+.cc-photo-preview .pw-mv[disabled] { opacity: 0.3; }
+.cc-photo-preview .pw-n { color: #fff; font-size: 12px; font-weight: 700; }
+.cc-add-label { font-size: 13px; }
+/* Cover photo count badge */
+.xcard-cover { position: relative; }
+.xcard-cover .xc-count { position: absolute; right: 7px; bottom: 7px; background: rgba(58,62,47,0.6); color: #fff; font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 8px; }
+/* Post detail photo gallery */
+.pgallery { margin-top: 10px; border-radius: 12px; overflow: hidden; }
+.pgallery img { width: 100%; display: block; border-radius: 12px; }
+.pgallery.multi { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; border-radius: 0; }
+.pgallery.multi img { aspect-ratio: 1; object-fit: cover; border-radius: 10px; }
 
 /* =========== 鸟种图鉴 (Field guide) =========== */
 .guide-head {
@@ -2630,14 +2643,14 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
   <div id="composeFields"></div>
   <div class="cc-field"><textarea id="composeBody" placeholder="说点什么……"></textarea></div>
   <div id="composePhotoPreview" class="cc-photo-preview"></div>
-  <button class="cc-add-photo" onclick="document.getElementById('composePhotoInput').click()"><span class="ic"><svg><use href="#i-camera"/></svg></span>添加配图</button>
+  <button class="cc-add-photo" onclick="document.getElementById('composePhotoInput').click()"><span class="ic"><svg><use href="#i-camera"/></svg></span><span class="cc-add-label">添加配图（0/6）</span></button>
   <div class="row-actions">
     <button class="btn ghost" onclick="closeSheet()">取消</button>
     <button class="btn ghost" onclick="saveDraft()">存草稿</button>
     <button class="btn accent" onclick="publishPost()">发布</button>
   </div>
 </div>
-<input type="file" id="composePhotoInput" accept="image/*" onchange="onComposePhoto(event)" style="display:none;">
+<input type="file" id="composePhotoInput" accept="image/*" multiple onchange="onComposePhoto(event)" style="display:none;">
 
 <!-- ============ Edit pet sheet ============ -->
 <div class="sheet" id="editPetSheet">
@@ -3975,7 +3988,7 @@ function fmtCloudTime(ts) {
 function cloudPostToLocal(p, likedSet, commentsBy) {
   return {
     id: p.id, channel: p.channel, domain: p.domain,
-    title: p.title || '', body: p.body || '', photo: p.photo || null,
+    title: p.title || '', body: p.body || '', photo: p.photo || null, photos: p.photos || (p.photo ? [p.photo] : []),
     species: p.species || null, speciesName: p.species_name || '',
     fields: p.fields || {}, author: p.author || '鸟友', author_id: p.author_id || '',
     time: fmtCloudTime(p.created_at),
@@ -4379,26 +4392,30 @@ function postCardHTML(p, clickable) {
     ${p.title ? `<div class="ptitle">${esc(p.title)}</div>` : ''}
     ${p.body ? `<div class="pbody">${esc(p.body)}</div>` : ''}
     ${fieldRows ? `<div class="pfields">${fieldRows}</div>` : ''}
-    ${p.photo ? `<div class="pphoto"><img src="${p.photo}" alt=""></div>` : ''}
+    ${(() => { const ph = postPhotos(p); return ph.length ? `<div class="pgallery${ph.length > 1 ? ' multi' : ''}">${ph.map(s => `<img src="${s}" alt="">`).join('')}</div>` : ''; })()}
     ${p.speciesName ? `<div class="pspecies">${esc(p.speciesName)}</div>` : ''}
     <div class="pstats"><span class="${p.likedByMe ? 'on' : ''}"><svg><use href="#i-heart"/></svg>${p.likes || 0}</span><span><svg><use href="#i-feed"/></svg>${(p.comments || []).length}</span></div>
   </div>`;
 }
 
 /* ============ Two-column waterfall feed cards (小红书 style) ============ */
+function postPhotos(p) { return (p.photos && p.photos.length) ? p.photos : (p.photo ? [p.photo] : []); }
+function firstPhoto(p) { const a = postPhotos(p); return a[0] || null; }
 function feedCardHTML(p) {
   const author = p.author || '我';
   const likes = p.likes || 0;
   const liked = !!p.likedByMe;
   const titleText = p.title || p.body || '';
+  const cov = firstPhoto(p);
+  const n = postPhotos(p).length;
   let cover;
-  if (p.photo) {
-    cover = `<div class="xcard-cover"><img src="${p.photo}" alt="" loading="lazy"></div>`;
+  if (cov) {
+    cover = `<div class="xcard-cover"><img src="${cov}" alt="" loading="lazy">${n > 1 ? `<span class="xc-count">${n}图</span>` : ''}</div>`;
   } else {
     const ch = CHAN[postChannelKey(p)] || { domain: 'general' };
     cover = `<div class="xcard-cover text ${ch.domain}">${esc(titleText) || '分享一刻'}</div>`;
   }
-  const titleBelow = (p.photo && titleText) ? `<div class="xcard-title">${esc(titleText)}</div>` : '';
+  const titleBelow = (cov && titleText) ? `<div class="xcard-title">${esc(titleText)}</div>` : '';
   return `<div class="xcard" onclick="openPost(${p.id})">
     ${cover}
     <div class="xcard-body">
@@ -4889,11 +4906,11 @@ function saveDraft() {
   const title = document.getElementById('composeTitle').value.trim();
   const body = document.getElementById('composeBody').value.trim();
   readComposeFields();
-  if (!title && !body && !composePhoto) { toast('草稿是空的'); return; }
+  if (!title && !body && !composePhotos.length) { toast('草稿是空的'); return; }
   if (!state.draftList) state.draftList = [];
   state.draftList.unshift({
     id: 'draft_' + Date.now(), channel: composeChannel,
-    title, body, photo: composePhoto || null,
+    title, body, photo: composePhotos[0] || null, photos: composePhotos.slice(),
     species: composeSpecies || null, speciesName: composeSpeciesName || '',
     fields: Object.assign({}, composeFieldVals), time: nowDateTime()
   });
@@ -4928,9 +4945,9 @@ function openDraft(id) {
   saveState();
   openCompose({ channel: d.channel, speciesId: d.species, speciesName: d.speciesName, title: d.title });
   document.getElementById('composeBody').value = d.body || '';
-  composePhoto = d.photo || null;
+  composePhotos = (d.photos && d.photos.length) ? d.photos.slice() : (d.photo ? [d.photo] : []);
   composeFieldVals = Object.assign({}, d.fields || {});
-  if (composePhoto) document.getElementById('composePhotoPreview').innerHTML = `<div class="pw"><img src="${composePhoto}" alt=""><button class="rm" onclick="removeComposePhoto()">×</button></div>`;
+  renderComposePhotos();
   renderComposeFields();
 }
 function deleteDraft(id) {
@@ -5165,7 +5182,8 @@ function feedListHTML(posts) {
     const help = isHelpPost(p);
     const answered = (p.comments || []).length > 0;
     const status = help ? `<span class="ans ${answered ? 'done' : 'wait'}">${answered ? '已回答' : '待回答'}</span>` : '';
-    const thumb = p.photo ? `<div class="if-thumb"><img src="${p.photo}" alt="" loading="lazy"></div>` : '';
+    const tphoto = firstPhoto(p);
+    const thumb = tphoto ? `<div class="if-thumb"><img src="${tphoto}" alt="" loading="lazy"></div>` : '';
     return `<div class="ifeed-card" onclick="openPost(${p.id})">
       <div class="if-main">
         ${(p.title || status) ? `<div class="if-title">${status}${esc(p.title || '')}</div>` : ''}
@@ -5189,7 +5207,7 @@ function carStart() { carStop(); carTimer = setInterval(() => carGo(carIndex + 1
 function carStop() { if (carTimer) { clearInterval(carTimer); carTimer = null; } }
 
 /* ============ Post composer ============ */
-let composeChannel = 'care', composePhoto = null,
+let composeChannel = 'care', composePhotos = [],
     composeSpecies = null, composeSpeciesName = '', composeFieldVals = {}, editingPostId = null;
 function openCompose(opts) {
   opts = opts || {};
@@ -5202,11 +5220,11 @@ function openCompose(opts) {
       composeChannel = postChannelKey(p);
       composeSpecies = p.species || null;
       composeSpeciesName = p.speciesName || '';
-      composePhoto = p.photo || null;
+      composePhotos = (p.photos && p.photos.length) ? p.photos.slice() : (p.photo ? [p.photo] : []);
       composeFieldVals = Object.assign({}, p.fields || {});
       document.getElementById('composeTitle').value = p.title || '';
       document.getElementById('composeBody').value = p.body || '';
-      document.getElementById('composePhotoPreview').innerHTML = composePhoto ? `<img src="${composePhoto}" alt="">` : '';
+      renderComposePhotos();
       renderComposeChannels();
       renderComposeFields();   // prefills cf_ inputs from composeFieldVals
       updateComposeSpeciesUI();
@@ -5217,11 +5235,11 @@ function openCompose(opts) {
   composeChannel = opts.channel || 'share';
   composeSpecies = opts.speciesId || null;
   composeSpeciesName = opts.speciesName || '';
-  composePhoto = null;
+  composePhotos = [];
   composeFieldVals = {};
   document.getElementById('composeTitle').value = opts.title || '';
   document.getElementById('composeBody').value = '';
-  document.getElementById('composePhotoPreview').innerHTML = '';
+  renderComposePhotos();
   renderComposeChannels();
   renderComposeFields();
   updateComposeSpeciesUI();
@@ -5274,33 +5292,65 @@ function pickComposeSpecies(id) {
   showSheet('composeSheet');
 }
 function communityPhotosFor(id) { return (state.posts || []).filter(p => p.species === id && p.photo).map(p => p.photo); }
+const COMPOSE_MAX_PHOTOS = 6;
 function onComposePhoto(ev) {
-  const file = ev.target.files && ev.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const img = new Image();
-    img.onload = () => {
-      const max = 700;
-      let w = img.width, h = img.height;
-      const scale = Math.min(1, max / Math.max(w, h));
-      w = Math.round(w * scale); h = Math.round(h * scale);
-      const cv = document.createElement('canvas');
-      cv.width = w; cv.height = h;
-      cv.getContext('2d').drawImage(img, 0, 0, w, h);
-      try { composePhoto = cv.toDataURL('image/jpeg', 0.82); }
-      catch (err) { composePhoto = e.target.result; }
-      document.getElementById('composePhotoPreview').innerHTML =
-        `<div class="pw"><img src="${composePhoto}" alt=""><button class="rm" onclick="removeComposePhoto()">×</button></div>`;
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
+  const files = Array.from(ev.target.files || []);
   ev.target.value = '';
+  if (!files.length) return;
+  const room = COMPOSE_MAX_PHOTOS - composePhotos.length;
+  if (room <= 0) { toast(`最多 ${COMPOSE_MAX_PHOTOS} 张图`); return; }
+  files.slice(0, room).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const max = 700;
+        let w = img.width, h = img.height;
+        const scale = Math.min(1, max / Math.max(w, h));
+        w = Math.round(w * scale); h = Math.round(h * scale);
+        const cv = document.createElement('canvas');
+        cv.width = w; cv.height = h;
+        cv.getContext('2d').drawImage(img, 0, 0, w, h);
+        let data;
+        try { data = cv.toDataURL('image/jpeg', 0.82); } catch (err) { data = e.target.result; }
+        composePhotos.push(data);
+        renderComposePhotos();
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+  if (files.length > room) toast(`最多 ${COMPOSE_MAX_PHOTOS} 张，已取前 ${room} 张`);
 }
-function removeComposePhoto() {
-  composePhoto = null;
-  document.getElementById('composePhotoPreview').innerHTML = '';
+function renderComposePhotos() {
+  const el = document.getElementById('composePhotoPreview');
+  if (!el) return;
+  el.innerHTML = composePhotos.map((src, i) => `
+    <div class="pw">
+      <img src="${src}" alt="">
+      <button class="rm" onclick="removeComposePhoto(${i})">×</button>
+      <div class="pw-ord">
+        <button class="pw-mv" ${i === 0 ? 'disabled' : ''} onclick="event.stopPropagation();moveComposePhoto(${i},-1)">‹</button>
+        <span class="pw-n">${i + 1}</span>
+        <button class="pw-mv" ${i === composePhotos.length - 1 ? 'disabled' : ''} onclick="event.stopPropagation();moveComposePhoto(${i},1)">›</button>
+      </div>
+    </div>`).join('');
+  const addBtn = document.querySelector('.cc-add-photo');
+  if (addBtn) {
+    addBtn.style.display = composePhotos.length >= COMPOSE_MAX_PHOTOS ? 'none' : '';
+    const lbl = addBtn.querySelector('.cc-add-label');
+    if (lbl) lbl.textContent = `添加配图（${composePhotos.length}/${COMPOSE_MAX_PHOTOS}）`;
+  }
+}
+function moveComposePhoto(i, dir) {
+  const j = i + dir;
+  if (j < 0 || j >= composePhotos.length) return;
+  const t = composePhotos[i]; composePhotos[i] = composePhotos[j]; composePhotos[j] = t;
+  renderComposePhotos();
+}
+function removeComposePhoto(i) {
+  if (i == null) { composePhotos = []; } else { composePhotos.splice(i, 1); }
+  renderComposePhotos();
 }
 async function publishPost() {
   const title = document.getElementById('composeTitle').value.trim();
@@ -5309,7 +5359,7 @@ async function publishPost() {
   const fields = {};
   (CHANNEL_FIELDS[composeChannel] || []).forEach(([k]) => { const v = (composeFieldVals[k] || '').trim(); if (v) fields[k] = v; });
   const hasFields = Object.keys(fields).length > 0;
-  if (!title && !body && !composePhoto && !hasFields) { toast('写点什么再发布吧 ✨'); return; }
+  if (!title && !body && !composePhotos.length && !hasFields) { toast('写点什么再发布吧 ✨'); return; }
   if (!state.posts) state.posts = [];
   const domain = (CHAN[composeChannel] || {}).domain || 'general';
   // Cloud mode: write to the shared backend so every tester sees it
@@ -5317,13 +5367,14 @@ async function publishPost() {
     const row = {
       author: myName(), author_id: DEVICE_ID,
       channel: composeChannel, domain,
-      title, body, photo: composePhoto || null,
+      title, body, photo: composePhotos[0] || null, photos: composePhotos.slice(),
       species: composeSpecies || null, species_name: composeSpeciesName || '',
       fields
     };
     if (editingPostId != null) {
       const eid = editingPostId; editingPostId = null;
-      const { error } = await sb.from('posts').update(row).eq('id', eid);
+      let { error } = await sb.from('posts').update(row).eq('id', eid);
+      if (error && /photos|column/i.test(error.message || '')) { const r2 = Object.assign({}, row); delete r2.photos; ({ error } = await sb.from('posts').update(r2).eq('id', eid)); }
       if (error) { toast('更新失败：' + error.message); return; }
       closeSheet();
       await syncCloudPosts();
@@ -5333,7 +5384,8 @@ async function publishPost() {
       return;
     }
     row.likes = 0;
-    const { error } = await sb.from('posts').insert(row);
+    let { error } = await sb.from('posts').insert(row);
+    if (error && /photos|column/i.test(error.message || '')) { const r2 = Object.assign({}, row); delete r2.photos; ({ error } = await sb.from('posts').insert(r2)); }
     if (error) { toast('发布失败：' + error.message); return; }
     closeSheet();
     discoverFilter = composeChannel;
@@ -5350,7 +5402,7 @@ async function publishPost() {
       p.channel = composeChannel;
       p.domain = (CHAN[composeChannel] || {}).domain || 'general';
       p.title = title; p.body = body;
-      p.photo = composePhoto || null;
+      p.photo = composePhotos[0] || null; p.photos = composePhotos.slice();
       p.species = composeSpecies || null;
       p.speciesName = composeSpeciesName || '';
       p.fields = fields;
@@ -5368,7 +5420,7 @@ async function publishPost() {
     id: Date.now(),
     channel: composeChannel,
     domain: (CHAN[composeChannel] || {}).domain || 'general',
-    title, body, photo: composePhoto || null,
+    title, body, photo: composePhotos[0] || null, photos: composePhotos.slice(),
     species: composeSpecies || null,
     speciesName: composeSpeciesName || '',
     fields,
@@ -6617,7 +6669,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.16.0';
+const APP_VERSION = '0.17.0';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
