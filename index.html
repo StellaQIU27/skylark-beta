@@ -729,13 +729,13 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 .xcard-cover { position: relative; }
 .xcard-cover .xc-count { position: absolute; right: 7px; bottom: 7px; background: rgba(58,62,47,0.6); color: #fff; font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 8px; }
 /* Post detail photo gallery */
-.pgallery { margin-top: 10px; border-radius: 12px; overflow: hidden; }
+.pgallery { margin: 0 0 12px; border-radius: 12px; overflow: hidden; }
 .pgallery img { width: 100%; display: block; border-radius: 12px; }
 /* Swipeable photo carousel (multi-photo detail) */
-.pcarousel { position: relative; margin-top: 10px; }
-.pc-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; border-radius: 12px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.pcarousel { position: relative; margin: 0 0 12px; }
+.pc-track { display: flex; align-items: flex-start; overflow-x: auto; scroll-snap-type: x mandatory; border-radius: 12px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
 .pc-track::-webkit-scrollbar { display: none; }
-.pc-track img { min-width: 100%; width: 100%; aspect-ratio: 1; object-fit: cover; scroll-snap-align: center; display: block; border-radius: 12px; }
+.pc-track img { flex: 0 0 100%; width: 100%; height: auto; object-fit: contain; scroll-snap-align: start; display: block; border-radius: 12px; }
 .pc-count { position: absolute; top: 9px; right: 9px; background: rgba(58,62,47,0.6); color: #fff; font-size: 11px; font-weight: 600; padding: 1px 8px; border-radius: 8px; }
 .pc-dots { display: flex; justify-content: center; gap: 6px; margin-top: 8px; }
 .pc-dots span { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-mute); opacity: 0.45; transition: all 200ms; }
@@ -4390,7 +4390,16 @@ function postCardHTML(p, clickable) {
   const author = p.author || '我';
   const fields = p.fields || {};
   const fieldRows = Object.keys(fields).map(k => `<div class="pf"><span class="pfk">${esc(FIELD_LABEL[k] || k)}</span><span class="pfv">${esc(fields[k])}</span></div>`).join('');
-  return `<div class="post-card"${clickable ? ` onclick="openPost(${p.id})"` : ''}>
+  const ph = postPhotos(p);
+  let photoBlock = '';
+  if (ph.length === 1) photoBlock = `<div class="pgallery"><img src="${ph[0]}" alt=""></div>`;
+  else if (ph.length > 1) photoBlock = `<div class="pcarousel">
+        <div class="pc-track" onscroll="pcUpdate(this)">${ph.map(s => `<img src="${s}" alt="">`).join('')}</div>
+        <div class="pc-count">1/${ph.length}</div>
+        <div class="pc-dots">${ph.map((_, i) => `<span class="${i === 0 ? 'on' : ''}"></span>`).join('')}</div>
+      </div>`;
+  return `<div class="post-card${photoBlock ? ' has-photo' : ''}"${clickable ? ` onclick="openPost(${p.id})"` : ''}>
+    ${photoBlock}
     <div class="ph">
       <div class="pav" onclick="event.stopPropagation();openUser('${p.author_id || ''}')">${esc(author[0] || '我')}</div>
       <div class="pmeta" onclick="event.stopPropagation();openUser('${p.author_id || ''}')" style="cursor:pointer;"><div class="pauthor">${esc(author)}</div><div class="ptime">${esc(p.time || '')}</div></div>
@@ -4399,16 +4408,6 @@ function postCardHTML(p, clickable) {
     ${p.title ? `<div class="ptitle">${esc(p.title)}</div>` : ''}
     ${p.body ? `<div class="pbody">${esc(p.body)}</div>` : ''}
     ${fieldRows ? `<div class="pfields">${fieldRows}</div>` : ''}
-    ${(() => {
-      const ph = postPhotos(p);
-      if (!ph.length) return '';
-      if (ph.length === 1) return `<div class="pgallery"><img src="${ph[0]}" alt=""></div>`;
-      return `<div class="pcarousel">
-        <div class="pc-track" onscroll="pcUpdate(this)">${ph.map(s => `<img src="${s}" alt="">`).join('')}</div>
-        <div class="pc-count">1/${ph.length}</div>
-        <div class="pc-dots">${ph.map((_, i) => `<span class="${i === 0 ? 'on' : ''}"></span>`).join('')}</div>
-      </div>`;
-    })()}
     ${p.speciesName ? `<div class="pspecies">${esc(p.speciesName)}</div>` : ''}
     <div class="pstats"><span class="${p.likedByMe ? 'on' : ''}"><svg><use href="#i-heart"/></svg>${p.likes || 0}</span><span><svg><use href="#i-feed"/></svg>${(p.comments || []).length}</span></div>
   </div>`;
@@ -6694,7 +6693,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.17.1';
+const APP_VERSION = '0.17.2';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
