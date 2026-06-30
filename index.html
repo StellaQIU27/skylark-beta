@@ -731,8 +731,15 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 /* Post detail photo gallery */
 .pgallery { margin-top: 10px; border-radius: 12px; overflow: hidden; }
 .pgallery img { width: 100%; display: block; border-radius: 12px; }
-.pgallery.multi { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; border-radius: 0; }
-.pgallery.multi img { aspect-ratio: 1; object-fit: cover; border-radius: 10px; }
+/* Swipeable photo carousel (multi-photo detail) */
+.pcarousel { position: relative; margin-top: 10px; }
+.pc-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; border-radius: 12px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.pc-track::-webkit-scrollbar { display: none; }
+.pc-track img { min-width: 100%; width: 100%; aspect-ratio: 1; object-fit: cover; scroll-snap-align: center; display: block; border-radius: 12px; }
+.pc-count { position: absolute; top: 9px; right: 9px; background: rgba(58,62,47,0.6); color: #fff; font-size: 11px; font-weight: 600; padding: 1px 8px; border-radius: 8px; }
+.pc-dots { display: flex; justify-content: center; gap: 6px; margin-top: 8px; }
+.pc-dots span { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-mute); opacity: 0.45; transition: all 200ms; }
+.pc-dots span.on { background: var(--sage-dark); opacity: 1; width: 16px; border-radius: 3px; }
 
 /* =========== 鸟种图鉴 (Field guide) =========== */
 .guide-head {
@@ -4392,7 +4399,16 @@ function postCardHTML(p, clickable) {
     ${p.title ? `<div class="ptitle">${esc(p.title)}</div>` : ''}
     ${p.body ? `<div class="pbody">${esc(p.body)}</div>` : ''}
     ${fieldRows ? `<div class="pfields">${fieldRows}</div>` : ''}
-    ${(() => { const ph = postPhotos(p); return ph.length ? `<div class="pgallery${ph.length > 1 ? ' multi' : ''}">${ph.map(s => `<img src="${s}" alt="">`).join('')}</div>` : ''; })()}
+    ${(() => {
+      const ph = postPhotos(p);
+      if (!ph.length) return '';
+      if (ph.length === 1) return `<div class="pgallery"><img src="${ph[0]}" alt=""></div>`;
+      return `<div class="pcarousel">
+        <div class="pc-track" onscroll="pcUpdate(this)">${ph.map(s => `<img src="${s}" alt="">`).join('')}</div>
+        <div class="pc-count">1/${ph.length}</div>
+        <div class="pc-dots">${ph.map((_, i) => `<span class="${i === 0 ? 'on' : ''}"></span>`).join('')}</div>
+      </div>`;
+    })()}
     ${p.speciesName ? `<div class="pspecies">${esc(p.speciesName)}</div>` : ''}
     <div class="pstats"><span class="${p.likedByMe ? 'on' : ''}"><svg><use href="#i-heart"/></svg>${p.likes || 0}</span><span><svg><use href="#i-feed"/></svg>${(p.comments || []).length}</span></div>
   </div>`;
@@ -4401,6 +4417,15 @@ function postCardHTML(p, clickable) {
 /* ============ Two-column waterfall feed cards (小红书 style) ============ */
 function postPhotos(p) { return (p.photos && p.photos.length) ? p.photos : (p.photo ? [p.photo] : []); }
 function firstPhoto(p) { const a = postPhotos(p); return a[0] || null; }
+function pcUpdate(track) {
+  const w = track.clientWidth || 1;
+  const idx = Math.round(track.scrollLeft / w);
+  const wrap = track.parentElement;
+  if (!wrap) return;
+  wrap.querySelectorAll('.pc-dots span').forEach((d, i) => d.classList.toggle('on', i === idx));
+  const c = wrap.querySelector('.pc-count');
+  if (c) c.textContent = `${idx + 1}/${track.children.length}`;
+}
 function feedCardHTML(p) {
   const author = p.author || '我';
   const likes = p.likes || 0;
@@ -6669,7 +6694,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.17.0';
+const APP_VERSION = '0.17.1';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
