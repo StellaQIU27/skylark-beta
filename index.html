@@ -229,6 +229,8 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
   background-color: #DEE5DE;
   background-image: url('find-bird.png');
 }
+.feature-card.soon { filter: grayscale(0.35); opacity: 0.82; }
+.feature-card .soon-badge { position: absolute; top: 8px; right: 8px; z-index: 3; background: rgba(58,62,47,0.72); color: #fff; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 7px; }
 /* Top fade so title text stays readable; bird subject (bottom of image) stays clean */
 .feature-card::before {
   content: '';
@@ -2105,10 +2107,11 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
       <div class="fi"><svg><use href="#i-arrow-right"/></svg></div>
       <div class="deco"></div>
     </button>
-    <button class="feature-card fc-3" onclick="openCamera()">
+    <button class="feature-card fc-3 soon" onclick="toast('识鸟功能开发中，敬请期待')">
+      <span class="soon-badge">待开发</span>
       <div class="ft">识鸟</div>
       <div class="fs">拍照识别鸟种</div>
-      <div class="fi"><svg><use href="#i-arrow-right"/></svg></div>
+      <div class="fi"><svg><use href="#i-info"/></svg></div>
       <div class="deco"></div>
     </button>
   </div>
@@ -2363,10 +2366,11 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
       <div class="fi"><svg><use href="#i-arrow-right"/></svg></div>
       <div class="deco"></div>
     </button>
-    <button class="feature-card fc-3" onclick="openCamera()">
+    <button class="feature-card fc-3 soon" onclick="toast('识鸟功能开发中，敬请期待')">
+      <span class="soon-badge">待开发</span>
       <div class="ft">识鸟</div>
       <div class="fs">拍照识别鸟种</div>
-      <div class="fi"><svg><use href="#i-arrow-right"/></svg></div>
+      <div class="fi"><svg><use href="#i-info"/></svg></div>
       <div class="deco"></div>
     </button>
   </div>
@@ -6693,7 +6697,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.17.2';
+const APP_VERSION = '0.18.0';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
