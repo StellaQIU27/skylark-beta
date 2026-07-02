@@ -735,10 +735,11 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 .pgallery img { width: 100%; display: block; border-radius: 12px; }
 /* Swipeable photo carousel (multi-photo detail) */
 .pcarousel { position: relative; margin: 0 0 12px; }
-.pc-track { display: flex; align-items: flex-start; overflow-x: auto; scroll-snap-type: x mandatory; border-radius: 12px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-.pc-track::-webkit-scrollbar { display: none; }
-.pc-slide { flex: 0 0 100%; min-width: 0; scroll-snap-align: start; }
-.pc-slide img { width: 100%; height: auto; display: block; border-radius: 12px; }
+.pc-viewport { overflow: hidden; border-radius: 12px; touch-action: pan-y; }
+.pc-track { display: flex; align-items: flex-start; transition: transform 300ms cubic-bezier(.4,0,.2,1); will-change: transform; }
+.pc-slide { flex: 0 0 100%; min-width: 0; }
+.pc-slide img { width: 100%; height: auto; display: block; }
+.pc-dots span { cursor: pointer; }
 .pc-count { position: absolute; top: 9px; right: 9px; background: rgba(58,62,47,0.6); color: #fff; font-size: 11px; font-weight: 600; padding: 1px 8px; border-radius: 8px; }
 .pc-dots { display: flex; justify-content: center; gap: 6px; margin-top: 8px; }
 .pc-dots span { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-mute); opacity: 0.45; transition: all 200ms; }
@@ -4403,10 +4404,12 @@ function postCardHTML(p, clickable) {
   const ph = postPhotos(p);
   let photoBlock = '';
   if (ph.length === 1) photoBlock = `<div class="pgallery"><img src="${ph[0]}" alt=""></div>`;
-  else if (ph.length > 1) photoBlock = `<div class="pcarousel">
-        <div class="pc-track" onscroll="pcUpdate(this)">${ph.map(s => `<div class="pc-slide"><img src="${s}" alt=""></div>`).join('')}</div>
+  else if (ph.length > 1) photoBlock = `<div class="pcarousel" data-idx="0">
+        <div class="pc-viewport" ontouchstart="pcStart(event)" ontouchmove="pcMove(event)" ontouchend="pcEnd(event)">
+          <div class="pc-track">${ph.map(s => `<div class="pc-slide"><img src="${s}" alt=""></div>`).join('')}</div>
+        </div>
         <div class="pc-count">1/${ph.length}</div>
-        <div class="pc-dots">${ph.map((_, i) => `<span class="${i === 0 ? 'on' : ''}"></span>`).join('')}</div>
+        <div class="pc-dots">${ph.map((_, i) => `<span class="${i === 0 ? 'on' : ''}" onclick="pcDot(this,${i})"></span>`).join('')}</div>
       </div>`;
   return `<div class="post-card${photoBlock ? ' has-photo' : ''}"${clickable ? ` onclick="openPost(${p.id})"` : ''}>
     ${photoBlock}
@@ -4426,15 +4429,40 @@ function postCardHTML(p, clickable) {
 /* ============ Two-column waterfall feed cards (小红书 style) ============ */
 function postPhotos(p) { return (p.photos && p.photos.length) ? p.photos : (p.photo ? [p.photo] : []); }
 function firstPhoto(p) { const a = postPhotos(p); return a[0] || null; }
-function pcUpdate(track) {
-  const w = track.clientWidth || 1;
-  const idx = Math.round(track.scrollLeft / w);
-  const wrap = track.parentElement;
-  if (!wrap) return;
-  wrap.querySelectorAll('.pc-dots span').forEach((d, i) => d.classList.toggle('on', i === idx));
-  const c = wrap.querySelector('.pc-count');
-  if (c) c.textContent = `${idx + 1}/${track.children.length}`;
+let _pcx = null, _pcy = null, _pcLock = null;
+function pcCar(el) { return el.closest('.pcarousel'); }
+function pcCount(car) { return car.querySelectorAll('.pc-slide').length; }
+function pcStart(e) { _pcx = e.touches[0].clientX; _pcy = e.touches[0].clientY; _pcLock = null; }
+function pcMove(e) {
+  if (_pcx == null) return;
+  const dx = e.touches[0].clientX - _pcx, dy = e.touches[0].clientY - _pcy;
+  if (_pcLock == null && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) _pcLock = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+  if (_pcLock !== 'x') return;
+  e.preventDefault();
+  const car = pcCar(e.currentTarget); const idx = +car.dataset.idx || 0;
+  const t = car.querySelector('.pc-track');
+  t.style.transition = 'none';
+  t.style.transform = `translateX(calc(${-idx * 100}% + ${dx}px))`;
 }
+function pcEnd(e) {
+  if (_pcx == null) return;
+  const car = pcCar(e.currentTarget); const n = pcCount(car);
+  let idx = +car.dataset.idx || 0;
+  const dx = e.changedTouches[0].clientX - _pcx;
+  if (_pcLock === 'x') { if (dx < -40 && idx < n - 1) idx++; else if (dx > 40 && idx > 0) idx--; }
+  pcGo(car, idx);
+  _pcx = null; _pcy = null; _pcLock = null;
+}
+function pcGo(car, idx) {
+  car.dataset.idx = idx;
+  const t = car.querySelector('.pc-track');
+  t.style.transition = '';
+  t.style.transform = `translateX(-${idx * 100}%)`;
+  car.querySelectorAll('.pc-dots span').forEach((d, i) => d.classList.toggle('on', i === idx));
+  const c = car.querySelector('.pc-count');
+  if (c) c.textContent = `${idx + 1}/${pcCount(car)}`;
+}
+function pcDot(span, i) { pcGo(pcCar(span), i); }
 function feedCardHTML(p) {
   const author = p.author || '我';
   const likes = p.likes || 0;
@@ -6703,7 +6731,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.18.1';
+const APP_VERSION = '0.18.2';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
