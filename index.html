@@ -737,7 +737,8 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 .pcarousel { position: relative; margin: 0 0 12px; }
 .pc-track { display: flex; align-items: flex-start; overflow-x: auto; scroll-snap-type: x mandatory; border-radius: 12px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
 .pc-track::-webkit-scrollbar { display: none; }
-.pc-track img { flex: 0 0 100%; width: 100%; height: auto; object-fit: contain; scroll-snap-align: start; display: block; border-radius: 12px; }
+.pc-slide { flex: 0 0 100%; min-width: 0; scroll-snap-align: start; }
+.pc-slide img { width: 100%; height: auto; display: block; border-radius: 12px; }
 .pc-count { position: absolute; top: 9px; right: 9px; background: rgba(58,62,47,0.6); color: #fff; font-size: 11px; font-weight: 600; padding: 1px 8px; border-radius: 8px; }
 .pc-dots { display: flex; justify-content: center; gap: 6px; margin-top: 8px; }
 .pc-dots span { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-mute); opacity: 0.45; transition: all 200ms; }
@@ -3997,9 +3998,14 @@ function fmtCloudTime(ts) {
   return `${d.getMonth() + 1}月${d.getDate()}日 ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
 function cloudPostToLocal(p, likedSet, commentsBy) {
+  let photos = (p.photos && p.photos.length) ? p.photos : null;
+  if (!photos && p.photo && typeof p.photo === 'string' && p.photo.charAt(0) === '[') {
+    try { photos = JSON.parse(p.photo); } catch (e) { photos = null; }
+  }
+  if (!photos) photos = p.photo ? [p.photo] : [];
   return {
     id: p.id, channel: p.channel, domain: p.domain,
-    title: p.title || '', body: p.body || '', photo: p.photo || null, photos: p.photos || (p.photo ? [p.photo] : []),
+    title: p.title || '', body: p.body || '', photo: photos[0] || null, photos: photos,
     species: p.species || null, speciesName: p.species_name || '',
     fields: p.fields || {}, author: p.author || '鸟友', author_id: p.author_id || '',
     time: fmtCloudTime(p.created_at),
@@ -4398,7 +4404,7 @@ function postCardHTML(p, clickable) {
   let photoBlock = '';
   if (ph.length === 1) photoBlock = `<div class="pgallery"><img src="${ph[0]}" alt=""></div>`;
   else if (ph.length > 1) photoBlock = `<div class="pcarousel">
-        <div class="pc-track" onscroll="pcUpdate(this)">${ph.map(s => `<img src="${s}" alt="">`).join('')}</div>
+        <div class="pc-track" onscroll="pcUpdate(this)">${ph.map(s => `<div class="pc-slide"><img src="${s}" alt=""></div>`).join('')}</div>
         <div class="pc-count">1/${ph.length}</div>
         <div class="pc-dots">${ph.map((_, i) => `<span class="${i === 0 ? 'on' : ''}"></span>`).join('')}</div>
       </div>`;
@@ -5402,7 +5408,7 @@ async function publishPost() {
     if (editingPostId != null) {
       const eid = editingPostId; editingPostId = null;
       let { error } = await sb.from('posts').update(row).eq('id', eid);
-      if (error && /photos|column/i.test(error.message || '')) { const r2 = Object.assign({}, row); delete r2.photos; ({ error } = await sb.from('posts').update(r2).eq('id', eid)); }
+      if (error && /photos|column/i.test(error.message || '')) { const r2 = Object.assign({}, row); delete r2.photos; r2.photo = composePhotos.length > 1 ? JSON.stringify(composePhotos) : (composePhotos[0] || null); ({ error } = await sb.from('posts').update(r2).eq('id', eid)); }
       if (error) { toast('更新失败：' + error.message); return; }
       closeSheet();
       await syncCloudPosts();
@@ -5413,7 +5419,7 @@ async function publishPost() {
     }
     row.likes = 0;
     let { error } = await sb.from('posts').insert(row);
-    if (error && /photos|column/i.test(error.message || '')) { const r2 = Object.assign({}, row); delete r2.photos; ({ error } = await sb.from('posts').insert(r2)); }
+    if (error && /photos|column/i.test(error.message || '')) { const r2 = Object.assign({}, row); delete r2.photos; r2.photo = composePhotos.length > 1 ? JSON.stringify(composePhotos) : (composePhotos[0] || null); ({ error } = await sb.from('posts').insert(r2)); }
     if (error) { toast('发布失败：' + error.message); return; }
     closeSheet();
     discoverFilter = composeChannel;
@@ -6697,7 +6703,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.18.0';
+const APP_VERSION = '0.18.1';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
