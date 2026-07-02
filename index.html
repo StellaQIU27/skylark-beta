@@ -4686,7 +4686,7 @@ function toggleBookmark(id) {
   if (favScreen && favScreen.classList.contains('active')) renderFavorites();
 }
 /* ============ Community circles (groups) ============ */
-function openCommunity() { showScreen('community'); renderCommunity(); }
+function openCommunity() { showScreen('community'); renderCommunity(); syncCircleCounts(); }
 const DAILY_KNOWLEDGE = [
   { tag: '饮食', title: '瓜子和坚果只适合当奖励', body: '日常主食更建议以配方粮和新鲜蔬菜为主，高脂零食少量给，避免鸟宝挑食和体重失控。', channel: 'carehelp' },
   { tag: '安全', title: '厨房油烟和不粘锅涂层要远离鸟宝', body: '鸟的呼吸系统非常敏感，烹饪油烟、香薰、喷雾和过热涂层都可能造成风险。', channel: 'carehelp' },
@@ -4866,7 +4866,7 @@ const PINNED_BY_ID = {};
 Object.values(PINNED_POSTS).forEach(arr => arr.forEach(p => { PINNED_BY_ID[p.id] = p; }));
 
 let activeCircle = null;
-function enterCircle(key) { activeCircle = key; circleShowAllPinned = false; showScreen('circle'); renderCircle(key); }
+function enterCircle(key) { activeCircle = key; circleShowAllPinned = false; showScreen('circle'); renderCircle(key); syncCircleCounts(); }
 
 /* ============ Combined search (birds / posts / users) ============ */
 function openSearch() {
@@ -4898,15 +4898,35 @@ function renderSearch() {
   area.innerHTML = html || `<div class="search-hint">没有找到「${esc(q)}」相关内容</div>`;
 }
 function isJoined(key) { return (state.joinedCircles || []).includes(key); }
-function toggleJoinCircle(key) {
+let circleCounts = {};
+async function syncCircleCounts() {
+  if (!CLOUD) return;
+  try {
+    const { data } = await sb.from('circle_members').select('circle_key');
+    const c = {};
+    (data || []).forEach(r => { c[r.circle_key] = (c[r.circle_key] || 0) + 1; });
+    circleCounts = c;
+    if (document.getElementById('screen-community').classList.contains('active')) renderCommunity();
+    if (document.getElementById('screen-circle').classList.contains('active') && activeCircle) renderCircle(activeCircle);
+  } catch (e) { console.warn('circle counts failed', e); }
+}
+async function toggleJoinCircle(key) {
   if (!state.joinedCircles) state.joinedCircles = [];
-  if (isJoined(key)) state.joinedCircles = state.joinedCircles.filter(k => k !== key);
-  else { state.joinedCircles.push(key); toast('已加入圈子 🎉'); }
+  const joining = !isJoined(key);
+  if (joining) { state.joinedCircles.push(key); circleCounts[key] = (circleCounts[key] || 0) + 1; toast('已加入圈子 🎉'); }
+  else { state.joinedCircles = state.joinedCircles.filter(k => k !== key); circleCounts[key] = Math.max(0, (circleCounts[key] || 0) - 1); }
   saveState();
   renderCircle(key);
+  if (CLOUD) {
+    try {
+      if (joining) await sb.from('circle_members').upsert({ circle_key: key, user_id: DEVICE_ID }, { onConflict: 'circle_key,user_id' });
+      else await sb.from('circle_members').delete().eq('circle_key', key).eq('user_id', DEVICE_ID);
+      syncCircleCounts();
+    } catch (e) { console.warn('join sync failed', e); }
+  }
 }
 function circleMembers(key) {
-  return ((CIRCLE_META[key] && CIRCLE_META[key].members) || 0) + (isJoined(key) ? 1 : 0);
+  return circleCounts[key] || 0;
 }
 function pinnedCardHTML(p) {
   return `<div class="post-card pinned" onclick="openPost(${p.id})">
@@ -6734,7 +6754,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.19.0';
+const APP_VERSION = '0.20.0';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
@@ -6757,6 +6777,7 @@ if (CLOUD) {
   syncCloudPosts();
   syncNotifications();
   syncFollows();
+  syncCircleCounts();
   // light polling so testers see each other's posts & notifications without a manual refresh
   setInterval(() => {
     if (document.visibilityState !== 'visible') return;
