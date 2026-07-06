@@ -727,6 +727,55 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 .cc-photo-preview .pw-mv[disabled] { opacity: 0.3; }
 .cc-photo-preview .pw-n { color: #fff; font-size: 12px; font-weight: 700; }
 .cc-add-label { font-size: 13px; }
+/* Notes daily photos — editor preview strip */
+.notes-photo-strip { display: flex; gap: 6px; padding: 0 14px 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.notes-photo-strip:empty { display: none; }
+.notes-photo-strip img { width: 56px; height: 56px; border-radius: 10px; object-fit: cover; flex-shrink: 0; border: 1px solid var(--beige-border); }
+/* Notes photos in timeline history */
+.hist-item .hphotos { display: flex; gap: 6px; margin-top: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.hist-item .hphotos img { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+/* 鸟宝相册 (Album) */
+.album-sum { font-size: 12.5px; color: var(--ink-soft); margin: 4px 4px 12px; }
+.album-group {
+  background: var(--cream-warm); border: 1px solid var(--beige-border);
+  border-radius: 16px; padding: 12px; margin-bottom: 12px;
+}
+.album-group .ag-head { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
+.album-group .ag-date { font-size: 13px; font-weight: 700; color: var(--ink); }
+.album-group .ag-pet {
+  font-size: 11.5px; font-weight: 600; color: var(--sage-dark);
+  background: var(--sage-tint); padding: 1px 8px; border-radius: 8px;
+}
+.album-group .ag-n { margin-left: auto; font-size: 11.5px; color: var(--ink-soft); }
+.album-group .ag-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.album-group .ag-cell { border-radius: 10px; overflow: hidden; aspect-ratio: 1; padding: 0; display: block; }
+.album-group .ag-cell img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.album-group .ag-note {
+  margin-top: 9px; padding-top: 8px; border-top: 1px dashed var(--beige-border);
+  font-size: 12px; color: var(--ink); line-height: 1.5;
+}
+/* Fullscreen photo viewer */
+.photo-viewer {
+  position: fixed; inset: 0; background: rgba(30, 32, 24, 0.94);
+  z-index: 420; display: none; align-items: center; justify-content: center; flex-direction: column;
+}
+.photo-viewer.active { display: flex; }
+.photo-viewer img { max-width: 92%; max-height: 72%; border-radius: 12px; object-fit: contain; }
+.photo-viewer .pv-cap { color: #fff; font-size: 13px; font-weight: 600; margin-top: 14px; opacity: 0.9; }
+.photo-viewer .pv-note { color: #fff; font-size: 12px; margin-top: 6px; opacity: 0.65; max-width: 82%; text-align: center; line-height: 1.5; }
+.photo-viewer .pv-close {
+  position: absolute; top: calc(env(safe-area-inset-top) + 16px); right: 16px;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(255,255,255,0.16); color: #fff; font-size: 20px;
+}
+.photo-viewer .pv-nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 38px; height: 38px; border-radius: 50%;
+  background: rgba(255,255,255,0.16); color: #fff; font-size: 22px; line-height: 1;
+}
+.photo-viewer .pv-nav.prev { left: 10px; }
+.photo-viewer .pv-nav.next { right: 10px; }
+.photo-viewer .pv-nav[disabled] { opacity: 0.25; }
 /* Cover photo count badge */
 .xcard-cover { position: relative; }
 .xcard-cover .xc-count { position: absolute; right: 7px; bottom: 7px; background: rgba(58,62,47,0.6); color: #fff; font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 8px; }
@@ -2320,6 +2369,7 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
         <div class="nt empty" id="notesPreview">点击记录今天的小美好…</div>
         <div class="edit-hint"><svg><use href="#i-pen"/></svg>编辑</div>
       </div>
+      <div class="notes-photo-strip" id="notesPhotoStrip"></div>
     </button>
 
     <!-- Save button (prominent, at end of editor) -->
@@ -2421,7 +2471,7 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
 
   <div class="stats-card">
     <button class="st" onclick="enterRecordsTab()"><div class="si"><img src="icon-stat-bird.png" alt=""></div><div class="sv" id="myPetsCount">1</div><div class="sl">我的爱鸟</div></button>
-    <button class="st" onclick="enterRecordsTab()"><div class="si"><img src="icon-stat-book.png" alt=""></div><div class="sv" id="myRecordsCount">0</div><div class="sl">记录日记</div></button>
+    <button class="st" onclick="openAlbum()"><div class="si"><img src="icon-stat-book.png" alt=""></div><div class="sv" id="myAlbumCount">0</div><div class="sl">鸟宝相册</div></button>
     <button class="st" onclick="showScreen('likes')"><div class="si"><img src="icon-stat-heart.png" alt=""></div><div class="sv" id="myLikesCount">0</div><div class="sl">收到的赞</div></button>
     <button class="st" onclick="showScreen('following')"><div class="si"><img src="icon-stat-users.png" alt=""></div><div class="sv" id="myFollowingCount">0</div><div class="sl">关注的人</div></button>
   </div>
@@ -2522,6 +2572,15 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
   <div id="draftsArea" style="padding:0 16px;"></div>
 </section>
 
+<!-- ============ 鸟宝相册 (ALBUM) ============ -->
+<section id="screen-album" class="screen">
+  <div class="guide-head">
+    <button class="g-back" onclick="goBackSub()"><svg><use href="#i-arrow-left"/></svg></button>
+    <div class="g-title">鸟宝相册</div>
+  </div>
+  <div id="albumArea" style="padding:0 16px 20px;"></div>
+</section>
+
 <section id="screen-settings" class="screen">
   <div class="guide-head">
     <button class="g-back" onclick="goBackSub()"><svg><use href="#i-arrow-left"/></svg></button>
@@ -2603,6 +2662,16 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
 <!-- ============ Modals ============ -->
 <div class="sheet-backdrop" id="backdrop" onclick="closeSheet()"></div>
 
+<!-- Fullscreen photo viewer (album / record photos) -->
+<div class="photo-viewer" id="photoViewer" onclick="closePhotoViewer()">
+  <button class="pv-close" onclick="closePhotoViewer()">×</button>
+  <img id="pvImg" alt="" onclick="event.stopPropagation()">
+  <div class="pv-cap" id="pvCap"></div>
+  <div class="pv-note" id="pvNote"></div>
+  <button class="pv-nav prev" id="pvPrev" onclick="event.stopPropagation();stepPhotoViewer(-1)">‹</button>
+  <button class="pv-nav next" id="pvNext" onclick="event.stopPropagation();stepPhotoViewer(1)">›</button>
+</div>
+
 <div class="sheet" id="weightSheet">
   <div class="handle"></div>
   <h3>记录体重 · <span id="wsPetName">皮皮</span></h3>
@@ -2621,7 +2690,10 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
 <div class="sheet" id="notesSheet">
   <div class="handle"></div>
   <h3>今日备注</h3>
-  <textarea class="notes-input" id="notesInput" placeholder="记录今天的小确幸……"></textarea>
+  <textarea class="notes-input" id="notesInput" placeholder="记录今天的小确幸……状态、便便观察都可以记在这里"></textarea>
+  <div id="notesPhotoPreview" class="cc-photo-preview" style="margin-top:10px;"></div>
+  <button class="cc-add-photo" id="notesAddPhotoBtn" onclick="document.getElementById('notesPhotoInput').click()"><span class="ic"><svg><use href="#i-camera"/></svg></span><span class="cc-add-label">添加今日照片（0/6）</span></button>
+  <input id="notesPhotoInput" type="file" accept="image/*" multiple style="display:none" onchange="onNotesPhoto(event)">
   <div class="row-actions">
     <button class="btn ghost" onclick="closeSheet()">取消</button>
     <button class="btn accent" onclick="saveNotes()">保存</button>
@@ -4063,11 +4135,12 @@ function getDraft(petId, date) {
     const saved = getRecord(petId, date);
     state.drafts[k] = saved
       ? JSON.parse(JSON.stringify(saved))
-      : { weight: null, feedings: [], bath: null, sunMinutes: 0, notes: '', updatedFields: {} };
+      : { weight: null, feedings: [], bath: null, sunMinutes: 0, notes: '', photos: [], updatedFields: {} };
   }
   // Migrate any legacy `foods` array → single feeding
   const d = state.drafts[k];
   if (!d.feedings) d.feedings = [];
+  if (!d.photos) d.photos = [];
   if (d.foods && d.foods.length && d.feedings.length === 0) {
     d.feedings = [{ id: Date.now(), time: (d.updatedFields && d.updatedFields.foods) || '08:00', foods: d.foods }];
   }
@@ -4083,6 +4156,7 @@ function getRecordSafe(petId, date) {
     delete r.foods;
   }
   if (!r.feedings) r.feedings = [];
+  if (!r.photos) r.photos = [];
   return r;
 }
 function hasChanges(petId, date) {
@@ -4090,7 +4164,7 @@ function hasChanges(petId, date) {
   if (!draft) return false;
   const saved = getRecordSafe(petId, date);
   if (!saved) {
-    return (draft.weight !== null) || (draft.feedings && draft.feedings.length) || draft.bath || draft.sunMinutes > 0 || draft.notes;
+    return (draft.weight !== null) || (draft.feedings && draft.feedings.length) || draft.bath || draft.sunMinutes > 0 || draft.notes || (draft.photos && draft.photos.length);
   }
   // Compare ignoring updatedFields (which are metadata)
   const norm = obj => JSON.stringify({ ...obj, updatedFields: null, savedAt: null });
@@ -4170,6 +4244,7 @@ function showScreen(name) {
   if (name === 'notifications') { renderNotifications(); markNotifsRead(); if (CLOUD) syncNotifications(); }
   if (name === 'likes') { renderLikes(); if (CLOUD) syncNotifications(); }
   if (name === 'community') renderCommunity();
+  if (name === 'album') renderAlbum();
   if (name === 'following') { renderFollowing(); if (CLOUD) syncFollows(); }
   if (name === 'followers') { renderFollowers(); if (CLOUD) syncFollows(); }
   if (CLOUD && (name === 'discover' || name === 'home')) { syncCloudPosts(); syncNotifications(); }
@@ -5419,7 +5494,7 @@ function renderComposePhotos() {
         <button class="pw-mv" ${i === composePhotos.length - 1 ? 'disabled' : ''} onclick="event.stopPropagation();moveComposePhoto(${i},1)">›</button>
       </div>
     </div>`).join('');
-  const addBtn = document.querySelector('.cc-add-photo');
+  const addBtn = document.querySelector('#composeSheet .cc-add-photo');
   if (addBtn) {
     addBtn.style.display = composePhotos.length >= COMPOSE_MAX_PHOTOS ? 'none' : '';
     const lbl = addBtn.querySelector('.cc-add-label');
@@ -5844,6 +5919,7 @@ function renderTimelineList(petId) {
           <div class="hk"><svg><use href="#i-calendar-check"/></svg><span class="kv">保存于 ${rec.savedAt || '—'}</span></div>
         </div>
         ${rec.notes ? `<div class="hnote">💭 ${rec.notes}</div>` : ''}
+        ${(rec.photos && rec.photos.length) ? `<div class="hphotos">${rec.photos.map(s => `<img src="${s}" alt="" loading="lazy">`).join('')}</div>` : ''}
       </button>
     `;
   }
@@ -5944,13 +6020,19 @@ function renderEditor() {
 
   // Notes
   const notesEl = document.getElementById('notesPreview');
+  const draftPhotos = draft.photos || [];
   if (draft.notes) {
     notesEl.textContent = draft.notes;
+    notesEl.classList.remove('empty');
+  } else if (draftPhotos.length) {
+    notesEl.textContent = `已添加 ${draftPhotos.length} 张照片`;
     notesEl.classList.remove('empty');
   } else {
     notesEl.textContent = '点击记录今天的小美好…';
     notesEl.classList.add('empty');
   }
+  document.getElementById('notesPhotoStrip').innerHTML =
+    draftPhotos.map(s => `<img src="${s}" alt="">`).join('');
   document.getElementById('notesTime').textContent = (draft.updatedFields && draft.updatedFields.notes) || '— —';
 
   // Save button (bottom)
@@ -6027,7 +6109,8 @@ function renderProfile() {
   updateNotificationDots();
   updateProfileStats();
   document.getElementById('myPetsCount').textContent = state.pets.length;
-  document.getElementById('myRecordsCount').textContent = state.recordDays;
+  document.getElementById('myAlbumCount').textContent =
+    albumGroups().reduce((s, g) => s + g.photos.length, 0);
   const days = state.streakDays;
   document.getElementById('streakDays').textContent = days;
   document.getElementById('streakSub').textContent = days > 0
@@ -6412,22 +6495,169 @@ function saveWeight() {
   toast(`体重 ${v.toFixed(1)}g 已填入 · 记得点底部保存`);
 }
 
-/* ============ Notes edit ============ */
+/* ============ Notes edit (text + photos) ============ */
+const NOTES_MAX_PHOTOS = 6;
+let notesPhotos = [];
 function openNotesEdit() {
   const draft = getDraft(state.activePetId, state.selectedDate);
   document.getElementById('notesInput').value = draft.notes || '';
+  notesPhotos = (draft.photos || []).slice();
+  renderNotesPhotos();
   showSheet('notesSheet');
   setTimeout(() => document.getElementById('notesInput').focus(), 100);
+}
+function onNotesPhoto(ev) {
+  const files = Array.from(ev.target.files || []);
+  ev.target.value = '';
+  if (!files.length) return;
+  const room = NOTES_MAX_PHOTOS - notesPhotos.length;
+  if (room <= 0) { toast(`每日最多 ${NOTES_MAX_PHOTOS} 张照片`); return; }
+  files.slice(0, room).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const max = 700;
+        let w = img.width, h = img.height;
+        const scale = Math.min(1, max / Math.max(w, h));
+        w = Math.round(w * scale); h = Math.round(h * scale);
+        const cv = document.createElement('canvas');
+        cv.width = w; cv.height = h;
+        cv.getContext('2d').drawImage(img, 0, 0, w, h);
+        let data;
+        try { data = cv.toDataURL('image/jpeg', 0.82); } catch (err) { data = e.target.result; }
+        notesPhotos.push(data);
+        renderNotesPhotos();
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+  if (files.length > room) toast(`每日最多 ${NOTES_MAX_PHOTOS} 张，已取前 ${room} 张`);
+}
+function removeNotesPhoto(i) {
+  notesPhotos.splice(i, 1);
+  renderNotesPhotos();
+}
+function renderNotesPhotos() {
+  const el = document.getElementById('notesPhotoPreview');
+  if (!el) return;
+  el.innerHTML = notesPhotos.map((src, i) => `
+    <div class="pw">
+      <img src="${src}" alt="">
+      <button class="rm" onclick="removeNotesPhoto(${i})">×</button>
+    </div>`).join('');
+  const addBtn = document.getElementById('notesAddPhotoBtn');
+  if (addBtn) {
+    addBtn.style.display = notesPhotos.length >= NOTES_MAX_PHOTOS ? 'none' : '';
+    const lbl = addBtn.querySelector('.cc-add-label');
+    if (lbl) lbl.textContent = `添加今日照片（${notesPhotos.length}/${NOTES_MAX_PHOTOS}）`;
+  }
 }
 function saveNotes() {
   const d = getDraft(state.activePetId, state.selectedDate);
   d.notes = document.getElementById('notesInput').value.trim();
+  d.photos = notesPhotos.slice();
   if (!d.updatedFields) d.updatedFields = {};
   d.updatedFields.notes = nowHHmm();
   saveState();
   closeSheet();
   renderEditor();
   toast('备注已填入 · 记得点底部保存');
+}
+
+/* ============ 鸟宝相册 (Album — photos from daily records) ============ */
+function albumGroups() {
+  // One group per pet per date that has photos, newest date first.
+  const groups = [];
+  state.pets.forEach(p => {
+    const recs = state.records[p.id] || {};
+    Object.keys(recs).forEach(d => {
+      const r = recs[d];
+      if (r && r.photos && r.photos.length) {
+        groups.push({ date: d, pet: p, photos: r.photos, note: r.notes || '' });
+      }
+    });
+  });
+  groups.sort((a, b) => b.date.localeCompare(a.date) || a.pet.name.localeCompare(b.pet.name));
+  return groups;
+}
+function openAlbum() {
+  showScreen('album');
+  renderAlbum();
+}
+let albumFlat = [];
+function renderAlbum() {
+  const el = document.getElementById('albumArea');
+  if (!el) return;
+  const groups = albumGroups();
+  albumFlat = [];
+  if (!groups.length) {
+    el.innerHTML = `
+      <div class="hist-empty" style="margin-top:12px;">
+        <div class="eico"><svg><use href="#i-camera"/></svg></div>
+        <div class="et">相册还是空的</div>
+        <div class="es">在每日记录的「今日备注」里添加照片，<br/>鸟宝的每一天都会收进这里。</div>
+      </div>`;
+    return;
+  }
+  const total = groups.reduce((n, g) => n + g.photos.length, 0);
+  let html = `<div class="album-sum">共 ${total} 张照片 · ${groups.length} 天记录</div>`;
+  let lastMonth = '';
+  for (const g of groups) {
+    const m = monthLabel(g.date);
+    if (m !== lastMonth) {
+      html += `<div class="hist-month-head" style="margin-left:4px;">${m}</div>`;
+      lastMonth = m;
+    }
+    const dDate = parseDate(g.date);
+    const dayLabel = isToday(g.date) ? '今天'
+      : g.date === daysBefore(todayISO(), 1) ? '昨天'
+      : `${dDate.getMonth() + 1}月${dDate.getDate()}日`;
+    const cap = `${dDate.getFullYear()}年${dDate.getMonth() + 1}月${dDate.getDate()}日 · ${g.pet.name}`;
+    const cells = g.photos.map(src => {
+      const idx = albumFlat.length;
+      albumFlat.push({ src, cap, note: g.note });
+      return `<button class="ag-cell" onclick="openPhotoViewer(${idx})"><img src="${src}" alt="" loading="lazy"></button>`;
+    }).join('');
+    html += `
+      <div class="album-group">
+        <div class="ag-head">
+          <span class="ag-date">${dayLabel} · 周${weekday(g.date)}</span>
+          <span class="ag-pet">${esc(g.pet.name)}</span>
+          <span class="ag-n">${g.photos.length} 张</span>
+        </div>
+        <div class="ag-grid">${cells}</div>
+        ${g.note ? `<div class="ag-note">💭 ${esc(g.note)}</div>` : ''}
+      </div>`;
+  }
+  el.innerHTML = html;
+}
+/* Fullscreen viewer over albumFlat */
+let pvIndex = 0;
+function openPhotoViewer(idx) {
+  if (!albumFlat.length) return;
+  pvIndex = Math.max(0, Math.min(albumFlat.length - 1, idx));
+  updatePhotoViewer();
+  document.getElementById('photoViewer').classList.add('active');
+}
+function updatePhotoViewer() {
+  const it = albumFlat[pvIndex];
+  if (!it) return;
+  document.getElementById('pvImg').src = it.src;
+  document.getElementById('pvCap').textContent = `${it.cap}（${pvIndex + 1}/${albumFlat.length}）`;
+  document.getElementById('pvNote').textContent = it.note || '';
+  document.getElementById('pvPrev').disabled = pvIndex === 0;
+  document.getElementById('pvNext').disabled = pvIndex === albumFlat.length - 1;
+}
+function stepPhotoViewer(dir) {
+  const n = pvIndex + dir;
+  if (n < 0 || n >= albumFlat.length) return;
+  pvIndex = n;
+  updatePhotoViewer();
+}
+function closePhotoViewer() {
+  document.getElementById('photoViewer').classList.remove('active');
 }
 
 /* ============ Add pet — handled by the unified edit sheet (openAddPet / saveEditPet) ============ */
@@ -6541,8 +6771,10 @@ function onPetPhoto(ev) {
 const CROP_S = 280;     // on-screen stage size
 const CROP_OUT = 400;   // exported avatar size
 let cropImg = null, cropScale = 1, cropMinScale = 1, cropOffX = 0, cropOffY = 0, cropBound = false;
+let cropTarget = 'pet';   // 'pet' → editPetSheet, 'user' → userEditSheet
 
-function openCropper(dataURL) {
+function openCropper(dataURL, target) {
+  cropTarget = target || 'pet';
   const img = new Image();
   img.onload = () => {
     cropImg = img;
@@ -6605,15 +6837,23 @@ function confirmCrop() {
   const ctx = out.getContext('2d');
   ctx.imageSmoothingQuality = 'high';
   ctx.drawImage(cropImg, cropOffX * ratio, cropOffY * ratio, cropImg.width * cropScale * ratio, cropImg.height * cropScale * ratio);
-  try { editPetPhoto = out.toDataURL('image/jpeg', 0.88); }
-  catch (err) { editPetPhoto = cropImg.src; }
+  let data;
+  try { data = out.toDataURL('image/jpeg', 0.88); }
+  catch (err) { data = cropImg.src; }
   cropImg = null;
-  showSheet('editPetSheet');
-  updateEditAvatarPreview();
+  if (cropTarget === 'user') {
+    userPhotoTmp = data;
+    showSheet('userEditSheet');
+    updateUserAvatarPreview();
+  } else {
+    editPetPhoto = data;
+    showSheet('editPetSheet');
+    updateEditAvatarPreview();
+  }
 }
 function cancelCrop() {
   cropImg = null;
-  showSheet('editPetSheet');
+  showSheet(cropTarget === 'user' ? 'userEditSheet' : 'editPetSheet');
 }
 function saveEditPet() {
   const name = document.getElementById('editPetName').value.trim();
@@ -6721,18 +6961,8 @@ function updateUserAvatarPreview() {
 function onUserPhoto(ev) {
   const file = ev.target.files && ev.target.files[0]; if (!file) return;
   const reader = new FileReader();
-  reader.onload = e => {
-    const img = new Image();
-    img.onload = () => {
-      const max = 400; let w = img.width, h = img.height;
-      const s = Math.min(1, max / Math.max(w, h)); w = Math.round(w * s); h = Math.round(h * s);
-      const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
-      cv.getContext('2d').drawImage(img, 0, 0, w, h);
-      try { userPhotoTmp = cv.toDataURL('image/jpeg', 0.85); } catch (err) { userPhotoTmp = e.target.result; }
-      updateUserAvatarPreview();
-    };
-    img.src = e.target.result;
-  };
+  // Same crop flow as pet photos: drag to position + slider to zoom → square avatar.
+  reader.onload = e => openCropper(e.target.result, 'user');
   reader.readAsDataURL(file); ev.target.value = '';
 }
 function saveUserProfile() {
@@ -6754,7 +6984,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.21.0';
+const APP_VERSION = '0.22.0';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
