@@ -6754,7 +6754,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.20.0';
+const APP_VERSION = '0.21.0';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
@@ -6773,6 +6773,32 @@ renderDiscover();
 renderVersion();
 startTicker();
 showScreen('discover');   // social-first: open to the feed
+
+/* ============ Edge-swipe back gesture (iOS-style) ============ */
+function smartBack() {
+  const bd = document.getElementById('backdrop');
+  if (bd && bd.classList.contains('active')) { closeSheet(); return; }
+  const active = document.querySelector('.screen.active');
+  const id = active ? active.id.replace('screen-', '') : '';
+  if (['discover', 'records', 'profile', 'community', 'home'].includes(id)) {
+    if (id === 'records' && !viewingPetList && state.activePetId) { backToPetList(); }
+    return;
+  }
+  if (id === 'editor') { closeEditor(); return; }
+  goBackSub();
+}
+(function () {
+  let sx = null, sy = null, on = false;
+  document.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    if (t && t.clientX <= 26) { sx = t.clientX; sy = t.clientY; on = true; } else { on = false; }
+  }, { passive: true });
+  document.addEventListener('touchend', e => {
+    if (!on) return; on = false;
+    const t = e.changedTouches[0]; if (!t) return;
+    if (t.clientX - sx > 60 && Math.abs(t.clientY - sy) < 55) smartBack();
+  }, { passive: true });
+})();
 if (CLOUD) {
   syncCloudPosts();
   syncNotifications();
