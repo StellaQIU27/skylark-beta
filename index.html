@@ -1197,13 +1197,16 @@ nav.tabbar .tab.notif-tab.unread::after { content: ''; position: absolute; top: 
 }
 .prof-me { display: flex; align-items: center; gap: 12px; position: relative; z-index: 2; }
 .prof-me .av {
-  width: 60px; height: 60px; border-radius: 50%;
+  width: 60px; height: 60px; aspect-ratio: 1; flex-shrink: 0; border-radius: 50%;
   background: #fff; position: relative;
   display: grid; place-items: center;
   border: 2px solid #fff;
   box-shadow: 0 4px 10px rgba(107, 122, 76, 0.1);
 }
 .prof-me .av img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+/* Keep every avatar a perfect circle (never squished by flex) */
+.post-card .pav, .xc-author .xa-av, .cmt-av, .notif-row .nt-av, .user-hero .user-av, .sr-av, .prof-me .av, .edit-avatar .ea-img { aspect-ratio: 1; flex-shrink: 0; }
+.post-card .pav img, .xc-author .xa-av img, .cmt-av img, .notif-row .nt-av img, .user-hero .user-av img, .sr-av img { width: 100%; height: 100%; object-fit: cover; }
 .prof-me .av .av-cam {
   position: absolute; bottom: -2px; right: -2px;
   width: 22px; height: 22px; border-radius: 50%;
@@ -6472,11 +6475,18 @@ function removeCustomFood(name) {
 }
 
 /* ============ Weight edit ============ */
+function lastRecordedWeight(petId) {
+  const recs = state.records[petId] || {};
+  const dates = Object.keys(recs).filter(d => recs[d] && recs[d].weight).sort();
+  return dates.length ? recs[dates[dates.length - 1]].weight : null;
+}
 function openWeightEdit() {
   const pet = state.pets.find(p => p.id === state.activePetId) || state.pets[0];
   document.getElementById('wsPetName').textContent = (pet || {}).name || '';
   const draft = getDraft(state.activePetId, state.selectedDate);
-  document.getElementById('weightInput').value = (draft.weight !== null ? draft.weight : (pet ? pet.weight : 90)).toFixed(1);
+  const last = lastRecordedWeight(state.activePetId);
+  const def = (draft.weight !== null) ? draft.weight : (last !== null ? last : (pet ? pet.weight : 90));
+  document.getElementById('weightInput').value = def.toFixed(1);
   showSheet('weightSheet');
 }
 function bumpWeight(n) {
@@ -6986,7 +6996,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.23.0';
+const APP_VERSION = '0.24.0';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
