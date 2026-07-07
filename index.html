@@ -4264,6 +4264,7 @@ const SPECIES_AVATARS = {
   '金太阳锥尾鹦鹉': 'parrot-conure.png',
   '太阳锥尾鹦鹉': 'parrot-conure.png',
   '太阳鹦鹉': 'parrot-conure.png',
+  '小太阳鹦鹉': 'parrot-conure.png',
   '和尚鹦鹉': 'parrot-monk.png',
 };
 const SPECIES_COLOR = {
@@ -4273,6 +4274,7 @@ const SPECIES_COLOR = {
   '金太阳锥尾鹦鹉': '#F29B5A',
   '太阳锥尾鹦鹉': '#F29B5A',
   '太阳鹦鹉': '#F29B5A',
+  '小太阳鹦鹉': '#F29B5A',
   '和尚鹦鹉': '#8FA37C',
 };
 function avatarSrc(pet) {
@@ -6667,7 +6669,7 @@ const SPECIES_LIST = [
   { name: '虎皮鹦鹉',     color: '#7FA9B8', avatar: 'parrot-budgie.png',    short: '虎皮鹦鹉' },
   { name: '牡丹鹦鹉',     color: '#7AAA61', avatar: 'parrot-lovebird.png',  short: '牡丹鹦鹉' },
   { name: '玄凤鹦鹉',     color: '#D9B068', avatar: 'parrot-cockatiel.png', short: '玄凤鹦鹉' },
-  { name: '金太阳锥尾鹦鹉', color: '#F29B5A', avatar: 'parrot-conure.png',     short: '太阳锥尾' },
+  { name: '小太阳鹦鹉',   color: '#F29B5A', avatar: 'parrot-conure.png',     short: '小太阳' },
   { name: '和尚鹦鹉',     color: '#8FA37C', avatar: 'parrot-monk.png',      short: '和尚鹦鹉' },
 ];
 let editPetId = null, editPetSpecies = '玄凤鹦鹉', editPetGender = 'm', editPetPhoto = null, editPetInitial = '';
@@ -6984,7 +6986,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.22.0';
+const APP_VERSION = '0.22.1';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
