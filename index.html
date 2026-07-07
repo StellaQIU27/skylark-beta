@@ -6986,7 +6986,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.22.1';
+const APP_VERSION = '0.23.0';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
@@ -7005,6 +7005,11 @@ renderDiscover();
 renderVersion();
 startTicker();
 showScreen('discover');   // social-first: open to the feed
+
+/* ============ Auto-update via service worker (never touches localStorage) ============ */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+}
 
 /* ============ Edge-swipe back gesture (iOS-style) ============ */
 function smartBack() {
