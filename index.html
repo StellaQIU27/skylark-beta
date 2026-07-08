@@ -2759,6 +2759,9 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
   <div style="margin-bottom:14px;">
     <div style="font-size:11px;color:var(--ink-mute);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:8px;">品种</div>
     <div class="species-grid" id="editSpeciesGrid"></div>
+    <div id="customSpeciesWrap" style="display:none; margin-top:8px;">
+      <input id="customSpeciesInput" class="notes-input" style="min-height:auto;" maxlength="16" placeholder="输入品种，如：折衷鹦鹉、鸡尾鹦鹉…" oninput="onCustomSpeciesInput(this.value)">
+    </div>
   </div>
 
   <div style="margin-bottom:12px;">
@@ -6685,7 +6688,7 @@ const SPECIES_LIST = [
   { name: '小太阳鹦鹉',   color: '#F29B5A', avatar: 'parrot-conure.png',     short: '小太阳' },
   { name: '和尚鹦鹉',     color: '#8FA37C', avatar: 'parrot-monk.png',      short: '和尚鹦鹉' },
 ];
-let editPetId = null, editPetSpecies = '玄凤鹦鹉', editPetGender = 'm', editPetPhoto = null, editPetInitial = '';
+let editPetId = null, editPetSpecies = '玄凤鹦鹉', editPetGender = 'm', editPetPhoto = null, editPetInitial = '', editCustom = false;
 // Age is derived from a birth month ('YYYY-MM'); legacy pets may only have a text age.
 function ageFromBirth(birth) {
   if (!birth) return '';
@@ -6712,6 +6715,7 @@ function openEditPet(id) {
   if (!pet) { toast('请先添加一只爱鸟'); return; }
   editPetId = pet.id;
   editPetSpecies = pet.species;
+  editCustom = !SPECIES_LIST.some(s => s.name === pet.species);
   editPetGender = pet.gender;
   editPetPhoto = pet.photo || null;
   editPetInitial = pet.initial || (pet.name ? pet.name[0] : '鸟');
@@ -6729,6 +6733,7 @@ function openAddPet() {
   // Add a new pet through the same rich sheet (species + name + birth + gender + photo)
   editPetId = null;
   editPetSpecies = '玄凤鹦鹉';
+  editCustom = false;
   editPetGender = 'm';
   editPetPhoto = null;
   editPetInitial = '鸟';
@@ -6744,15 +6749,41 @@ function openAddPet() {
 }
 function renderEditSpeciesGrid() {
   const grid = document.getElementById('editSpeciesGrid');
+  const presetNames = SPECIES_LIST.map(s => s.name);
+  const isCustom = editCustom || (!!editPetSpecies && !presetNames.includes(editPetSpecies));
   grid.innerHTML = SPECIES_LIST.map(s => `
-    <button class="species-opt ${s.name === editPetSpecies ? 'on' : ''}" onclick="pickEditSpecies('${s.name}')">
+    <button class="species-opt ${!isCustom && s.name === editPetSpecies ? 'on' : ''}" onclick="pickEditSpecies('${s.name}')">
       <div class="sa" style="background:${s.color};"><img src="${s.avatar}" alt=""></div>
       <div class="sn">${s.short}</div>
-    </button>`).join('');
+    </button>`).join('') + `
+    <button class="species-opt ${isCustom ? 'on' : ''}" onclick="pickCustomSpecies()">
+      <div class="sa" style="background:var(--paper-dark); display:grid; place-items:center; color:var(--sage-dark); font-size:24px; font-weight:300;">＋</div>
+      <div class="sn">自定义</div>
+    </button>`;
+  const wrap = document.getElementById('customSpeciesWrap');
+  if (wrap) {
+    wrap.style.display = isCustom ? '' : 'none';
+    const inp = document.getElementById('customSpeciesInput');
+    if (isCustom && inp && inp.value !== editPetSpecies) inp.value = editPetSpecies || '';
+  }
 }
 function pickEditSpecies(name) {
+  editCustom = false;
   editPetSpecies = name;
   renderEditSpeciesGrid();
+  updateEditAvatarPreview();
+}
+function pickCustomSpecies() {
+  editCustom = true;
+  const presetNames = SPECIES_LIST.map(s => s.name);
+  if (presetNames.includes(editPetSpecies)) editPetSpecies = '';
+  renderEditSpeciesGrid();
+  const inp = document.getElementById('customSpeciesInput');
+  if (inp) { inp.value = editPetSpecies || ''; setTimeout(() => inp.focus(), 60); }
+  updateEditAvatarPreview();
+}
+function onCustomSpeciesInput(v) {
+  editPetSpecies = (v || '').trim();
   updateEditAvatarPreview();
 }
 function pickEditGender(g) { editPetGender = g; updateEditGenderUI(); }
@@ -6873,6 +6904,8 @@ function cancelCrop() {
 function saveEditPet() {
   const name = document.getElementById('editPetName').value.trim();
   if (!name) { toast('请给 TA 起个名字'); return; }
+  if (!editPetSpecies || !editPetSpecies.trim()) { toast('请选择或输入品种'); return; }
+  editPetSpecies = editPetSpecies.trim();
   const birth = document.getElementById('editPetBirth').value;  // 'YYYY-MM' or ''
   const color = SPECIES_COLOR[editPetSpecies] || '#8BA88B';
   if (editPetId === null) {
@@ -6999,7 +7032,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.24.3';
+const APP_VERSION = '0.25.0';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
