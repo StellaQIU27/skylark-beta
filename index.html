@@ -955,6 +955,7 @@ nav.tabbar .tab.center .lbl { margin-top: 38px; }
 .cmt-acts { display: flex; gap: 16px; margin-top: 5px; }
 .cmt-act { background: none; font-size: 12px; color: var(--ink-mute); display: inline-flex; align-items: center; gap: 3px; }
 .cmt-act.on { color: var(--terracotta); font-weight: 600; }
+.cmt-act.del { color: var(--terracotta); }
 .reply-hint { display: flex; justify-content: space-between; align-items: center; margin: 0 20px 6px; font-size: 12px; color: var(--sage-dark); background: var(--cream-warm); border-radius: 10px; padding: 7px 12px; }
 .reply-hint span { color: var(--ink-mute); cursor: pointer; padding: 0 4px; }
 .post-card .pstats { display: flex; gap: 16px; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--beige-border); }
@@ -4641,16 +4642,37 @@ function commentHTML(c, postId, isReply) {
   const canInteract = c.id != null && CLOUD;
   const liked = isCommentLiked(c.id);
   const safeAuthor = String(c.author || '鸟友').replace(/'/g, "\\'");
+  const mine = !!c.author_id && c.author_id === DEVICE_ID;
   const likeBtn = canInteract ? `<button class="cmt-act${liked ? ' on' : ''}" onclick="event.stopPropagation();likeComment(${c.id},${postId})">♥ ${c.likes || 0}</button>` : '';
   const replyBtn = (canInteract && !isReply) ? `<button class="cmt-act" onclick="event.stopPropagation();startReply(${c.id},'${safeAuthor}')">回复</button>` : '';
+  const delBtn = (mine && c.id != null) ? `<button class="cmt-act del" onclick="event.stopPropagation();deleteComment(${postId},${c.id})">删除</button>` : '';
   return `<div class="cmt${isReply ? ' reply' : ''}">
     <div class="cmt-av" onclick="event.stopPropagation();openUser('${c.author_id || ''}')">${esc((c.author || '友')[0])}</div>
     <div class="cmt-bd">
       <div class="cmt-top"><span class="cmt-au">${esc(c.author || '鸟友')}</span><span class="cmt-tm">${esc(c.time || '')}</span></div>
       <div class="cmt-tx">${esc(c.text)}</div>
-      ${(likeBtn || replyBtn) ? `<div class="cmt-acts">${likeBtn}${replyBtn}</div>` : ''}
+      ${(likeBtn || replyBtn || delBtn) ? `<div class="cmt-acts">${likeBtn}${replyBtn}${delBtn}</div>` : ''}
     </div>
   </div>`;
+}
+async function deleteComment(pid, cid) {
+  const p = findPost(pid); if (!p) return;
+  const c = (p.comments || []).find(x => x.id === cid);
+  if (!c) return;
+  if (!(c.author_id && c.author_id === DEVICE_ID)) { toast('只能删除自己的评论'); return; }
+  if (!confirm('删除这条评论吗？')) return;
+  if (CLOUD) {
+    try {
+      await sb.from('comments').delete().eq('id', cid);
+      await sb.from('comments').delete().eq('parent_id', cid);
+    } catch (e) { toast('删除失败'); return; }
+    await syncCloudPosts();
+    const np = findPost(pid); if (np) rerenderPostDetail(np);
+  } else {
+    p.comments = (p.comments || []).filter(x => x.id !== cid && x.parent_id !== cid);
+    saveState(); rerenderPostDetail(p); renderDiscover(); renderHome();
+  }
+  toast('评论已删除');
 }
 function startReply(cid, author) {
   replyTarget = { id: cid, author };
@@ -7032,7 +7054,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.25.2';
+const APP_VERSION = '0.26.0';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
