@@ -2255,14 +2255,14 @@ textarea.notes-input:focus { outline: 2px solid var(--sage-dark); }
       <div style="font-size:12px; color:var(--ink-soft);">共 <span id="tlRecordCount">0</span> 条</div>
     </div>
 
-    <div id="tlList"></div>
-
     <div class="add-record-box">
       <button class="add-record-btn" onclick="openNewRecord()">
         <svg><use href="#i-pen"/></svg>
         添加新记录
       </button>
     </div>
+
+    <div id="tlList"></div>
   </div>
 </section>
 
@@ -7032,7 +7032,7 @@ function clearLocalData() {
 }
 
 /* ============ Version ============ */
-const APP_VERSION = '0.25.0';
+const APP_VERSION = '0.25.1';
 const APP_BUILD = '2026-05-30';
 function aboutTap() { toast('Skylark · 雀跃 v' + APP_VERSION + ' beta · ' + APP_BUILD + ' · 社区' + (CLOUD ? '云端' : '本地')); }
 function renderVersion() {
