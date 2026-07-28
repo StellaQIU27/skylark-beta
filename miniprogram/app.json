@@ -1,0 +1,43 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/community/community",
+    "pages/circle/circle",
+    "pages/post/post",
+    "pages/records/records",
+    "pages/editor/editor",
+    "pages/profile/profile",
+    "pages/guide/guide",
+    "pages/search/search",
+    "pages/notifications/notifications",
+    "pages/user/user",
+    "pages/album/album",
+    "pages/settings/settings",
+    "pages/favorites/favorites",
+    "pages/drafts/drafts",
+    "pages/followers/followers",
+    "pages/following/following",
+    "pages/likes/likes"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#F5EDDE",
+    "navigationBarTitleText": "雀跃",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F5EDDE"
+  },
+  "tabBar": {
+    "color": "#8C8973",
+    "selectedColor": "#6B7A4C",
+    "backgroundColor": "#FBF6EA",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/home/home", "text": "首页", "iconPath": "images/tab-home.png", "selectedIconPath": "images/tab-home-on.png" },
+      { "pagePath": "pages/records/records", "text": "记录", "iconPath": "images/tab-record.png", "selectedIconPath": "images/tab-record-on.png" },
+      { "pagePath": "pages/community/community", "text": "社区", "iconPath": "images/tab-community.png", "selectedIconPath": "images/tab-community-on.png" },
+      { "pagePath": "pages/profile/profile", "text": "我的", "iconPath": "images/tab-me.png", "selectedIconPath": "images/tab-me-on.png" }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

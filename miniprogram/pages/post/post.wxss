@@ -1,0 +1,3 @@
+.ph { padding: 200rpx 60rpx; text-align: center; }
+.ph-t { font-size: 34rpx; font-weight: 700; color: var(--ink); }
+.ph-s { font-size: 26rpx; color: var(--ink-soft); margin-top: 16rpx; }

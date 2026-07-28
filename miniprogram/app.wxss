@@ -1,0 +1,86 @@
+/* 雀跃 Skylark — 全局样式（移植自 Web 版设计系统） */
+page {
+  --cream: #F5EDDE;
+  --cream-warm: #FBF6EA;
+  --paper: #FDFAF2;
+  --paper-dark: #EDE1C8;
+  --beige-border: #E8DCC4;
+  --sage: #8BA88B;
+  --sage-tint: #E4EBDA;
+  --sage-soft: #C6D3B8;
+  --sage-dark: #6B7A4C;
+  --sage-darker: #4E5A35;
+  --terracotta: #D9896B;
+  --terracotta-soft: #F5C9B8;
+  --ink: #3A3E2F;
+  --ink-soft: #6F715D;
+  --ink-mute: #8C8973;
+
+  background: var(--cream);
+  color: var(--ink);
+  font-family: -apple-system, "PingFang SC", "Noto Sans SC", sans-serif;
+  font-size: 30rpx;
+  line-height: 1.5;
+}
+
+view, text, button, input, textarea { box-sizing: border-box; }
+button::after { border: none; }
+button {
+  padding: 0; margin: 0; background: none; line-height: inherit;
+  font-size: inherit; color: inherit; border-radius: 0;
+}
+
+/* ---------- 通用组件 ---------- */
+.card {
+  background: var(--cream-warm);
+  border: 2rpx solid var(--beige-border);
+  border-radius: 40rpx;
+  padding: 32rpx;
+}
+.btn {
+  display: flex; align-items: center; justify-content: center;
+  padding: 24rpx 40rpx; border-radius: 32rpx;
+  background: var(--sage-dark); color: var(--cream);
+  font-size: 30rpx; font-weight: 600;
+}
+.btn.accent { background: var(--terracotta); color: #fff; }
+.btn.ghost { background: transparent; color: var(--sage-dark); border: 3rpx solid var(--sage-dark); }
+.btn:active { opacity: .85; }
+
+.section-head {
+  padding: 4rpx 40rpx 20rpx;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.section-head .h {
+  display: flex; align-items: center; gap: 12rpx;
+  font-family: "Noto Sans SC", sans-serif; font-weight: 700; font-size: 34rpx;
+}
+.section-head .h image { width: 36rpx; height: 36rpx; }
+
+.chip {
+  display: inline-block; padding: 6rpx 20rpx; border-radius: 20rpx;
+  background: var(--sage-tint); color: var(--sage-dark);
+  font-size: 24rpx; font-weight: 500;
+}
+.chip.paper { background: var(--paper-dark); color: var(--ink-soft); }
+
+.empty-card {
+  margin: 12rpx 32rpx; padding: 60rpx 40rpx;
+  background: var(--cream-warm); border: 2rpx dashed var(--beige-border);
+  border-radius: 32rpx; text-align: center;
+}
+.empty-card .et { font-weight: 700; font-size: 32rpx; margin-bottom: 10rpx; }
+.empty-card .es { font-size: 26rpx; color: var(--ink-soft); line-height: 1.6; }
+
+/* 头像统一正圆 */
+.avatar {
+  border-radius: 50%; overflow: hidden; flex-shrink: 0;
+  background: var(--sage-dark); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+}
+.avatar image { width: 100%; height: 100%; }
+
+/* 安全区 */
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.page-pad { padding-bottom: 40rpx; }

@@ -1,0 +1,147 @@
+<view class="page">
+  <!-- 品牌头 -->
+  <view class="home-head">
+    <view class="hh-row">
+      <image class="hh-logo" src="/images/skylark-logo.png" mode="aspectFill"/>
+      <view>
+        <view class="hh-title">雀跃</view>
+        <view class="hh-tag">记录 · 分享 · 发现 · 守护</view>
+      </view>
+    </view>
+    <view class="hh-bell {{unread>0?'on':''}}" bindtap="goNotifications">
+      <image src="/images/icon-bell.png" mode="aspectFit"/>
+    </view>
+  </view>
+
+  <!-- 搜索 -->
+  <view class="searchbox" bindtap="goSearch">
+    <text class="sb-ic">🔍</text>
+    <text class="sb-tx">搜索鸟种 / 帖子 / 用户</text>
+  </view>
+
+  <!-- 滚动通知条 -->
+  <view class="ticker" wx:if="{{ticker}}" bindtap="tickerTap">
+    <text class="tk-ic">🔔</text>
+    <text class="tk-tx">{{ticker.text}}</text>
+    <text class="tk-go">›</text>
+  </view>
+
+  <!-- 三个入口 -->
+  <view class="feature-row">
+    <view class="fcard fc1" bindtap="goRecords">
+      <view class="ft">我的爱鸟</view>
+      <view class="fs">记录成长与健康</view>
+      <image class="fbg" src="/images/my-bird.png" mode="aspectFill"/>
+    </view>
+    <view class="fcard fc2" bindtap="goCommunity">
+      <view class="ft">社区</view>
+      <view class="fs">交流经验与心得</view>
+      <image class="fbg" src="/images/community.png" mode="aspectFill"/>
+    </view>
+    <view class="fcard fc3 soon" bindtap="soonTip">
+      <view class="soon-badge">待开发</view>
+      <view class="ft">识鸟</view>
+      <view class="fs">拍照识别鸟种</view>
+      <image class="fbg" src="/images/find-bird.png" mode="aspectFill"/>
+    </view>
+  </view>
+
+  <!-- 每日小知识 -->
+  <view class="daily" wx:if="{{knowledge}}" bindtap="openKnowledge">
+    <image class="dk-illu" src="/images/daily-knowledge-bird.png" mode="aspectFit"/>
+    <view class="dk-body">
+      <view class="dk-kicker">每日养鸟小知识 · {{knowledge.tag}}</view>
+      <view class="dk-title">{{knowledge.title}}</view>
+      <view class="dk-sub">{{knowledge.body}}</view>
+    </view>
+  </view>
+
+  <!-- 频道筛选 -->
+  <view class="section-head">
+    <view class="h">最新动态</view>
+  </view>
+  <scroll-view class="filter" scroll-x>
+    <view class="ff {{filter==='all'?'on':''}}" data-f="all" bindtap="setFilter">全部</view>
+    <view class="ff {{filter==='daily'?'on':''}}" data-f="daily" bindtap="setFilter">养鸟日常</view>
+    <view class="ff {{filter==='carehelp'?'on':''}}" data-f="carehelp" bindtap="setFilter">护理问答</view>
+    <view class="ff {{filter==='wild'?'on':''}}" data-f="wild" bindtap="setFilter">观鸟交流</view>
+  </scroll-view>
+
+  <!-- 空态 -->
+  <view class="empty-card" wx:if="{{!list.length && !loading}}">
+    <view class="et">还没有动态</view>
+    <view class="es">点下方「＋」发第一条，\n和鸟友们交流吧。</view>
+  </view>
+
+  <!-- 护理问答：单列信息流 -->
+  <view class="ifeed" wx:if="{{filter==='carehelp' && list.length}}">
+    <view class="ifeed-card" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="openPost">
+      <view class="if-main">
+        <view class="if-title">
+          <text wx:if="{{item.isHelp}}" class="ans {{item.answered?'done':'wait'}}">{{item.answered?'已回答':'待回答'}}</text>{{item.title||item.body}}
+        </view>
+        <view class="if-body" wx:if="{{item.title && item.body}}">{{item.body}}</view>
+        <view class="if-foot">
+          <text class="if-au">{{item.author}}</text>
+          <text class="if-meta">♥ {{item.likes}} · 回复 {{item.commentCount}}</text>
+        </view>
+      </view>
+      <image wx:if="{{item.photo}}" class="if-thumb" src="{{item.photo}}" mode="aspectFill"/>
+    </view>
+  </view>
+
+  <!-- 其它：双列瀑布 -->
+  <view class="feed-grid" wx:if="{{filter!=='carehelp' && list.length}}">
+    <view class="fg-col">
+      <view class="xcard" wx:for="{{colA}}" wx:key="id" data-id="{{item.id}}" bindtap="openPost">
+        <view class="xc-cover" wx:if="{{item.photo}}">
+          <image src="{{item.photo}}" mode="widthFix"/>
+          <text class="xc-count" wx:if="{{item.photoCount>1}}">{{item.photoCount}}图</text>
+        </view>
+        <view class="xc-cover text {{item.domain}}" wx:else>{{item.title||item.body||'分享一刻'}}</view>
+        <view class="xc-body">
+          <view class="xc-title" wx:if="{{item.photo && (item.title||item.body)}}">{{item.title||item.body}}</view>
+          <view class="xc-foot">
+            <view class="xc-au"><view class="xa-av">{{item.initial}}</view><text class="xa-nm">{{item.author}}</text></view>
+            <text class="xc-like {{item.likedByMe?'on':''}}">♥ {{item.likes}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="fg-col">
+      <view class="xcard" wx:for="{{colB}}" wx:key="id" data-id="{{item.id}}" bindtap="openPost">
+        <view class="xc-cover" wx:if="{{item.photo}}">
+          <image src="{{item.photo}}" mode="widthFix"/>
+          <text class="xc-count" wx:if="{{item.photoCount>1}}">{{item.photoCount}}图</text>
+        </view>
+        <view class="xc-cover text {{item.domain}}" wx:else>{{item.title||item.body||'分享一刻'}}</view>
+        <view class="xc-body">
+          <view class="xc-title" wx:if="{{item.photo && (item.title||item.body)}}">{{item.title||item.body}}</view>
+          <view class="xc-foot">
+            <view class="xc-au"><view class="xa-av">{{item.initial}}</view><text class="xa-nm">{{item.author}}</text></view>
+            <text class="xc-like {{item.likedByMe?'on':''}}">♥ {{item.likes}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="page-pad"></view>
+</view>
+
+<!-- 发帖悬浮按钮 -->
+<view class="fab" bindtap="goCompose">＋</view>
+
+<!-- 每日小知识弹窗 -->
+<view class="mask {{showKnow?'show':''}}" bindtap="closeKnow"></view>
+<view class="sheet {{showKnow?'show':''}}">
+  <view class="sh-handle"></view>
+  <view class="dks-kicker">每日养鸟小知识 · {{knowledge.tag}}</view>
+  <view class="dks-title">{{knowledge.title}}</view>
+  <view class="dks-body">{{knowledge.body}}</view>
+  <view class="dks-src">小知识仅供参考，鸟宝出现异常请及时就医</view>
+  <view class="sh-actions">
+    <view class="btn ghost" bindtap="closeKnow">关闭</view>
+    <view class="btn accent" bindtap="knowGo">去讨论</view>
+  </view>
+</view>
