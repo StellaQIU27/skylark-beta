@@ -165,6 +165,7 @@
   <view class="acts">
     <view class="btn accent full" bindtap="saveRecord">保存今日记录</view>
   </view>
+  <view class="del-record" wx:if="{{hasSaved}}" bindtap="deleteRecord">删除这条记录</view>
   <view class="page-pad"></view>
 </view>
 

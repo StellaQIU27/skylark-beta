@@ -109,6 +109,11 @@
 }
 .so.on, .bo.on { background: var(--sage-dark); color: #fff; border-color: var(--sage-dark); font-weight: 600; }
 
+.del-record {
+  text-align: center; color: var(--terracotta); font-size: 28rpx;
+  padding: 26rpx; margin-bottom: 32rpx;
+  background: var(--cream-warm); border: 2rpx solid var(--beige-border); border-radius: 32rpx;
+}
 .acts { display: flex; gap: 20rpx; margin: 32rpx 0 40rpx; }
 .acts .btn { flex: 1; }
 .btn.full { flex: 1; }

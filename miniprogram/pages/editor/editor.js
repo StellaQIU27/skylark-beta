@@ -25,7 +25,8 @@ Page({
     speciesList: [], petSpecies: '玄凤鹦鹉', petAvatar: '', petColor: '#D9B068',
     petName: '', petBirth: '', petGender: 'm', petPhoto: null, custom: false, petId: null,
     // 记录
-    date: '', dateLabel: '', pet: {}, rec: { weight: 0, feedings: [], sunMinutes: 0, bath: '', notes: '', photos: [] },
+    date: '', dateLabel: '', pet: {}, hasSaved: false,
+    rec: { weight: 0, feedings: [], sunMinutes: 0, bath: '', notes: '', photos: [] },
     showWeight: false, weightInput: '90.0',
     showFeeding: false, feedTime: '08:00', foodOpts: [],
     showDate: false
@@ -246,8 +247,31 @@ Page({
     const dd = new Date(+d[0], +d[1] - 1, +d[2]);
     this.setData({
       date, pet, rec,
+      hasSaved: !!st.records[pet.id][date],
       dateLabel: `${dd.getFullYear()}年${dd.getMonth() + 1}月${dd.getDate()}日 周${WD[dd.getDay()]}`,
       weightInput: (raw.weight || this.lastWeight(st, pet.id) || 90).toFixed(1)
+    });
+  },
+
+  deleteRecord() {
+    const st = S.getState();
+    const pet = this.data.pet;
+    const date = this.data.date;
+    wx.showModal({
+      title: '删除记录',
+      content: `确定删除 ${this.data.dateLabel} 的记录吗？删除后无法恢复。`,
+      success: r => {
+        if (!r.confirm) return;
+        if (st.records[pet.id]) delete st.records[pet.id][date];
+        st.recordDays = Object.keys(st.records[pet.id] || {}).length;
+        // 体重回退到最近一次记录
+        const lw = this.lastWeight(st, pet.id);
+        const p = st.pets.find(x => x.id === pet.id);
+        if (p) p.weight = lw || 0;
+        S.saveState();
+        wx.showToast({ title: '记录已删除', icon: 'none' });
+        setTimeout(() => wx.navigateBack(), 600);
+      }
     });
   },
   lastWeight(st, petId) {
