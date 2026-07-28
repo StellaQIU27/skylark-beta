@@ -1,4 +1,31 @@
-<view class="ph">
-  <view class="ph-t">此页面正在迁移中</view>
-  <view class="ph-s">「search」页面即将上线</view>
+<view class="page">
+  <view class="sbox">
+    <input class="sinput" placeholder="搜索鸟种 / 帖子 / 用户" value="{{q}}" bindinput="onInput" focus confirm-type="search"/>
+  </view>
+  <view class="hint" wx:if="{{!q}}">输入关键词，搜索鸟种、帖子和鸟友</view>
+  <view class="hint" wx:elif="{{!birds.length && !posts.length && !users.length}}">没有找到「{{q}}」相关内容</view>
+
+  <block wx:if="{{birds.length}}">
+    <view class="sh">鸟种</view>
+    <view class="row" wx:for="{{birds}}" wx:key="id" data-id="{{item.id}}" bindtap="openBird">
+      <view class="ic"><image wx:if="{{item.cc_image}}" src="{{item.cc_image}}" mode="aspectFill"/></view>
+      <view class="bd"><view class="t">{{item.name_cn}}</view><view class="s">{{item.scientific_name}} · {{item.family_cn}}</view></view>
+    </view>
+  </block>
+
+  <block wx:if="{{users.length}}">
+    <view class="sh">鸟友</view>
+    <view class="row" wx:for="{{users}}" wx:key="id" data-id="{{item.id}}" bindtap="openUser">
+      <view class="uav">{{item.initial}}</view>
+      <view class="bd"><view class="t">{{item.name}}</view></view>
+    </view>
+  </block>
+
+  <block wx:if="{{posts.length}}">
+    <view class="sh">帖子</view>
+    <view class="row" wx:for="{{posts}}" wx:key="id" data-id="{{item.id}}" bindtap="openPost">
+      <view class="bd"><view class="t">{{item.disp}}</view><view class="s">{{item.author}} · ♥ {{item.likes}} · 回复 {{item.cc}}</view></view>
+    </view>
+  </block>
+  <view class="page-pad"></view>
 </view>

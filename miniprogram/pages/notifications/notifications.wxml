@@ -1,4 +1,15 @@
-<view class="ph">
-  <view class="ph-t">此页面正在迁移中</view>
-  <view class="ph-s">「notifications」页面即将上线</view>
+<view class="page">
+  <view class="empty-card" wx:if="{{!list.length}}">
+    <view class="et">暂无新通知</view>
+    <view class="es">鸟友的点赞、评论\n会出现在这里。</view>
+  </view>
+  <view class="row {{item.read?'':'unread'}}" wx:for="{{list}}" wx:key="_id" data-pid="{{item.postId}}" bindtap="openPost">
+    <view class="av">{{item.initial}}</view>
+    <view class="bd">
+      <view class="tx"><text class="b">{{item.actor}}</text> {{item.actText}}{{item.titleText}}</view>
+      <view class="cmt" wx:if="{{item.commentText}}">“{{item.commentText}}”</view>
+      <view class="tm">{{item.timeText}}</view>
+    </view>
+  </view>
+  <view class="page-pad"></view>
 </view>

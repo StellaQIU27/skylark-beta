@@ -1,4 +1,12 @@
-<view class="ph">
-  <view class="ph-t">此页面正在迁移中</view>
-  <view class="ph-s">「followers」页面即将上线</view>
+<view class="page">
+  <view class="empty-card" wx:if="{{!list.length}}">
+    <view class="et">{{emptyT}}</view>
+    <view class="es">{{emptyS}}</view>
+  </view>
+  <view class="row" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="open">
+    <view class="av">{{item.initial}}</view>
+    <view class="bd"><view class="n">{{item.name}}</view></view>
+    <view class="tag" wx:if="{{item.tag}}">{{item.tag}}</view>
+  </view>
+  <view class="page-pad"></view>
 </view>

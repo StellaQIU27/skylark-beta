@@ -1,4 +1,14 @@
-<view class="ph">
-  <view class="ph-t">此页面正在迁移中</view>
-  <view class="ph-s">「likes」页面即将上线</view>
+<view class="page">
+  <view class="empty-card" wx:if="{{!list.length}}">
+    <view class="et">还没有收到赞</view>
+    <view class="es">在社区发布动态后，\n鸟友们的喜欢会展示在这里。</view>
+  </view>
+  <view class="row" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="open">
+    <view class="av">♥</view>
+    <view class="bd">
+      <view class="t">你的动态 <text class="b">{{item.disp}}</text></view>
+      <view class="s">收到 {{item.likes}} 个赞{{item.who}}</view>
+    </view>
+  </view>
+  <view class="page-pad"></view>
 </view>

@@ -1,4 +1,14 @@
-<view class="ph">
-  <view class="ph-t">此页面正在迁移中</view>
-  <view class="ph-s">「favorites」页面即将上线</view>
+<view class="page">
+  <view class="empty-card" wx:if="{{!list.length}}">
+    <view class="et">还没有收藏</view>
+    <view class="es">在动态详情页点「收藏」，\n喜欢的帖子会保存在这里。</view>
+  </view>
+  <view class="card" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="open">
+    <image wx:if="{{item.photo}}" class="ph" src="{{item.photo}}" mode="aspectFill"/>
+    <view class="bd">
+      <view class="t">{{item.title||item.body||'（图片动态）'}}</view>
+      <view class="s">{{item.author}} · ♥ {{item.likes}}</view>
+    </view>
+  </view>
+  <view class="page-pad"></view>
 </view>

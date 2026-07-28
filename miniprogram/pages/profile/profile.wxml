@@ -1,4 +1,103 @@
-<view class="ph">
-  <view class="ph-t">此页面正在迁移中</view>
-  <view class="ph-s">「profile」页面即将上线</view>
+<view class="page">
+  <!-- 顶部资料 -->
+  <view class="prof-top">
+    <view class="prof-actions">
+      <view class="pa-btn" bindtap="goSettings">⚙</view>
+      <view class="pa-btn {{unread>0?'on':''}}" bindtap="goNotifications">🔔</view>
+    </view>
+    <view class="prof-me">
+      <view class="av" bindtap="editProfile">
+        <image wx:if="{{user.avatar}}" src="{{user.avatar}}" mode="aspectFill"/>
+        <text wx:else>{{initial}}</text>
+        <view class="av-cam">📷</view>
+      </view>
+      <view class="pm-info">
+        <view class="n">{{user.name}} <text class="lv">Lv.1</text></view>
+        <view class="s">
+          <text bindtap="goFollowers">{{followers}} 粉丝</text>
+          <text class="dot">·</text>
+          <text bindtap="goFollowing">关注 {{followingCount}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 四格统计 -->
+  <view class="stats-card">
+    <view class="st" bindtap="goRecords">
+      <image class="si" src="/images/icon-stat-bird.png" mode="aspectFit"/>
+      <view class="sv">{{petCount}}</view><view class="sl">我的爱鸟</view>
+    </view>
+    <view class="st" bindtap="goAlbum">
+      <image class="si" src="/images/icon-stat-book.png" mode="aspectFit"/>
+      <view class="sv">{{albumCount}}</view><view class="sl">鸟宝相册</view>
+    </view>
+    <view class="st" bindtap="goLikes">
+      <image class="si" src="/images/icon-stat-heart.png" mode="aspectFit"/>
+      <view class="sv">{{likesCount}}</view><view class="sl">收到的赞</view>
+    </view>
+    <view class="st" bindtap="goFollowing">
+      <image class="si" src="/images/icon-stat-users.png" mode="aspectFit"/>
+      <view class="sv">{{followingCount}}</view><view class="sl">关注的人</view>
+    </view>
+  </view>
+
+  <!-- 连续记录 -->
+  <view class="streak-card">
+    <view class="sh">
+      <view class="t">连续记录 <text class="b">{{streak}}</text> 天</view>
+    </view>
+    <view class="sub">{{streak>0 ? '继续加油，解锁爱鸟成长每一天！' : '开始记录，解锁爱鸟成长每一天！'}}</view>
+    <view class="streak-dots">
+      <view class="dot" wx:for="{{dots}}" wx:key="*this">✓</view>
+      <view class="dot today">今</view>
+    </view>
+  </view>
+
+  <!-- 菜单 -->
+  <view class="menu-card">
+    <view class="menu-row" bindtap="goFavorites"><text class="mi">★</text><text class="ml">我的收藏</text><text class="mc">›</text></view>
+    <view class="menu-row" bindtap="goDrafts"><text class="mi">📁</text><text class="ml">我的草稿</text><text class="mc">›</text></view>
+    <view class="menu-row" bindtap="openBackup"><text class="mi">☁</text><text class="ml">数据备份</text><text class="mc">›</text></view>
+    <view class="menu-row" bindtap="soon"><text class="mi">?</text><text class="ml">帮助与反馈</text><text class="mc">›</text></view>
+    <view class="menu-row" bindtap="about"><text class="mi">ⓘ</text><text class="ml">关于 Skylark · 雀跃</text><text class="mc">{{version}}</text></view>
+  </view>
+
+  <view class="page-pad"></view>
+</view>
+
+<!-- 编辑资料 -->
+<view class="mask {{showEdit?'show':''}}" bindtap="closeEdit"></view>
+<view class="sheet {{showEdit?'show':''}}">
+  <view class="sh-handle"></view>
+  <view class="sh-title">编辑资料</view>
+  <view class="ap-wrap" bindtap="pickAvatar">
+    <view class="ap-img">
+      <image wx:if="{{tmpAvatar}}" src="{{tmpAvatar}}" mode="aspectFill"/>
+      <text wx:else>{{initial}}</text>
+    </view>
+    <view class="ap-cam">📷</view>
+  </view>
+  <view class="ap-hint">点击上传头像</view>
+  <view class="fld">
+    <view class="fld-l">昵称</view>
+    <input class="ipt" placeholder="给自己起个昵称" value="{{tmpName}}" bindinput="onName" maxlength="16"/>
+  </view>
+  <view class="sh-actions">
+    <view class="btn ghost" bindtap="closeEdit">取消</view>
+    <view class="btn accent" bindtap="saveProfile">保存</view>
+  </view>
+</view>
+
+<!-- 数据备份 -->
+<view class="mask {{showBackup?'show':''}}" bindtap="closeBackup"></view>
+<view class="sheet {{showBackup?'show':''}}">
+  <view class="sh-handle"></view>
+  <view class="sh-title">数据备份</view>
+  <view class="bk-tip">你的爱鸟和记录已自动同步到微信云端（跟随你的微信号）。换手机登录同一个微信即可自动恢复，无需手动导入导出。</view>
+  <view class="btn" style="margin-bottom:20rpx" bindtap="syncNow">立即同步到云端</view>
+  <view class="btn ghost" bindtap="restoreNow">从云端恢复</view>
+  <view class="sh-actions">
+    <view class="btn ghost" bindtap="closeBackup">关闭</view>
+  </view>
 </view>

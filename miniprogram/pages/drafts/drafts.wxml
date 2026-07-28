@@ -1,4 +1,14 @@
-<view class="ph">
-  <view class="ph-t">此页面正在迁移中</view>
-  <view class="ph-s">「drafts」页面即将上线</view>
+<view class="page">
+  <view class="empty-card" wx:if="{{!list.length}}">
+    <view class="et">草稿箱是空的</view>
+    <view class="es">发帖时点「存草稿」，\n没写完的内容会保存在这里。</view>
+  </view>
+  <view class="card" wx:for="{{list}}" wx:key="id">
+    <view class="bd" data-id="{{item.id}}" bindtap="resume">
+      <view class="t">{{item.title||item.body||'（无文字）'}}</view>
+      <view class="s">{{item.chanName}} · {{item.time}}</view>
+    </view>
+    <view class="del" data-id="{{item.id}}" catchtap="del">删除</view>
+  </view>
+  <view class="page-pad"></view>
 </view>

@@ -1,4 +1,29 @@
-<view class="ph">
-  <view class="ph-t">此页面正在迁移中</view>
-  <view class="ph-s">「guide」页面即将上线</view>
+<view class="page">
+  <block wx:if="{{!detail}}">
+    <view class="sbox"><input class="sinput" placeholder="搜索中文名 / 学名 / 科" value="{{q}}" bindinput="onSearch"/></view>
+    <view class="cnt">{{list.length}} 种 · 中国常见野鸟</view>
+    <view class="grid">
+      <view class="gcard" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="open">
+        <view class="gimg"><image wx:if="{{item.cc_image}}" src="{{item.cc_image}}" mode="aspectFill"/><text wx:else>🐦</text></view>
+        <view class="gname">{{item.name_cn}}</view>
+        <view class="gsci">{{item.family_cn}}</view>
+      </view>
+    </view>
+  </block>
+
+  <block wx:else>
+    <view class="back" bindtap="back">‹ 鸟种图鉴</view>
+    <view class="dimg"><image wx:if="{{detail.cc_image}}" src="{{detail.cc_image}}" mode="aspectFill"/></view>
+    <view class="dattr" wx:if="{{detail.cc_attr}}">{{detail.cc_attr}}</view>
+    <view class="dname">{{detail.name_cn}}</view>
+    <view class="dsci">{{detail.scientific_name}} · {{detail.name_en}}</view>
+    <view class="dtags">
+      <text class="dt">{{detail.order_cn}}</text><text class="dt">{{detail.family_cn}}</text>
+      <text class="dt">{{detail.length_cm}} cm</text><text class="dt">{{detail.residency}}</text>
+      <text class="dt">IUCN {{detail.iucn}}</text>
+    </view>
+    <view class="dsec"><view class="dh">识别特征</view><view class="db">{{detail.id_features}}</view></view>
+    <view class="dsec"><view class="dh">分布与生境</view><view class="db">{{detail.habitat}}</view></view>
+  </block>
+  <view class="page-pad"></view>
 </view>

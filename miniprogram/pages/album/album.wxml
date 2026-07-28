@@ -1,4 +1,20 @@
-<view class="ph">
-  <view class="ph-t">此页面正在迁移中</view>
-  <view class="ph-s">「album」页面即将上线</view>
+<view class="page">
+  <view class="sum">共 {{total}} 张照片 · {{groups.length}} 天</view>
+  <view class="empty-card" wx:if="{{!groups.length}}">
+    <view class="et">相册还是空的</view>
+    <view class="es">在每日记录里添加照片，\n就会出现在这里。</view>
+  </view>
+  <view class="ag" wx:for="{{groups}}" wx:key="key">
+    <view class="ag-head">
+      <text class="ag-date">{{item.date}}</text>
+      <text class="ag-pet">{{item.petName}}</text>
+      <text class="ag-n">{{item.photos.length}} 张</text>
+    </view>
+    <view class="ag-grid">
+      <image wx:for="{{item.photos}}" wx:for-item="ph" wx:key="*this" src="{{ph}}" mode="aspectFill"
+             data-src="{{ph}}" data-all="{{item.photos}}" bindtap="preview"/>
+    </view>
+    <view class="ag-note" wx:if="{{item.notes}}">{{item.notes}}</view>
+  </view>
+  <view class="page-pad"></view>
 </view>

@@ -1,4 +1,26 @@
-<view class="ph">
-  <view class="ph-t">此页面正在迁移中</view>
-  <view class="ph-s">「user」页面即将上线</view>
+<view class="page">
+  <view class="hero">
+    <view class="uav">{{initial}}</view>
+    <view class="uname">{{name}}</view>
+    <view class="usub">{{posts.length}} 条动态 · 获赞 {{totalLikes}}</view>
+    <view class="btn {{following?'ghost':'accent'}}" style="margin-top:24rpx;padding:18rpx 56rpx;display:inline-flex" bindtap="toggleFollow">{{following?'✓ 已关注':'+ 关注'}}</view>
+  </view>
+  <view class="empty-card" wx:if="{{!posts.length}}"><view class="et">TA 还没有发布动态</view></view>
+  <view class="feed-grid" wx:else>
+    <view class="fg-col">
+      <view class="xcard" wx:for="{{colA}}" wx:key="id" data-id="{{item.id}}" bindtap="openPost">
+        <view class="xc-cover" wx:if="{{item.photo}}"><image src="{{item.photo}}" mode="widthFix"/></view>
+        <view class="xc-cover text" wx:else>{{item.title||item.body||'分享一刻'}}</view>
+        <view class="xc-body"><view class="xc-foot"><text class="xc-like">♥ {{item.likes}}</text></view></view>
+      </view>
+    </view>
+    <view class="fg-col">
+      <view class="xcard" wx:for="{{colB}}" wx:key="id" data-id="{{item.id}}" bindtap="openPost">
+        <view class="xc-cover" wx:if="{{item.photo}}"><image src="{{item.photo}}" mode="widthFix"/></view>
+        <view class="xc-cover text" wx:else>{{item.title||item.body||'分享一刻'}}</view>
+        <view class="xc-body"><view class="xc-foot"><text class="xc-like">♥ {{item.likes}}</text></view></view>
+      </view>
+    </view>
+  </view>
+  <view class="page-pad"></view>
 </view>
