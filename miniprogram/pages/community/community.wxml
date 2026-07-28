@@ -10,10 +10,17 @@
   <!-- 每日养鸟小知识 -->
   <view class="daily" wx:if="{{knowledge}}" bindtap="openKnowledge">
     <image class="dk-illu" src="/images/daily-knowledge-bird.png" mode="aspectFit"/>
-    <view class="dk-body">
-      <view class="dk-kicker">每日养鸟小知识 · {{knowledge.tag}}</view>
+    <view class="dk-content">
+      <view class="dk-top">
+        <view class="dk-kicker">每日养鸟小知识</view>
+        <view class="dk-date">{{today}}</view>
+      </view>
       <view class="dk-title">{{knowledge.title}}</view>
       <view class="dk-sub">{{knowledge.body}}</view>
+      <view class="dk-actions">
+        <view class="dk-tag">{{knowledge.tag}}</view>
+        <view class="dk-go">去讨论 ›</view>
+      </view>
     </view>
   </view>
 

@@ -5,6 +5,7 @@
 .hh-row { display: flex; align-items: center; gap: 22rpx; }
 .hh-logo { width: 104rpx; height: 104rpx; border-radius: 30rpx; background: var(--paper-dark); flex-shrink: 0; }
 .hh-title { font-weight: 700; font-size: 46rpx; color: var(--sage-dark); letter-spacing: -0.5rpx; }
+.hh-cn { font-weight: 700; margin-left: 8rpx; color: var(--sage-dark); }
 .hh-tag { color: var(--ink-soft); font-size: 24rpx; margin-top: 6rpx; letter-spacing: 2rpx; }
 .hh-bell { width: 76rpx; height: 76rpx; display: flex; align-items: center; justify-content: center; position: relative; }
 .hh-bell image { width: 44rpx; height: 44rpx; }

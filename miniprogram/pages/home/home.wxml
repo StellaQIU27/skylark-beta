@@ -4,7 +4,7 @@
     <view class="hh-row">
       <image class="hh-logo" src="/images/skylark-logo.png" mode="aspectFill"/>
       <view>
-        <view class="hh-title">雀跃</view>
+        <view class="hh-title">Skylark<text class="hh-cn">· 雀跃</text></view>
         <view class="hh-tag">记录 · 分享 · 发现 · 守护</view>
       </view>
     </view>

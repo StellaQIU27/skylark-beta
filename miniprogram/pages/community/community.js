@@ -20,7 +20,10 @@ Page({
     const d = new Date();
     const start = new Date(d.getFullYear(), 0, 0);
     const day = Math.floor((d - start) / 86400000);
-    this.setData({ knowledge: DAILY_KNOWLEDGE[day % DAILY_KNOWLEDGE.length] });
+    this.setData({
+      knowledge: DAILY_KNOWLEDGE[day % DAILY_KNOWLEDGE.length],
+      today: `${d.getMonth() + 1}月${d.getDate()}日`
+    });
   },
 
   async onShow() {
