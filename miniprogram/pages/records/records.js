@@ -27,6 +27,14 @@ Page({
   async onShow() {
     await getApp().waitReady();
     await S.restorePersonalFromCloud();
+    // 从 tab 进入时始终回到「我的爱鸟」列表（与 Web 版一致）
+    if (this.backFromDetail) { this.backFromDetail = false; }
+    else if (!this.keepDetail) {
+      const st = S.getState();
+      st.activePetId = null;
+      this.setData({ listMode: true, manageMode: false });
+    }
+    this.keepDetail = false;
     this.render();
   },
 
@@ -42,14 +50,13 @@ Page({
       });
     });
 
-    // 无鸟 or 未选中 -> 列表
-    if (!pets.length || (!st.activePetId && pets.length !== 1)) {
+    // 未选中任何一只 -> 显示列表（不管有几只鸟）
+    if (!pets.length || !st.activePetId) {
       this.setData({ listMode: true, pets });
       return;
     }
-    const active = st.activePetId || pets[0].id;
-    const pet = pets.find(p => p.id === active) || pets[0];
-    st.activePetId = pet.id;
+    const pet = pets.find(p => p.id === st.activePetId);
+    if (!pet) { st.activePetId = null; this.setData({ listMode: true, pets }); return; }
 
     this.renderTimeline(st, pet, pets);
   },
@@ -144,9 +151,9 @@ Page({
     this.setData({ listMode: true, manageMode: false });
     this.render();
   },
-  editPet(e) { this.editPetById(e.currentTarget.dataset.id); },
-  editPetById(id) { wx.navigateTo({ url: '/pages/editor/editor?mode=pet&id=' + id }); },
-  addPet() { wx.navigateTo({ url: '/pages/editor/editor?mode=pet' }); },
+  editPet(e) { this.keepDetail = true; this.editPetById(e.currentTarget.dataset.id); },
+  editPetById(id) { this.keepDetail = true; wx.navigateTo({ url: '/pages/editor/editor?mode=pet&id=' + id }); },
+  addPet() { this.keepDetail = true; wx.navigateTo({ url: '/pages/editor/editor?mode=pet' }); },
 
   deletePet(e) {
     const id = e.currentTarget.dataset.id;
@@ -168,8 +175,8 @@ Page({
     });
   },
 
-  newRecord() { wx.navigateTo({ url: '/pages/editor/editor?mode=record&date=' + S.todayISO() }); },
-  openRecord(e) { wx.navigateTo({ url: '/pages/editor/editor?mode=record&date=' + e.currentTarget.dataset.date }); },
+  newRecord() { this.keepDetail = true; wx.navigateTo({ url: '/pages/editor/editor?mode=record&date=' + S.todayISO() }); },
+  openRecord(e) { this.keepDetail = true; wx.navigateTo({ url: '/pages/editor/editor?mode=record&date=' + e.currentTarget.dataset.date }); },
 
   openMolt() { this.setData({ showMolt: true }); },
   closeMolt() { this.setData({ showMolt: false }); },
