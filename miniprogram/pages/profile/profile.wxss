@@ -111,3 +111,13 @@
   background: var(--cream-warm); border: 2rpx solid var(--beige-border); border-radius: 24rpx;
 }
 .bk-tip { font-size: 26rpx; color: var(--ink-soft); line-height: 1.7; margin-bottom: 28rpx; }
+.bk-tip.sm { font-size: 24rpx; margin-bottom: 20rpx; }
+.bk-div {
+  font-size: 24rpx; color: var(--ink-mute); font-weight: 600;
+  margin: 32rpx 0 16rpx; padding-top: 28rpx; border-top: 2rpx solid var(--beige-border);
+}
+.link-btn { text-align: center; font-size: 25rpx; color: var(--sage-dark); padding: 12rpx; }
+.paste-box {
+  width: 100%; height: 300rpx; padding: 24rpx; font-size: 24rpx; line-height: 1.5;
+  background: var(--cream-warm); border: 2rpx solid var(--beige-border); border-radius: 24rpx;
+}

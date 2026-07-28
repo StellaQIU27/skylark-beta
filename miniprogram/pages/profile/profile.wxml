@@ -94,10 +94,29 @@
 <view class="sheet {{showBackup?'show':''}}">
   <view class="sh-handle"></view>
   <view class="sh-title">数据备份</view>
-  <view class="bk-tip">你的爱鸟和记录已自动同步到微信云端（跟随你的微信号）。换手机登录同一个微信即可自动恢复，无需手动导入导出。</view>
+  <view class="bk-tip">你的爱鸟和记录已自动同步到微信云端（跟随你的微信号）。换手机登录同一个微信即可自动恢复。</view>
   <view class="btn" style="margin-bottom:20rpx" bindtap="syncNow">立即同步到云端</view>
-  <view class="btn ghost" bindtap="restoreNow">从云端恢复</view>
+  <view class="btn ghost" style="margin-bottom:20rpx" bindtap="restoreNow">从云端恢复</view>
+
+  <view class="bk-div">从旧版网页迁移</view>
+  <view class="bk-tip sm">如果你之前用过网页版「雀跃」，可以把导出的备份文件（skylark-backup-*.json）导入进来，恢复爱鸟档案与历史记录。</view>
+  <view class="btn ghost" style="margin-bottom:16rpx" bindtap="importFromFile">选择备份文件导入</view>
+  <view class="link-btn" bindtap="openPasteImport">或粘贴备份内容导入 ›</view>
+
   <view class="sh-actions">
     <view class="btn ghost" bindtap="closeBackup">关闭</view>
+  </view>
+</view>
+
+<!-- 粘贴导入 -->
+<view class="mask {{showPaste?'show':''}}" bindtap="closePaste"></view>
+<view class="sheet {{showPaste?'show':''}}">
+  <view class="sh-handle"></view>
+  <view class="sh-title">粘贴备份内容</view>
+  <view class="bk-tip sm">用手机打开备份 JSON 文件，全选复制后粘贴到下面。</view>
+  <textarea class="paste-box" placeholder="在此粘贴 { ... } 备份内容" value="{{pasteText}}" bindinput="onPaste" maxlength="-1"/>
+  <view class="sh-actions">
+    <view class="btn ghost" bindtap="closePaste">取消</view>
+    <view class="btn accent" bindtap="doPasteImport">导入</view>
   </view>
 </view>

@@ -7,7 +7,7 @@ Page({
     petCount: 0, albumCount: 0, likesCount: 0, followingCount: 0, followers: 0,
     streak: 0, dots: [], unread: 0, version: VERSION,
     showEdit: false, tmpName: '', tmpAvatar: null,
-    showBackup: false
+    showBackup: false, showPaste: false, pasteText: ''
   },
 
   async onShow() {
@@ -107,6 +107,66 @@ Page({
     this.setData({ showBackup: false });
     wx.showToast({ title: ok ? '已从云端恢复' : '本地已是最新', icon: 'none' });
     this.render();
+  },
+
+  /* ---------- 旧版网页备份导入 ---------- */
+  importFromFile() {
+    wx.chooseMessageFile({
+      count: 1, type: 'file', extension: ['json'],
+      success: (res) => {
+        const f = res.tempFiles[0];
+        wx.getFileSystemManager().readFile({
+          filePath: f.path, encoding: 'utf8',
+          success: (r) => this.applyBackup(r.data),
+          fail: () => wx.showToast({ title: '读取文件失败', icon: 'none' })
+        });
+      },
+      fail: () => {}
+    });
+  },
+  openPasteImport() { this.setData({ showBackup: false, showPaste: true, pasteText: '' }); },
+  closePaste() { this.setData({ showPaste: false }); },
+  onPaste(e) { this.data.pasteText = e.detail.value; },
+  doPasteImport() {
+    const t = (this.data.pasteText || '').trim();
+    if (!t) { wx.showToast({ title: '请先粘贴内容', icon: 'none' }); return; }
+    this.applyBackup(t);
+  },
+
+  applyBackup(text) {
+    let data;
+    try { data = JSON.parse(text); }
+    catch (e) { wx.showToast({ title: '内容不是有效的备份', icon: 'none' }); return; }
+    if (!data || typeof data !== 'object' || !data.pets) {
+      wx.showToast({ title: '这不是雀跃备份文件', icon: 'none' }); return;
+    }
+    const petN = (data.pets || []).length;
+    let recN = 0;
+    Object.keys(data.records || {}).forEach(k => { recN += Object.keys(data.records[k] || {}).length; });
+
+    wx.showModal({
+      title: '导入备份',
+      content: `将导入 ${petN} 只爱鸟、${recN} 条记录，并覆盖当前数据。确定吗？`,
+      success: (r) => {
+        if (!r.confirm) return;
+        const st = S.getState();
+        st.pets = data.pets || [];
+        st.records = data.records || {};
+        st.bookmarks = data.bookmarks || [];
+        st.draftList = data.draftList || [];
+        st.likedComments = data.likedComments || [];
+        st.joinedCircles = data.joinedCircles || [];
+        if (data.user && data.user.name) {
+          // 旧版头像是 base64，可直接沿用
+          st.user = { name: data.user.name, avatar: data.user.avatar || null };
+        }
+        st.activePetId = st.pets[0] ? st.pets[0].id : null;
+        S.saveState();
+        this.setData({ showPaste: false, showBackup: false });
+        wx.showToast({ title: '导入成功', icon: 'success' });
+        this.render();
+      }
+    });
   },
 
   goSettings() { wx.navigateTo({ url: '/pages/settings/settings' }); },
