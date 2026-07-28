@@ -1,4 +1,88 @@
-<view class="ph">
-  <view class="ph-t">此页面正在迁移中</view>
-  <view class="ph-s">「community」页面即将上线</view>
+<view class="page">
+  <!-- 头部 -->
+  <view class="rec-head">
+    <view class="tabs-inline"><view class="t on">社区</view></view>
+    <view class="bell-btn {{unread>0?'on':''}}" bindtap="goNotifications">
+      <image src="/images/icon-bell.png" mode="aspectFit"/>
+    </view>
+  </view>
+
+  <!-- 每日养鸟小知识 -->
+  <view class="daily" wx:if="{{knowledge}}" bindtap="openKnowledge">
+    <image class="dk-illu" src="/images/daily-knowledge-bird.png" mode="aspectFit"/>
+    <view class="dk-body">
+      <view class="dk-kicker">每日养鸟小知识 · {{knowledge.tag}}</view>
+      <view class="dk-title">{{knowledge.title}}</view>
+      <view class="dk-sub">{{knowledge.body}}</view>
+    </view>
+  </view>
+
+  <!-- 热帖排行 -->
+  <view class="hot-rank">
+    <view class="hr-head">
+      <view class="hr-title">热帖排行</view>
+      <view class="hr-sub">{{hot.length ? '按互动热度' : '内测实时榜'}}</view>
+    </view>
+    <view class="hr-empty" wx:if="{{!hot.length}}">还没有足够的社区帖子。发布第一条养鸟经验后，这里会自动生成热帖榜。</view>
+    <view class="hot-row" wx:for="{{hot}}" wx:key="id" data-id="{{item.id}}" bindtap="openPost">
+      <view class="hr-no">{{index+1}}</view>
+      <view class="hr-main">
+        <view class="hr-name">{{item.dispTitle}}</view>
+        <view class="hr-meta">♥ {{item.likes}} · 评论 {{item.commentCount}} · {{item.author}}</view>
+      </view>
+      <view class="hr-tag">{{item.chanName}}</view>
+    </view>
+  </view>
+
+  <!-- 快捷入口 -->
+  <view class="comm-quick">
+    <view class="cq" bindtap="goMyCircles">
+      <view class="cq-n">{{joinedCount}}</view>
+      <view class="cq-l">我的圈子</view>
+    </view>
+    <view class="cq" bindtap="goWaiting">
+      <view class="cq-n {{waiting>0?'alert':''}}">{{waiting}}</view>
+      <view class="cq-l">待回答求助</view>
+    </view>
+    <view class="cq" bindtap="goGuide">
+      <view class="cq-ic">🔍</view>
+      <view class="cq-l">鸟种图鉴</view>
+    </view>
+    <view class="cq" bindtap="goHome">
+      <view class="cq-ic">📋</view>
+      <view class="cq-l">最新动态</view>
+    </view>
+  </view>
+
+  <!-- 圈子列表 -->
+  <view class="section-head">
+    <view class="h">圈子</view>
+    <view class="sh-sub">进入感兴趣的圈子深入交流</view>
+  </view>
+  <view class="circle-list">
+    <view class="circle-card" wx:for="{{groups}}" wx:key="key" data-key="{{item.key}}" bindtap="enterCircle">
+      <image class="cc-ic" src="{{item.icon}}" mode="aspectFill"/>
+      <view class="cc-bd">
+        <view class="cc-name">{{item.name}}</view>
+        <view class="cc-sub">{{item.blurb}} · 已有 {{item.members}} 位</view>
+      </view>
+      <view class="cc-go">›</view>
+    </view>
+  </view>
+
+  <view class="page-pad"></view>
+</view>
+
+<!-- 每日小知识弹窗 -->
+<view class="mask {{showKnow?'show':''}}" bindtap="closeKnow"></view>
+<view class="sheet {{showKnow?'show':''}}">
+  <view class="sh-handle"></view>
+  <view class="dks-kicker">每日养鸟小知识 · {{knowledge.tag}}</view>
+  <view class="dks-title">{{knowledge.title}}</view>
+  <view class="dks-body">{{knowledge.body}}</view>
+  <view class="dks-src">小知识仅供参考，鸟宝出现异常请及时就医</view>
+  <view class="sh-actions">
+    <view class="btn ghost" bindtap="closeKnow">关闭</view>
+    <view class="btn accent" bindtap="knowGo">去讨论</view>
+  </view>
 </view>

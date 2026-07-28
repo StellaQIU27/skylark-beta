@@ -1,4 +1,114 @@
-<view class="ph">
-  <view class="ph-t">此页面正在迁移中</view>
-  <view class="ph-s">「circle」页面即将上线</view>
+<view class="page">
+  <!-- 圈子头 -->
+  <view class="circle-hero {{group.domain}}">
+    <image class="ch-logo" src="{{group.icon}}" mode="aspectFill"/>
+    <view class="ch-info">
+      <view class="ch-name">{{group.name}} <text class="beta-tag">内测圈子</text></view>
+      <view class="ch-blurb">{{group.blurb}}</view>
+      <view class="ch-row">
+        <view class="ch-members">已有 <text class="b">{{members}}</text> 位鸟友</view>
+        <view class="ch-join {{joined?'on':''}}" bindtap="toggleJoin">{{joined?'✓ 已加入':'+ 加入圈子'}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 置顶精华 -->
+  <block wx:if="{{pinned.length}}">
+    <view class="section-head">
+      <view class="h">置顶精华</view>
+      <view class="link-btn" wx:if="{{pinned.length>1}}" bindtap="toggleAllPinned">{{showAll?'收起':'查看全部 '+pinned.length+' 篇'}}</view>
+    </view>
+    <view class="pin-card" wx:for="{{shownPinned}}" wx:key="id" data-idx="{{index}}" bindtap="openPinned">
+      <view class="pin-badge">官方指南</view>
+      <view class="pin-head">
+        <view class="pin-av">官</view>
+        <view>
+          <view class="pin-author">{{item.author}}</view>
+          <view class="pin-time">{{item.time}}</view>
+        </view>
+      </view>
+      <view class="pin-title">{{item.title}}</view>
+      <view class="pin-body">{{item.body}}</view>
+      <view class="pin-src">{{item.source}}</view>
+    </view>
+  </block>
+
+  <!-- 圈内最新 -->
+  <view class="section-head">
+    <view class="h">圈内最新</view>
+    <view class="post-btn" bindtap="goCompose">✎ 在本圈发帖</view>
+  </view>
+
+  <view class="empty-card" wx:if="{{!list.length}}">
+    <view class="et">还没有动态</view>
+    <view class="es">来发圈里的第一条吧～</view>
+  </view>
+
+  <!-- 护理问答：单列 -->
+  <view class="ifeed" wx:if="{{isList && list.length}}">
+    <view class="ifeed-card" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="openPost">
+      <view class="if-main">
+        <view class="if-title">
+          <text wx:if="{{item.isHelp}}" class="ans {{item.answered?'done':'wait'}}">{{item.answered?'已回答':'待回答'}}</text>{{item.title||item.body}}
+        </view>
+        <view class="if-body" wx:if="{{item.title && item.body}}">{{item.body}}</view>
+        <view class="if-foot">
+          <text class="if-au">{{item.author}}</text>
+          <text class="if-meta">♥ {{item.likes}} · 回复 {{item.commentCount}}</text>
+        </view>
+      </view>
+      <image wx:if="{{item.photo}}" class="if-thumb" src="{{item.photo}}" mode="aspectFill"/>
+    </view>
+  </view>
+
+  <!-- 其它：双列瀑布 -->
+  <view class="feed-grid" wx:if="{{!isList && list.length}}">
+    <view class="fg-col">
+      <view class="xcard" wx:for="{{colA}}" wx:key="id" data-id="{{item.id}}" bindtap="openPost">
+        <view class="xc-cover" wx:if="{{item.photo}}">
+          <image src="{{item.photo}}" mode="widthFix"/>
+          <text class="xc-count" wx:if="{{item.photoCount>1}}">{{item.photoCount}}图</text>
+        </view>
+        <view class="xc-cover text {{item.domain}}" wx:else>{{item.title||item.body||'分享一刻'}}</view>
+        <view class="xc-body">
+          <view class="xc-title" wx:if="{{item.photo && (item.title||item.body)}}">{{item.title||item.body}}</view>
+          <view class="xc-foot">
+            <view class="xc-au"><view class="xa-av">{{item.initial}}</view><text class="xa-nm">{{item.author}}</text></view>
+            <text class="xc-like {{item.likedByMe?'on':''}}">♥ {{item.likes}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="fg-col">
+      <view class="xcard" wx:for="{{colB}}" wx:key="id" data-id="{{item.id}}" bindtap="openPost">
+        <view class="xc-cover" wx:if="{{item.photo}}">
+          <image src="{{item.photo}}" mode="widthFix"/>
+          <text class="xc-count" wx:if="{{item.photoCount>1}}">{{item.photoCount}}图</text>
+        </view>
+        <view class="xc-cover text {{item.domain}}" wx:else>{{item.title||item.body||'分享一刻'}}</view>
+        <view class="xc-body">
+          <view class="xc-title" wx:if="{{item.photo && (item.title||item.body)}}">{{item.title||item.body}}</view>
+          <view class="xc-foot">
+            <view class="xc-au"><view class="xa-av">{{item.initial}}</view><text class="xa-nm">{{item.author}}</text></view>
+            <text class="xc-like {{item.likedByMe?'on':''}}">♥ {{item.likes}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="page-pad"></view>
+</view>
+
+<!-- 置顶全文弹窗 -->
+<view class="mask {{showPin?'show':''}}" bindtap="closePin"></view>
+<view class="sheet {{showPin?'show':''}}">
+  <view class="sh-handle"></view>
+  <view class="dks-kicker">官方护理指南 · {{curPin.time}}</view>
+  <view class="dks-title">{{curPin.title}}</view>
+  <view class="dks-body">{{curPin.body}}</view>
+  <view class="dks-src">{{curPin.source}}</view>
+  <view class="sh-actions">
+    <view class="btn ghost" bindtap="closePin">关闭</view>
+  </view>
 </view>

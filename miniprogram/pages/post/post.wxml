@@ -1,4 +1,78 @@
-<view class="ph">
-  <view class="ph-t">此页面正在迁移中</view>
-  <view class="ph-s">「post」页面即将上线</view>
+<view class="page" wx:if="{{post}}">
+  <!-- 图片：单图 / 多图滑动 -->
+  <swiper wx:if="{{photos.length>1}}" class="pc" indicator-dots indicator-color="rgba(58,62,47,.25)"
+          indicator-active-color="#6B7A4C" circular="{{false}}" bindchange="onSwipe">
+    <swiper-item wx:for="{{photos}}" wx:key="*this">
+      <image src="{{item}}" mode="aspectFill" class="pc-img" data-src="{{item}}" bindtap="previewImg"/>
+    </swiper-item>
+  </swiper>
+  <view class="pc-count" wx:if="{{photos.length>1}}">{{cur+1}}/{{photos.length}}</view>
+  <image wx:if="{{photos.length===1}}" class="single-img" src="{{photos[0]}}" mode="widthFix"
+         data-src="{{photos[0]}}" bindtap="previewImg"/>
+
+  <!-- 正文 -->
+  <view class="body-card">
+    <view class="ph-row">
+      <view class="pav" bindtap="goUser">{{initial}}</view>
+      <view class="pmeta" bindtap="goUser">
+        <view class="pauthor">{{post.author}}</view>
+        <view class="ptime">{{post.time}}</view>
+      </view>
+      <view class="ptag {{post.domain}}">{{chanName}}</view>
+    </view>
+    <view class="ptitle" wx:if="{{post.title}}">{{post.title}}</view>
+    <view class="pbody" wx:if="{{post.body}}">{{post.body}}</view>
+    <view class="pfields" wx:if="{{fieldRows.length}}">
+      <view class="pf" wx:for="{{fieldRows}}" wx:key="k">
+        <text class="pfk">{{item.label}}</text><text class="pfv">{{item.v}}</text>
+      </view>
+    </view>
+    <view class="pspecies" wx:if="{{post.speciesName}}">{{post.speciesName}}</view>
+  </view>
+
+  <!-- 操作 -->
+  <view class="pd-actions">
+    <view class="pa {{post.likedByMe?'on':''}}" bindtap="toggleLike">♥ {{post.likedByMe?'已赞':'赞'}}{{post.likes?' · '+post.likes:''}}</view>
+    <view class="pa" bindtap="focusInput">💬 评论{{comments.length?' · '+comments.length:''}}</view>
+    <view class="pa" bindtap="sharePost">↗ 分享</view>
+    <view class="pa {{bookmarked?'on':''}}" bindtap="toggleBookmark">★ {{bookmarked?'已藏':'收藏'}}</view>
+  </view>
+  <view class="pd-owner" wx:if="{{mine}}">
+    <view class="po" bindtap="editPost">✎ 编辑</view>
+    <view class="po del" bindtap="deletePost">✕ 删除</view>
+  </view>
+
+  <!-- 评论 -->
+  <view class="cmt-list">
+    <view class="cmt-empty" wx:if="{{!comments.length}}">还没有评论，来说点什么吧～</view>
+    <view class="cmt {{item.isReply?'reply':''}}" wx:for="{{comments}}" wx:key="id">
+      <view class="cmt-av" data-uid="{{item.author_id}}" bindtap="goUserById">{{item.initial}}</view>
+      <view class="cmt-bd">
+        <view class="cmt-top">
+          <text class="cmt-au">{{item.author}}</text>
+          <text class="cmt-tm">{{item.time}}</text>
+        </view>
+        <view class="cmt-tx">{{item.text}}</view>
+        <view class="cmt-acts">
+          <text class="cmt-act {{item.liked?'on':''}}" data-id="{{item.id}}" bindtap="likeComment">♥ {{item.likes}}</text>
+          <text class="cmt-act" wx:if="{{!item.isReply}}" data-id="{{item.id}}" data-au="{{item.author}}" bindtap="startReply">回复</text>
+          <text class="cmt-act del" wx:if="{{item.mine}}" data-id="{{item.id}}" bindtap="deleteComment">删除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view style="height:180rpx"></view>
+</view>
+
+<!-- 评论输入 -->
+<view class="cmt-bar" wx:if="{{post}}">
+  <view class="reply-hint" wx:if="{{replyTo}}">
+    回复 @{{replyTo.author}}<text class="rh-x" bindtap="cancelReply">✕</text>
+  </view>
+  <view class="cb-row">
+    <input class="cb-input" placeholder="{{replyTo?'回复 @'+replyTo.author:'写下你的评论…'}}"
+           value="{{draft}}" bindinput="onInput" confirm-type="send" bindconfirm="submitComment" focus="{{inputFocus}}"/>
+    <view class="cb-send" bindtap="submitComment">发送</view>
+  </view>
 </view>
