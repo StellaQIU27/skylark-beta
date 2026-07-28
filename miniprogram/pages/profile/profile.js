@@ -178,6 +178,7 @@ Page({
   goFollowers() { wx.navigateTo({ url: '/pages/followers/followers' }); },
   goFavorites() { wx.navigateTo({ url: '/pages/favorites/favorites' }); },
   goDrafts() { wx.navigateTo({ url: '/pages/drafts/drafts' }); },
+  goHelp() { wx.navigateTo({ url: '/pages/help/help' }); },
   soon() { wx.showToast({ title: '即将推出', icon: 'none' }); },
   about() { wx.showToast({ title: 'Skylark · 雀跃 ' + VERSION, icon: 'none' }); }
 });

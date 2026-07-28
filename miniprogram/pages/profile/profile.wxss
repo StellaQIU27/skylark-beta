@@ -4,9 +4,9 @@
 .prof-top { background: linear-gradient(180deg, #E4EBDA 0%, transparent 80%); padding: 56rpx 40rpx 28rpx; position: relative; }
 .prof-actions { position: absolute; top: 40rpx; right: 32rpx; display: flex; gap: 12rpx; }
 .pa-btn {
-  width: 72rpx; height: 72rpx; border-radius: 24rpx; position: relative;
+  width: 76rpx; height: 76rpx; border-radius: 24rpx; position: relative;
   display: flex; align-items: center; justify-content: center;
-  font-size: 32rpx; color: var(--ink-soft);
+  font-size: 44rpx; color: var(--ink-soft);
 }
 .pa-btn.on::after { content: ''; position: absolute; top: 10rpx; right: 10rpx; width: 14rpx; height: 14rpx; border-radius: 50%; background: var(--terracotta); }
 .prof-me { display: flex; align-items: center; gap: 24rpx; }
@@ -69,8 +69,8 @@
 }
 .menu-row:last-child { border-bottom: none; }
 .mi {
-  width: 56rpx; height: 56rpx; border-radius: 18rpx; flex-shrink: 0;
-  background: var(--sage-tint); color: var(--sage-dark); font-size: 26rpx;
+  width: 64rpx; height: 64rpx; border-radius: 20rpx; flex-shrink: 0;
+  background: var(--sage-tint); color: var(--sage-dark); font-size: 34rpx;
   display: flex; align-items: center; justify-content: center;
 }
 .ml { flex: 1; font-size: 29rpx; color: var(--ink); }

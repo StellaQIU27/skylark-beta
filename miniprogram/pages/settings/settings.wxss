@@ -6,3 +6,37 @@
 .mc { color: var(--ink-mute); font-size: 25rpx; }
 .tip { font-size: 24rpx; color: var(--ink-soft); line-height: 1.6; margin: 28rpx 8rpx; }
 .danger { text-align: center; color: var(--terracotta); font-size: 28rpx; padding: 28rpx; background: var(--cream-warm); border: 2rpx solid var(--beige-border); border-radius: 32rpx; }
+
+/* 编辑资料弹窗 */
+.mask { position: fixed; inset: 0; background: rgba(30,32,24,.45); z-index: 300; opacity: 0; pointer-events: none; transition: opacity .25s; }
+.mask.show { opacity: 1; pointer-events: auto; }
+.sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 301;
+  background: var(--cream); border-radius: 56rpx 56rpx 0 0;
+  padding: 32rpx 40rpx calc(56rpx + env(safe-area-inset-bottom));
+  transform: translateY(100%); transition: transform .3s cubic-bezier(.2,.9,.3,1);
+}
+.sheet.show { transform: translateY(0); }
+.sh-handle { width: 72rpx; height: 8rpx; border-radius: 4rpx; background: var(--paper-dark); margin: 0 auto 24rpx; }
+.sh-title { font-weight: 700; font-size: 36rpx; margin-bottom: 24rpx; }
+.ap-wrap { position: relative; width: 180rpx; margin: 12rpx auto 10rpx; }
+.ap-img {
+  width: 180rpx; height: 180rpx; border-radius: 50%; overflow: hidden;
+  background: var(--sage-dark); color: #fff; font-size: 64rpx; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.ap-img image { width: 100%; height: 100%; }
+.ap-cam {
+  position: absolute; bottom: 4rpx; right: 4rpx;
+  width: 56rpx; height: 56rpx; border-radius: 50%;
+  background: var(--sage-dark); color: #fff; font-size: 24rpx;
+  display: flex; align-items: center; justify-content: center; border: 4rpx solid var(--cream);
+}
+.ap-hint { text-align: center; font-size: 22rpx; color: var(--ink-soft); margin-bottom: 28rpx; }
+.fld-l { font-size: 22rpx; color: var(--ink-mute); font-weight: 600; margin-bottom: 12rpx; }
+.ipt {
+  width: 100%; padding: 24rpx 28rpx; font-size: 29rpx;
+  background: var(--cream-warm); border: 2rpx solid var(--beige-border); border-radius: 24rpx;
+}
+.sh-actions { display: flex; gap: 20rpx; margin-top: 28rpx; }
+.sh-actions .btn { flex: 1; }

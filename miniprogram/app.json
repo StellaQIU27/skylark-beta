@@ -13,6 +13,7 @@
     "pages/user/user",
     "pages/album/album",
     "pages/settings/settings",
+    "pages/help/help",
     "pages/favorites/favorites",
     "pages/drafts/drafts",
     "pages/followers/followers",

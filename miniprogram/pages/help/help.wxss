@@ -1,0 +1,27 @@
+.page { min-height: 100vh; background: var(--cream); padding: 24rpx 32rpx 0; }
+.sec-title { font-weight: 700; font-size: 32rpx; color: var(--ink); margin: 28rpx 8rpx 18rpx; }
+
+.faq { background: var(--cream-warm); border: 2rpx solid var(--beige-border); border-radius: 28rpx; margin-bottom: 16rpx; padding: 26rpx 28rpx; }
+.fq { display: flex; align-items: center; gap: 16rpx; }
+.q { flex: 1; font-size: 29rpx; font-weight: 500; color: var(--ink); line-height: 1.5; }
+.ar { color: var(--ink-mute); font-size: 32rpx; transform: rotate(90deg); transition: transform .2s; }
+.ar.up { transform: rotate(-90deg); }
+.fa { font-size: 27rpx; color: var(--ink-soft); line-height: 1.7; margin-top: 16rpx; padding-top: 16rpx; border-top: 2rpx dashed var(--beige-border); }
+
+.fb-card { background: var(--cream-warm); border: 2rpx solid var(--beige-border); border-radius: 32rpx; padding: 28rpx; }
+.fb-tip { font-size: 25rpx; color: var(--ink-soft); margin-bottom: 20rpx; }
+.types { display: flex; gap: 14rpx; flex-wrap: wrap; margin-bottom: 20rpx; }
+.ty { padding: 12rpx 26rpx; border-radius: 26rpx; font-size: 25rpx; background: var(--paper); border: 2rpx solid var(--beige-border); color: var(--ink-soft); }
+.ty.on { background: var(--sage-dark); color: #fff; border-color: var(--sage-dark); font-weight: 600; }
+.fb-input { width: 100%; min-height: 200rpx; padding: 24rpx; font-size: 28rpx; line-height: 1.6; background: var(--paper); border: 2rpx solid var(--beige-border); border-radius: 24rpx; }
+.fb-count { text-align: right; font-size: 21rpx; color: var(--ink-mute); margin-top: 8rpx; }
+.fb-contact { width: 100%; padding: 22rpx 24rpx; font-size: 27rpx; background: var(--paper); border: 2rpx solid var(--beige-border); border-radius: 24rpx; margin-top: 12rpx; }
+
+.my-fb { background: var(--cream-warm); border: 2rpx solid var(--beige-border); border-radius: 28rpx; padding: 24rpx 28rpx; margin-bottom: 16rpx; }
+.mf-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12rpx; }
+.mf-ty { font-size: 21rpx; font-weight: 600; color: var(--sage-dark); background: var(--sage-tint); padding: 4rpx 16rpx; border-radius: 14rpx; }
+.mf-tm { font-size: 21rpx; color: var(--ink-mute); }
+.mf-tx { font-size: 27rpx; color: var(--ink); line-height: 1.6; }
+.mf-reply { font-size: 25rpx; color: var(--sage-dark); background: var(--sage-tint); border-radius: 18rpx; padding: 16rpx 20rpx; margin-top: 14rpx; line-height: 1.6; }
+
+.foot { text-align: center; font-size: 22rpx; color: var(--ink-mute); margin: 40rpx 0 20rpx; }

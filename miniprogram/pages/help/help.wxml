@@ -1,0 +1,43 @@
+<view class="page">
+  <!-- 常见问题 -->
+  <view class="sec-title">常见问题</view>
+  <view class="faq" wx:for="{{faqs}}" wx:key="q" data-i="{{index}}" bindtap="toggle">
+    <view class="fq">
+      <text class="q">{{item.q}}</text>
+      <text class="ar {{item.open?'up':''}}">›</text>
+    </view>
+    <view class="fa" wx:if="{{item.open}}">{{item.a}}</view>
+  </view>
+
+  <!-- 意见反馈 -->
+  <view class="sec-title">意见反馈</view>
+  <view class="fb-card">
+    <view class="fb-tip">遇到问题或有建议？告诉我们，会认真看每一条。</view>
+    <view class="types">
+      <view class="ty {{type===item?'on':''}}" wx:for="{{types}}" wx:key="*this"
+            data-t="{{item}}" bindtap="pickType">{{item}}</view>
+    </view>
+    <textarea class="fb-input" placeholder="描述你遇到的问题或建议…" value="{{text}}"
+              bindinput="onText" maxlength="500" auto-height/>
+    <view class="fb-count">{{text.length}}/500</view>
+    <input class="fb-contact" placeholder="联系方式（选填，方便我们回复你）"
+           value="{{contact}}" bindinput="onContact" maxlength="50"/>
+    <view class="btn accent" style="margin-top:24rpx" bindtap="submit">提交反馈</view>
+  </view>
+
+  <!-- 我的反馈记录 -->
+  <block wx:if="{{mine.length}}">
+    <view class="sec-title">我的反馈</view>
+    <view class="my-fb" wx:for="{{mine}}" wx:key="_id">
+      <view class="mf-top">
+        <text class="mf-ty">{{item.type}}</text>
+        <text class="mf-tm">{{item.timeText}}</text>
+      </view>
+      <view class="mf-tx">{{item.text}}</view>
+      <view class="mf-reply" wx:if="{{item.reply}}">官方回复：{{item.reply}}</view>
+    </view>
+  </block>
+
+  <view class="foot">Skylark · 雀跃 {{version}}</view>
+  <view class="page-pad"></view>
+</view>
