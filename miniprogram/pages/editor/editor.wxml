@@ -1,4 +1,226 @@
-<view class="ph">
-  <view class="ph-t">此页面正在迁移中</view>
-  <view class="ph-s">「editor」页面即将上线</view>
+<!-- ========== 发帖 ========== -->
+<view class="page" wx:if="{{mode==='post'}}">
+  <view class="fld">
+    <view class="fld-l">发到哪个圈子</view>
+    <view class="chips">
+      <view class="chip {{group===item.key?'on':''}}" wx:for="{{groups}}" wx:key="key"
+            data-key="{{item.key}}" bindtap="pickGroup">{{item.name}}</view>
+    </view>
+  </view>
+
+  <input class="ipt" placeholder="标题（选填）" value="{{title}}" bindinput="onTitle" maxlength="40"/>
+  <textarea class="txt" placeholder="说点什么……" value="{{body}}" bindinput="onBody" maxlength="1000" auto-height/>
+
+  <!-- 结构化字段（求助/观鸟） -->
+  <block wx:if="{{fields.length}}">
+    <view class="fld" wx:for="{{fields}}" wx:key="k">
+      <view class="fld-l">{{item.label}}</view>
+      <input class="ipt" placeholder="{{item.ph}}" value="{{item.v}}" data-k="{{item.k}}" bindinput="onField"/>
+    </view>
+  </block>
+
+  <!-- 配图 -->
+  <view class="photos">
+    <view class="pw" wx:for="{{photos}}" wx:key="*this">
+      <image src="{{item}}" mode="aspectFill" data-src="{{item}}" bindtap="previewPhoto"/>
+      <view class="pw-rm" data-i="{{index}}" catchtap="removePhoto">✕</view>
+      <view class="pw-ord">
+        <view class="pw-mv {{index===0?'off':''}}" data-i="{{index}}" data-d="-1" catchtap="movePhoto">‹</view>
+        <view class="pw-n">{{index+1}}</view>
+        <view class="pw-mv {{index===photos.length-1?'off':''}}" data-i="{{index}}" data-d="1" catchtap="movePhoto">›</view>
+      </view>
+    </view>
+  </view>
+  <view class="add-photo" wx:if="{{photos.length<6}}" bindtap="addPhoto">📷 添加配图（{{photos.length}}/6）</view>
+
+  <view class="acts">
+    <view class="btn ghost" bindtap="cancel">取消</view>
+    <view class="btn ghost" bindtap="saveDraft">存草稿</view>
+    <view class="btn accent" bindtap="publish">{{editId ? '更新' : '发布'}}</view>
+  </view>
+  <view class="page-pad"></view>
+</view>
+
+<!-- ========== 爱鸟档案 ========== -->
+<view class="page" wx:if="{{mode==='pet'}}">
+  <view class="avatar-pick" bindtap="pickPetPhoto">
+    <view class="ap-img" style="background:{{petPhoto ? '#EDE6DA' : petColor}}">
+      <image wx:if="{{petPhoto}}" src="{{petPhoto}}" mode="aspectFill"/>
+      <image wx:elif="{{petAvatar}}" src="{{petAvatar}}" mode="aspectFit"/>
+      <text wx:else>鸟</text>
+    </view>
+    <view class="ap-cam">📷</view>
+  </view>
+  <view class="ap-hint">点击上传爱鸟照片</view>
+
+  <view class="fld">
+    <view class="fld-l">品种</view>
+    <view class="species-grid">
+      <view class="sp {{(!custom && petSpecies===item.name)?'on':''}}" wx:for="{{speciesList}}" wx:key="name"
+            data-name="{{item.name}}" bindtap="pickSpecies">
+        <view class="sa" style="background:{{item.color}}"><image src="{{item.avatar}}" mode="aspectFit"/></view>
+        <view class="sn">{{item.short}}</view>
+      </view>
+      <view class="sp {{custom?'on':''}}" bindtap="pickCustom">
+        <view class="sa plus">＋</view>
+        <view class="sn">自定义</view>
+      </view>
+    </view>
+    <input wx:if="{{custom}}" class="ipt" style="margin-top:16rpx" placeholder="输入品种，如：折衷鹦鹉"
+           value="{{petSpecies}}" bindinput="onCustomSpecies" maxlength="16"/>
+  </view>
+
+  <view class="fld">
+    <view class="fld-l">名字</view>
+    <input class="ipt" placeholder="给 TA 起个名字" value="{{petName}}" bindinput="onPetName" maxlength="12"/>
+  </view>
+
+  <view class="fld">
+    <view class="fld-l">出生年月</view>
+    <picker mode="date" fields="month" value="{{petBirth}}" bindchange="pickBirth">
+      <view class="ipt">{{petBirth || '请选择'}}</view>
+    </picker>
+  </view>
+
+  <view class="fld">
+    <view class="fld-l">性别</view>
+    <view class="gender-row">
+      <view class="gd {{petGender==='m'?'on':''}}" data-g="m" bindtap="pickGender">♂ 男孩</view>
+      <view class="gd {{petGender==='f'?'on':''}}" data-g="f" bindtap="pickGender">♀ 女孩</view>
+    </view>
+  </view>
+
+  <view class="acts">
+    <view class="btn ghost" bindtap="cancel">取消</view>
+    <view class="btn accent" bindtap="savePet">保存</view>
+  </view>
+  <view class="page-pad"></view>
+</view>
+
+<!-- ========== 每日记录 ========== -->
+<view class="page" wx:if="{{mode==='record'}}">
+  <view class="ed-head">
+    <view class="ed-pet">{{pet.name}} · {{pet.species}}</view>
+    <view class="ed-date" bindtap="openDatePicker">{{dateLabel}} ›</view>
+  </view>
+
+  <!-- 体重 -->
+  <view class="rec-block" bindtap="openWeight">
+    <view class="rb-top">
+      <view class="rt">体重记录</view>
+      <view class="rv">{{rec.weight ? rec.weight : '—'}}<text class="u"> g</text></view>
+    </view>
+    <view class="rs">{{rec.weight ? '点击修改' : '点击记录体重'}}</view>
+  </view>
+
+  <!-- 喂食 -->
+  <view class="rec-block">
+    <view class="rb-top">
+      <view class="rt">饮食记录</view>
+      <view class="rv sm">{{rec.feedings.length}} 次</view>
+    </view>
+    <view class="feed-row" wx:for="{{rec.feedings}}" wx:key="id">
+      <view class="fr-time">{{item.time}}</view>
+      <view class="fr-foods">{{item.foods.length ? item.foodsText : '未选择食物'}}</view>
+      <view class="fr-del" data-i="{{index}}" catchtap="removeFeeding">✕</view>
+    </view>
+    <view class="add-mini" bindtap="openFeeding">＋ 添加一次喂食</view>
+  </view>
+
+  <!-- 日照 -->
+  <view class="rec-block">
+    <view class="rb-top">
+      <view class="rt">日照记录</view>
+      <view class="rv">{{rec.sunMinutes || 0}}<text class="u"> 分钟</text></view>
+    </view>
+    <view class="sun-opts">
+      <view class="so {{rec.sunMinutes===item?'on':''}}" wx:for="{{[0,15,30,45,60]}}" wx:key="*this"
+            data-v="{{item}}" bindtap="pickSun">{{item}}分</view>
+    </view>
+  </view>
+
+  <!-- 洗澡 -->
+  <view class="rec-block">
+    <view class="rb-top"><view class="rt">洗澡记录</view></view>
+    <view class="bath-opts">
+      <view class="bo {{rec.bath==='active'?'on':''}}" data-v="active" bindtap="pickBath">主动洗澡</view>
+      <view class="bo {{rec.bath==='spray'?'on':''}}" data-v="spray" bindtap="pickBath">喷水洗澡</view>
+      <view class="bo {{rec.bath==='none'?'on':''}}" data-v="none" bindtap="pickBath">未洗澡</view>
+    </view>
+  </view>
+
+  <!-- 备注 + 配图 -->
+  <view class="rec-block">
+    <view class="rb-top"><view class="rt">今日备注</view></view>
+    <textarea class="txt sm" placeholder="记录今天的小美好…" value="{{rec.notes}}" bindinput="onNotes" maxlength="300" auto-height/>
+    <view class="photos sm">
+      <view class="pw sm" wx:for="{{rec.photos}}" wx:key="*this">
+        <image src="{{item}}" mode="aspectFill" data-src="{{item}}" bindtap="previewRecPhoto"/>
+        <view class="pw-rm" data-i="{{index}}" catchtap="removeRecPhoto">✕</view>
+      </view>
+    </view>
+    <view class="add-mini" wx:if="{{rec.photos.length<9}}" bindtap="addRecPhoto">📷 添加照片</view>
+  </view>
+
+  <view class="acts">
+    <view class="btn accent full" bindtap="saveRecord">保存今日记录</view>
+  </view>
+  <view class="page-pad"></view>
+</view>
+
+<!-- 体重弹窗 -->
+<view class="mask {{showWeight?'show':''}}" bindtap="closeWeight"></view>
+<view class="sheet {{showWeight?'show':''}}">
+  <view class="sh-handle"></view>
+  <view class="sh-title">记录体重 · {{pet.name}}</view>
+  <view class="stepper">
+    <view class="st-btn" bindtap="bumpDown">−</view>
+    <view class="st-val"><input type="digit" value="{{weightInput}}" bindinput="onWeightInput"/><text class="u">g</text></view>
+    <view class="st-btn" bindtap="bumpUp">＋</view>
+  </view>
+  <view class="sh-hint">建议每日早晨同一时间称重</view>
+  <view class="sh-actions">
+    <view class="btn ghost" bindtap="closeWeight">取消</view>
+    <view class="btn accent" bindtap="saveWeight">保存</view>
+  </view>
+</view>
+
+<!-- 喂食弹窗 -->
+<view class="mask {{showFeeding?'show':''}}" bindtap="closeFeeding"></view>
+<view class="sheet {{showFeeding?'show':''}}">
+  <view class="sh-handle"></view>
+  <view class="sh-title">添加喂食</view>
+  <view class="fld">
+    <view class="fld-l">时间</view>
+    <picker mode="time" value="{{feedTime}}" bindchange="pickFeedTime">
+      <view class="ipt">{{feedTime}}</view>
+    </picker>
+  </view>
+  <view class="fld">
+    <view class="fld-l">食物（可多选）</view>
+    <view class="food-grid">
+      <view class="fo {{item.on?'on':''}}" wx:for="{{foodOpts}}" wx:key="key"
+            data-key="{{item.key}}" bindtap="toggleFood">
+        <image src="{{item.img}}" mode="aspectFit"/>
+        <text>{{item.key}}</text>
+      </view>
+    </view>
+  </view>
+  <view class="sh-actions">
+    <view class="btn ghost" bindtap="closeFeeding">取消</view>
+    <view class="btn accent" bindtap="saveFeeding">保存</view>
+  </view>
+</view>
+
+<!-- 日期弹窗 -->
+<view class="mask {{showDate?'show':''}}" bindtap="closeDate"></view>
+<view class="sheet {{showDate?'show':''}}">
+  <view class="sh-handle"></view>
+  <view class="sh-title">选择日期</view>
+  <picker mode="date" value="{{date}}" bindchange="pickDate">
+    <view class="ipt">{{date}}</view>
+  </picker>
+  <view class="sh-actions">
+    <view class="btn ghost" bindtap="closeDate">关闭</view>
+  </view>
 </view>

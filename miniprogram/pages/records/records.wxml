@@ -1,4 +1,154 @@
-<view class="ph">
-  <view class="ph-t">此页面正在迁移中</view>
-  <view class="ph-s">「records」页面即将上线</view>
+<view class="page">
+  <view class="rec-head">
+    <view class="tabs-inline"><view class="t on">{{listMode ? '我的爱鸟' : '记录'}}</view></view>
+    <view class="rec-manage-btn" wx:if="{{listMode && pets.length}}" bindtap="toggleManage">
+      ✎ {{manageMode ? '完成' : '管理'}}
+    </view>
+  </view>
+
+  <!-- 爱鸟列表 -->
+  <block wx:if="{{listMode}}">
+    <view class="section-head">
+      <view class="h">选择一只爱鸟</view>
+      <view class="sh-sub">共 {{pets.length}} 只</view>
+    </view>
+
+    <view class="empty-card" wx:if="{{!pets.length}}">
+      <view class="et">还没有爱鸟档案</view>
+      <view class="es">点击下方「添加新爱鸟」\n为你的第一只小鸟建档。</view>
+    </view>
+
+    <view class="pet-list">
+      <view class="pet-card {{manageMode?'shake':''}}" wx:for="{{pets}}" wx:key="id"
+            data-id="{{item.id}}" bindtap="tapPet">
+        <view class="pet-del" wx:if="{{manageMode}}" data-id="{{item.id}}" catchtap="deletePet">✕</view>
+        <view class="pav" style="background:{{item.photo ? '#EDE6DA' : item.color}}">
+          <image src="{{item.avatar}}" mode="{{item.photo ? 'aspectFill' : 'aspectFit'}}"/>
+        </view>
+        <view class="pname">{{item.name}} <text class="gender {{item.gender}}">{{item.gender==='m'?'♂':'♀'}}</text></view>
+        <view class="pspec">{{item.species}}</view>
+        <view class="page-age">{{item.ageText}}</view>
+        <view class="pweight">{{item.weightText}}<text class="u"> g</text></view>
+        <view class="pdays">已记录 <text class="b">{{item.dayCount}}</text> 天</view>
+      </view>
+    </view>
+
+    <view class="add-pet-row" bindtap="addPet">
+      <view class="plus">+</view>
+      <view>添加新爱鸟</view>
+    </view>
+  </block>
+
+  <!-- 单只鸟时间线 -->
+  <block wx:else>
+    <view class="tl-back" bindtap="backToList">‹ 我的爱鸟</view>
+
+    <view class="tl-header">
+      <view class="tlav" style="background:{{pet.photo ? '#EDE6DA' : pet.color}}">
+        <image src="{{pet.avatar}}" mode="{{pet.photo ? 'aspectFill' : 'aspectFit'}}"/>
+      </view>
+      <view class="tl-info">
+        <view class="tlname">{{pet.name}} <text class="gender {{pet.gender}}">{{pet.gender==='m'?'♂':'♀'}}</text></view>
+        <view class="tlsub">{{pet.species}} · {{pet.ageText}}</view>
+        <view class="tlstats">
+          <text>体重 <text class="b">{{pet.weightText}}g</text></text>
+          <text>均值 <text class="b">{{avgWeight}}</text></text>
+          <text>共 <text class="b">{{dayCount}}</text> 天</text>
+        </view>
+      </view>
+      <view class="tledit" data-id="{{pet.id}}" catchtap="editPet">✎ 编辑</view>
+    </view>
+
+    <!-- 体重走势 -->
+    <view class="tl-chart-card">
+      <view class="ch">体重走势（近 7 天）</view>
+      <view class="chart-wrap">
+        <view class="ylab"><text>{{yMax}}</text><text>{{yMid}}</text><text>{{yMin}}</text></view>
+        <view class="bars">
+          <view class="bar-col" wx:for="{{chart}}" wx:key="date">
+            <view class="bar-val" wx:if="{{item.w}}">{{item.w}}</view>
+            <view class="bar" style="height:{{item.h}}%"></view>
+            <view class="bar-lab">{{item.label}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 换羽期 -->
+    <view class="molt-card" bindtap="openMolt">
+      <view class="mc-ic {{molt.cls}}">🪶</view>
+      <view class="mc-bd">
+        <view class="mc-t">换羽期{{molt.label ? '' : '记录'}}
+          <text class="molt-tag {{molt.cls}}" wx:if="{{molt.label}}">{{molt.label}}</text>
+        </view>
+        <view class="mc-s">{{molt.range || '记录开始与结束时间，关注换羽状态'}}</view>
+      </view>
+      <view class="mc-go">{{molt.range ? '✎' : '记录 ›'}}</view>
+    </view>
+
+    <!-- 日记 -->
+    <view class="section-head">
+      <view class="h">日记</view>
+      <view class="sh-sub">共 {{dayCount}} 条</view>
+    </view>
+
+    <view class="add-record-box">
+      <view class="add-record-btn" bindtap="newRecord">✎ 添加新记录</view>
+    </view>
+
+    <view class="empty-card" wx:if="{{!records.length}}">
+      <view class="et">还没有记录</view>
+      <view class="es">点击上方「添加新记录」\n开始记录爱鸟的每一天。</view>
+    </view>
+
+    <view class="hist-list">
+      <block wx:for="{{records}}" wx:key="date">
+        <view class="hist-month" wx:if="{{item.monthHead}}">{{item.monthHead}}</view>
+        <view class="hist-item" data-date="{{item.date}}" bindtap="openRecord">
+          <view class="hh">
+            <view class="hd">{{item.dayLabel}}</view>
+            <view class="hwd">周{{item.weekday}}</view>
+            <view class="hwv" wx:if="{{item.weight}}">{{item.weight}}<text class="u">g</text>
+              <text class="d {{item.deltaDown?'dn':''}}" wx:if="{{item.delta}}">{{item.delta}}</text>
+            </view>
+          </view>
+          <view class="hrow">
+            <view class="hk">🌿 {{item.foodsText}}</view>
+            <view class="hk">🛁 {{item.bathText}}</view>
+            <view class="hk">☀️ {{item.sunText}}</view>
+          </view>
+          <view class="hnote" wx:if="{{item.notes}}">{{item.notes}}</view>
+          <view class="hphotos" wx:if="{{item.photos.length}}">
+            <image wx:for="{{item.photos}}" wx:for-item="ph" wx:key="*this" src="{{ph}}" mode="aspectFill"/>
+          </view>
+        </view>
+      </block>
+    </view>
+  </block>
+
+  <view class="page-pad"></view>
+</view>
+
+<!-- 换羽期弹窗 -->
+<view class="mask {{showMolt?'show':''}}" bindtap="closeMolt"></view>
+<view class="sheet {{showMolt?'show':''}}">
+  <view class="sh-handle"></view>
+  <view class="sh-title">换羽期记录</view>
+  <view class="fld">
+    <view class="fld-l">开始日期</view>
+    <picker mode="date" value="{{moltStart}}" bindchange="pickMoltStart">
+      <view class="fld-v">{{moltStart || '请选择'}}</view>
+    </picker>
+  </view>
+  <view class="fld">
+    <view class="fld-l">结束日期（换羽结束后再填）</view>
+    <picker mode="date" value="{{moltEnd}}" bindchange="pickMoltEnd">
+      <view class="fld-v">{{moltEnd || '请选择'}}</view>
+    </picker>
+  </view>
+  <view class="del-row" wx:if="{{moltStart}}" bindtap="clearMolt">清除换羽记录</view>
+  <view class="sh-actions">
+    <view class="btn ghost" bindtap="closeMolt">取消</view>
+    <view class="btn accent" bindtap="saveMolt">保存</view>
+  </view>
 </view>
