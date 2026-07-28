@@ -39,5 +39,7 @@
     ]
   },
   "style": "v2",
+  "renderer": "webview",
+  "lazyCodeLoading": "requiredComponents",
   "sitemapLocation": "sitemap.json"
 }

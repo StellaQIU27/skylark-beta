@@ -29,30 +29,23 @@
   <!-- 三个入口 -->
   <view class="feature-row">
     <view class="fcard fc1" bindtap="goRecords">
+      <view class="fc-fade"></view>
       <view class="ft">我的爱鸟</view>
       <view class="fs">记录成长与健康</view>
-      <image class="fbg" src="/images/my-bird.png" mode="aspectFill"/>
+      <view class="fi">›</view>
     </view>
     <view class="fcard fc2" bindtap="goCommunity">
+      <view class="fc-fade"></view>
       <view class="ft">社区</view>
       <view class="fs">交流经验与心得</view>
-      <image class="fbg" src="/images/community.png" mode="aspectFill"/>
+      <view class="fi">›</view>
     </view>
     <view class="fcard fc3 soon" bindtap="soonTip">
+      <view class="fc-fade"></view>
       <view class="soon-badge">待开发</view>
       <view class="ft">识鸟</view>
       <view class="fs">拍照识别鸟种</view>
-      <image class="fbg" src="/images/find-bird.png" mode="aspectFill"/>
-    </view>
-  </view>
-
-  <!-- 每日小知识 -->
-  <view class="daily" wx:if="{{knowledge}}" bindtap="openKnowledge">
-    <image class="dk-illu" src="/images/daily-knowledge-bird.png" mode="aspectFit"/>
-    <view class="dk-body">
-      <view class="dk-kicker">每日养鸟小知识 · {{knowledge.tag}}</view>
-      <view class="dk-title">{{knowledge.title}}</view>
-      <view class="dk-sub">{{knowledge.body}}</view>
+      <view class="fi">›</view>
     </view>
   </view>
 
