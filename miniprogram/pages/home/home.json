@@ -1,4 +1,5 @@
 {
-  "navigationBarTitleText": "雀跃",
-  "usingComponents": {}, "enablePullDownRefresh": true
+  "navigationBarTitleText": "雀跃 · 鸟宝养护记录",
+  "usingComponents": {},
+  "enablePullDownRefresh": true
 }
