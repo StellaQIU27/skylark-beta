@@ -26,7 +26,7 @@
   background: var(--cream-warm); border: 2rpx solid var(--beige-border);
   border-radius: 28rpx; padding: 22rpx 28rpx;
 }
-.tk-ic { font-size: 26rpx; }
+.tk-ic { width: 32rpx; height: 32rpx; flex-shrink: 0; }
 .tk-tx { flex: 1; font-size: 27rpx; color: var(--ink); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .tk-go { color: var(--ink-mute); font-size: 32rpx; }
 

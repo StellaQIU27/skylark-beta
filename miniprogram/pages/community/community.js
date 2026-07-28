@@ -22,7 +22,9 @@ Page({
     const day = Math.floor((d - start) / 86400000);
     this.setData({
       knowledge: DAILY_KNOWLEDGE[day % DAILY_KNOWLEDGE.length],
-      today: `${d.getMonth() + 1}月${d.getDate()}日`
+      today: `${d.getMonth() + 1}月${d.getDate()}日`,
+      // 先渲染圈子（含 logo），云端人数稍后回填
+      groups: S.GROUPS.map(g => ({ key: g.key, name: g.name, blurb: g.blurb, icon: g.icon, members: 0 }))
     });
   },
 

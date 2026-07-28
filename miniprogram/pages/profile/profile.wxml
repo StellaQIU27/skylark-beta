@@ -2,8 +2,8 @@
   <!-- 顶部资料 -->
   <view class="prof-top">
     <view class="prof-actions">
-      <view class="pa-btn" bindtap="goSettings">⚙</view>
-      <view class="pa-btn {{unread>0?'on':''}}" bindtap="goNotifications">🔔</view>
+      <view class="pa-btn" bindtap="goSettings"><image src="/images/icon-settings.png" mode="aspectFit"/></view>
+      <view class="pa-btn {{unread>0?'on':''}}" bindtap="goNotifications"><image src="/images/icon-bell.png" mode="aspectFit"/></view>
     </view>
     <view class="prof-me">
       <view class="av" bindtap="editProfile">

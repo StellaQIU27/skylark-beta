@@ -21,7 +21,7 @@
 
   <!-- 滚动通知条 -->
   <view class="ticker" wx:if="{{ticker}}" bindtap="tickerTap">
-    <text class="tk-ic">🔔</text>
+    <image class="tk-ic" src="/images/icon-bell.png" mode="aspectFit"/>
     <text class="tk-tx">{{ticker.text}}</text>
     <text class="tk-go">›</text>
   </view>
