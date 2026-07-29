@@ -248,6 +248,39 @@ async function markNotifsRead() {
   } catch (e) {}
 }
 
+/* ---------- 内容安全检测 ---------- */
+// 返回 true 表示可以发布；false 表示被拦截（已提示用户）
+async function checkContent(text, fileID, scene) {
+  try {
+    const res = await wx.cloud.callFunction({
+      name: 'checkContent',
+      data: { text: text || '', fileID: fileID || '', scene: scene || 2 }
+    });
+    const r = res.result || {};
+    if (r.pass === false) {
+      wx.showModal({
+        title: '内容未通过审核',
+        content: r.reason || '内容不合规，请修改后再发布',
+        showCancel: false
+      });
+      return false;
+    }
+    return true;
+  } catch (e) {
+    // 云函数未部署或异常时不阻断（避免内测期发不出内容）
+    console.warn('内容检测不可用', e);
+    return true;
+  }
+}
+
+/* ---------- 埋点 ---------- */
+function track(name, props) {
+  try {
+    wx.cloud.callFunction({ name: 'track', data: { name, props: props || {} } })
+      .catch(() => {});
+  } catch (e) {}
+}
+
 /* ---------- 工具 ---------- */
 function fmtTime(ts) {
   if (!ts) return '';
@@ -274,5 +307,6 @@ module.exports = {
   fetchCircleCounts, joinCircle,
   fetchFollows, toggleFollow,
   fetchNotifications, addNotification, markNotifsRead,
-  fmtTime, todayISO, isMine
+  fmtTime, todayISO, isMine,
+  checkContent, track
 };

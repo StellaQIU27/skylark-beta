@@ -86,8 +86,15 @@ Page({
       }
     });
   },
-  saveProfile() {
+  async saveProfile() {
     const name = (this.data.tmpName || '').trim() || '雀跃用户';
+    // 昵称内容检测
+    if (name !== '雀跃用户') {
+      wx.showLoading({ title: '检测中' });
+      const safe = await S.checkContent(name, '', 1);
+      wx.hideLoading();
+      if (!safe) return;
+    }
     const st = S.getState();
     st.user = { name, avatar: this.data.tmpAvatar || null };
     S.saveState();

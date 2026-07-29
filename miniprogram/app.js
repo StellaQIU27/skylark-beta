@@ -38,6 +38,13 @@ App({
     this.globalData.user = u || { name: '雀跃用户', avatar: null };
     this.globalData.ready = true;
     if (this.readyCallback) this.readyCallback(this.globalData.openid);
+    // 启动埋点（用于统计激活与留存）
+    try {
+      wx.cloud.callFunction({
+        name: 'track',
+        data: { name: 'app_launch', props: { sys: (wx.getSystemInfoSync() || {}).platform || '' } }
+      }).catch(() => {});
+    } catch (e) {}
   },
 
   // 页面可等待 openid 就绪

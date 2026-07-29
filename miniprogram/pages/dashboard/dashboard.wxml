@@ -1,0 +1,47 @@
+<view class="page">
+  <view class="loading" wx:if="{{loading}}">加载中…</view>
+  <view class="err" wx:if="{{err}}">{{err}}</view>
+
+  <block wx:if="{{!loading && !err}}">
+    <view class="sec">核心指标</view>
+    <view class="kpis">
+      <view class="kpi" wx:for="{{kpis}}" wx:key="k">
+        <view class="kv">{{item.v}}</view>
+        <view class="kl">{{item.k}}</view>
+      </view>
+    </view>
+
+    <view class="sec">每日活跃</view>
+    <view class="card">
+      <view class="dau-row" wx:for="{{dau}}" wx:key="day">
+        <text class="d">{{item.day}}</text>
+        <view class="bar" style="width:{{item.w}}%"></view>
+        <text class="n">{{item.users}}</text>
+      </view>
+      <view class="empty" wx:if="{{!dau.length}}">还没有活跃数据</view>
+    </view>
+
+    <view class="sec">行为分布</view>
+    <view class="card">
+      <view class="ev" wx:for="{{events}}" wx:key="name">
+        <text class="en">{{item.name}}</text><text class="ec">{{item.count}}</text>
+      </view>
+      <view class="empty" wx:if="{{!events.length}}">还没有埋点数据</view>
+    </view>
+
+    <view class="sec">用户明细</view>
+    <view class="card">
+      <view class="uh">
+        <text class="c1">用户</text><text class="c2">活跃天</text><text class="c3">记录</text><text class="c4">帖/评</text>
+      </view>
+      <view class="ur" wx:for="{{users}}" wx:key="openid">
+        <text class="c1">{{item.openid}}</text>
+        <text class="c2">{{item.activeDays}}</text>
+        <text class="c3">{{item.records}}</text>
+        <text class="c4">{{item.posts}}/{{item.comments}}</text>
+      </view>
+      <view class="empty" wx:if="{{!users.length}}">暂无用户数据</view>
+    </view>
+  </block>
+  <view class="page-pad"></view>
+</view>

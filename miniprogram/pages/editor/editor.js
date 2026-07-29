@@ -146,6 +146,13 @@ Page({
       wx.showToast({ title: '写点什么再发布吧', icon: 'none' }); return;
     }
     const domain = (S.CHAN[this.data.channel] || {}).domain || 'general';
+
+    // 内容安全检测（文本 + 首图）
+    wx.showLoading({ title: '检测中' });
+    const safe = await S.checkContent(title + '\n' + body, this.data.photos[0], 3);
+    wx.hideLoading();
+    if (!safe) return;
+
     wx.showLoading({ title: this.data.editId ? '更新中' : '发布中' });
     try {
       if (this.data.editId) {
@@ -154,6 +161,7 @@ Page({
         });
       } else {
         await S.addPost({ channel: this.data.channel, domain, title, body, photos: this.data.photos, fields });
+        S.track('post_publish', { channel: this.data.channel, photos: this.data.photos.length });
       }
       wx.hideLoading();
       wx.showToast({ title: this.data.editId ? '已更新' : '已发布', icon: 'none' });
@@ -224,6 +232,7 @@ Page({
         age: '新成员', weight: 0, color, initial: name[0], photo: this.data.petPhoto || null
       });
       st.activePetId = id;
+      S.track('pet_add', { species });
     }
     S.saveState();
     wx.showToast({ title: '已保存', icon: 'none' });
@@ -368,6 +377,13 @@ Page({
     }
     st.recordDays = Object.keys(st.records[pet.id]).length;
     S.saveState();
+    S.track('record_save', {
+      date: this.data.date,
+      hasWeight: !!r.weight,
+      feedings: (r.feedings || []).length,
+      photos: (r.photos || []).length,
+      totalDays: st.recordDays
+    });
     wx.showToast({ title: '记录已保存', icon: 'none' });
     setTimeout(() => wx.navigateBack(), 600);
   },

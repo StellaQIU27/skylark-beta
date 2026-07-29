@@ -104,9 +104,17 @@ Page({
     if (!text) { wx.showToast({ title: '写点什么再发送', icon: 'none' }); return; }
     const p = this.data.post;
     const parent = this.data.replyTo ? this.data.replyTo.id : null;
+
+    // 内容安全检测
+    wx.showLoading({ title: '检测中' });
+    const safe = await S.checkContent(text, '', 2);
+    wx.hideLoading();
+    if (!safe) return;
+
     wx.showLoading({ title: '发送中' });
     try {
       await S.addComment(p.id, text, parent);
+      S.track('comment_add', { postId: p.id, isReply: !!parent });
       if (p.author_id && p.author_id !== getApp().globalData.openid) {
         S.addNotification({
           recipientId: p.author_id, actor: (S.getState().user || {}).name || '鸟友',
