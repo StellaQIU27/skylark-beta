@@ -74,7 +74,7 @@
         </view>
         <view class="cmt-tx">{{item.text}}</view>
         <view class="cmt-acts">
-          <text class="cmt-act {{item.liked?'on':''}}" data-id="{{item.id}}" bindtap="likeComment">♥ {{item.likes}}</text>
+          <view class="cmt-act {{item.liked?'on':''}}" data-id="{{item.id}}" bindtap="likeComment"><image class="ca-ic" src="{{item.liked?'/images/ic-like-on.png':'/images/ic-like.png'}}" mode="aspectFit"/>{{item.likes}}</view>
           <text class="cmt-act" wx:if="{{!item.isReply}}" data-id="{{item.id}}" data-au="{{item.author}}" bindtap="startReply">回复</text>
           <text class="cmt-act del" wx:if="{{item.mine}}" data-id="{{item.id}}" bindtap="deleteComment">删除</text>
           <text class="cmt-act" wx:if="{{!item.mine}}" data-id="{{item.id}}" bindtap="reportComment">举报</text>

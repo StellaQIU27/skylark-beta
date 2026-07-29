@@ -11,14 +11,14 @@
       <view class="xcard" wx:for="{{colA}}" wx:key="id" data-id="{{item.id}}" bindtap="openPost">
         <view class="xc-cover" wx:if="{{item.photo}}"><image src="{{item.photo}}" mode="widthFix"/></view>
         <view class="xc-cover text" wx:else>{{item.title||item.body||'分享一刻'}}</view>
-        <view class="xc-body"><view class="xc-foot"><text class="xc-like">♥ {{item.likes}}</text></view></view>
+        <view class="xc-body"><view class="xc-foot"><view class="xc-like"><image class="xc-ic" src="/images/ic-like.png" mode="aspectFit"/>{{item.likes}}</view></view></view>
       </view>
     </view>
     <view class="fg-col">
       <view class="xcard" wx:for="{{colB}}" wx:key="id" data-id="{{item.id}}" bindtap="openPost">
         <view class="xc-cover" wx:if="{{item.photo}}"><image src="{{item.photo}}" mode="widthFix"/></view>
         <view class="xc-cover text" wx:else>{{item.title||item.body||'分享一刻'}}</view>
-        <view class="xc-body"><view class="xc-foot"><text class="xc-like">♥ {{item.likes}}</text></view></view>
+        <view class="xc-body"><view class="xc-foot"><view class="xc-like"><image class="xc-ic" src="/images/ic-like.png" mode="aspectFit"/>{{item.likes}}</view></view></view>
       </view>
     </view>
   </view>

@@ -29,7 +29,7 @@
 .ap-cam {
   position: absolute; bottom: 4rpx; right: 4rpx;
   width: 56rpx; height: 56rpx; border-radius: 50%;
-  background: var(--sage-dark); color: #fff; font-size: 24rpx;
+  background: var(--sage-dark);
   display: flex; align-items: center; justify-content: center; border: 4rpx solid var(--cream);
 }
 .ap-hint { text-align: center; font-size: 22rpx; color: var(--ink-soft); margin-bottom: 28rpx; }
@@ -40,3 +40,5 @@
 }
 .sh-actions { display: flex; gap: 20rpx; margin-top: 28rpx; }
 .sh-actions .btn { flex: 1; }
+
+.ap-cam image { width: 30rpx; height: 30rpx; }

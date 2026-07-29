@@ -7,7 +7,7 @@
     <image wx:if="{{item.photo}}" class="ph" src="{{item.photo}}" mode="aspectFill"/>
     <view class="bd">
       <view class="t">{{item.title||item.body||'（图片动态）'}}</view>
-      <view class="s">{{item.author}} · ♥ {{item.likes}}</view>
+      <view class="s">{{item.author}} · 赞 {{item.likes}}</view>
     </view>
   </view>
   <view class="page-pad"></view>

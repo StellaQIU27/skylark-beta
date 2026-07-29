@@ -21,10 +21,11 @@
 .av-cam {
   position: absolute; bottom: -4rpx; right: -4rpx;
   width: 44rpx; height: 44rpx; border-radius: 50%;
-  background: var(--sage-dark); color: #fff; font-size: 20rpx;
+  background: var(--sage-dark);
   display: flex; align-items: center; justify-content: center;
   border: 4rpx solid var(--cream);
 }
+.av-cam image { width: 24rpx; height: 24rpx; }
 .pm-info { flex: 1; min-width: 0; }
 .n { font-weight: 700; font-size: 36rpx; display: flex; align-items: center; gap: 12rpx; }
 .lv { font-size: 20rpx; font-weight: 600; color: var(--sage-dark); background: var(--sage-tint); padding: 4rpx 14rpx; border-radius: 14rpx; }
@@ -68,11 +69,7 @@
   padding: 28rpx 32rpx; border-bottom: 2rpx solid var(--beige-border);
 }
 .menu-row:last-child { border-bottom: none; }
-.mi {
-  width: 64rpx; height: 64rpx; border-radius: 20rpx; flex-shrink: 0;
-  background: var(--sage-tint); color: var(--sage-dark); font-size: 34rpx;
-  display: flex; align-items: center; justify-content: center;
-}
+.mi { width: 44rpx; height: 44rpx; flex-shrink: 0; }
 .ml { flex: 1; font-size: 29rpx; color: var(--ink); }
 .mc { color: var(--ink-mute); font-size: 25rpx; }
 
@@ -101,9 +98,10 @@
 .ap-cam {
   position: absolute; bottom: 4rpx; right: 4rpx;
   width: 56rpx; height: 56rpx; border-radius: 50%;
-  background: var(--sage-dark); color: #fff; font-size: 24rpx;
+  background: var(--sage-dark);
   display: flex; align-items: center; justify-content: center; border: 4rpx solid var(--cream);
 }
+.ap-cam image { width: 30rpx; height: 30rpx; }
 .ap-hint { text-align: center; font-size: 22rpx; color: var(--ink-soft); margin-bottom: 28rpx; }
 .fld-l { font-size: 22rpx; color: var(--ink-mute); font-weight: 600; margin-bottom: 12rpx; }
 .ipt {

@@ -73,8 +73,9 @@
 .cmt-au { font-weight: 600; font-size: 26rpx; color: var(--ink); }
 .cmt-tm { font-size: 21rpx; color: var(--ink-mute); flex-shrink: 0; }
 .cmt-tx { font-size: 28rpx; color: var(--ink); margin-top: 6rpx; line-height: 1.5; word-break: break-word; }
-.cmt-acts { display: flex; gap: 32rpx; margin-top: 12rpx; }
-.cmt-act { font-size: 23rpx; color: var(--ink-mute); }
+.cmt-acts { display: flex; gap: 32rpx; margin-top: 12rpx; align-items: center; }
+.ca-ic { width: 24rpx; height: 24rpx; margin-right: 6rpx; }
+.cmt-act { font-size: 23rpx; color: var(--ink-mute); display: flex; align-items: center; }
 .cmt-act.on { color: var(--terracotta); font-weight: 600; }
 .cmt-act.del { color: var(--terracotta); }
 

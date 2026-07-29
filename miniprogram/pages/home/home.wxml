@@ -15,7 +15,7 @@
 
   <!-- 搜索 -->
   <view class="searchbox" bindtap="goSearch">
-    <text class="sb-ic">🔍</text>
+    <image class="sb-ic" src="/images/ic-search.png" mode="aspectFit"/>
     <text class="sb-tx">搜索鸟种 / 帖子 / 用户</text>
   </view>
 
@@ -76,7 +76,7 @@
         <view class="if-body" wx:if="{{item.title && item.body}}">{{item.body}}</view>
         <view class="if-foot">
           <text class="if-au">{{item.author}}</text>
-          <text class="if-meta">♥ {{item.likes}} · 回复 {{item.commentCount}}</text>
+          <text class="if-meta">赞 {{item.likes}} · 回复 {{item.commentCount}}</text>
         </view>
       </view>
       <image wx:if="{{item.photo}}" class="if-thumb" src="{{item.photo}}" mode="aspectFill"/>
@@ -96,7 +96,7 @@
           <view class="xc-title" wx:if="{{item.photo && (item.title||item.body)}}">{{item.title||item.body}}</view>
           <view class="xc-foot">
             <view class="xc-au"><view class="xa-av">{{item.initial}}</view><text class="xa-nm">{{item.author}}</text></view>
-            <text class="xc-like {{item.likedByMe?'on':''}}">♥ {{item.likes}}</text>
+            <view class="xc-like {{item.likedByMe?'on':''}}"><image class="xc-ic" src="{{item.likedByMe?'/images/ic-like-on.png':'/images/ic-like.png'}}" mode="aspectFit"/>{{item.likes}}</view>
           </view>
         </view>
       </view>
@@ -112,7 +112,7 @@
           <view class="xc-title" wx:if="{{item.photo && (item.title||item.body)}}">{{item.title||item.body}}</view>
           <view class="xc-foot">
             <view class="xc-au"><view class="xa-av">{{item.initial}}</view><text class="xa-nm">{{item.author}}</text></view>
-            <text class="xc-like {{item.likedByMe?'on':''}}">♥ {{item.likes}}</text>
+            <view class="xc-like {{item.likedByMe?'on':''}}"><image class="xc-ic" src="{{item.likedByMe?'/images/ic-like-on.png':'/images/ic-like.png'}}" mode="aspectFit"/>{{item.likes}}</view>
           </view>
         </view>
       </view>

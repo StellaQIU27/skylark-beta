@@ -65,7 +65,7 @@
 }
 .cq-n { font-size: 40rpx; font-weight: 700; color: var(--sage-dark); line-height: 1; }
 .cq-n.alert { color: var(--terracotta); }
-.cq-ic { font-size: 34rpx; line-height: 1; height: 40rpx; display: flex; align-items: center; }
+.cq-ic { width: 40rpx; height: 40rpx; }
 .cq-l { font-size: 22rpx; color: var(--ink-soft); }
 
 /* section head */

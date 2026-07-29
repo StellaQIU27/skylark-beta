@@ -87,6 +87,8 @@
 .xa-av { width: 40rpx; height: 40rpx; border-radius: 50%; flex-shrink: 0; background: var(--sage-dark); color: #fff; font-size: 20rpx; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 .xa-nm { font-size: 23rpx; color: var(--ink-soft); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .xc-like { font-size: 23rpx; color: var(--ink-mute); flex-shrink: 0; }
+.xc-like { display: flex; align-items: center; gap: 6rpx; }
+.xc-ic { width: 24rpx; height: 24rpx; flex-shrink: 0; }
 .xc-like.on { color: var(--terracotta); }
 
 /* 单列信息流 */

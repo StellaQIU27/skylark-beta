@@ -4,7 +4,7 @@
     <view class="es">在社区发布动态后，\n鸟友们的喜欢会展示在这里。</view>
   </view>
   <view class="row" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="open">
-    <view class="av">♥</view>
+    <view class="av"><image src="/images/ic-like-white.png" mode="aspectFit"/></view>
     <view class="bd">
       <view class="t">你的动态 <text class="b">{{item.disp}}</text></view>
       <view class="s">收到 {{item.likes}} 个赞{{item.who}}</view>

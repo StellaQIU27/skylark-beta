@@ -1,6 +1,7 @@
 .page { min-height: 100vh; background: var(--cream); padding: 24rpx 32rpx 0; }
 .row { display: flex; align-items: center; gap: 22rpx; padding: 24rpx 12rpx; border-bottom: 2rpx solid var(--beige-border); }
-.av { width: 80rpx; height: 80rpx; border-radius: 50%; background: var(--terracotta); color: #fff; font-size: 32rpx; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.av { width: 80rpx; height: 80rpx; border-radius: 50%; background: var(--terracotta); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.av image { width: 40rpx; height: 40rpx; }
 .bd { flex: 1; min-width: 0; }
 .bd .t { font-size: 28rpx; color: var(--ink); }
 .bd .t .b { font-weight: 600; }

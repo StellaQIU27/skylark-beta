@@ -17,7 +17,7 @@
   background: #fff; border: 2rpx solid var(--beige-border);
   border-radius: 32rpx; padding: 22rpx 28rpx;
 }
-.sb-ic { font-size: 26rpx; opacity: .5; }
+.sb-ic { width: 30rpx; height: 30rpx; opacity: .55; flex-shrink: 0; }
 .sb-tx { color: var(--ink-mute); font-size: 27rpx; }
 
 /* 滚动条 */
@@ -129,6 +129,8 @@
 }
 .xa-nm { font-size: 23rpx; color: var(--ink-soft); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .xc-like { font-size: 23rpx; color: var(--ink-mute); flex-shrink: 0; }
+.xc-like { display: flex; align-items: center; gap: 6rpx; }
+.xc-ic { width: 24rpx; height: 24rpx; flex-shrink: 0; }
 .xc-like.on { color: var(--terracotta); }
 
 /* 单列信息流（护理问答） */

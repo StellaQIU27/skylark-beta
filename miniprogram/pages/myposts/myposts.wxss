@@ -12,4 +12,5 @@
 .xc-title { font-size: 27rpx; color: var(--ink); line-height: 1.4; font-weight: 500; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .xc-meta { font-size: 21rpx; color: var(--ink-mute); margin-top: 10rpx; }
 .xc-foot { display: flex; gap: 24rpx; margin-top: 12rpx; }
-.xc-like, .xc-cmt { font-size: 23rpx; color: var(--ink-mute); }
+.xc-like, .xc-cmt { font-size: 23rpx; color: var(--ink-mute); display: flex; align-items: center; gap: 6rpx; }
+.xc-ic { width: 24rpx; height: 24rpx; }

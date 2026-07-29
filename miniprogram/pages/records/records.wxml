@@ -76,7 +76,7 @@
 
     <!-- 换羽期 -->
     <view class="molt-card" bindtap="openMolt">
-      <view class="mc-ic {{molt.cls}}">🪶</view>
+      <view class="mc-ic {{molt.cls}}"><image src="/images/ic-feather.png" mode="aspectFit"/></view>
       <view class="mc-bd">
         <view class="mc-t">换羽期{{molt.label ? '' : '记录'}}
           <text class="molt-tag {{molt.cls}}" wx:if="{{molt.label}}">{{molt.label}}</text>
@@ -113,9 +113,9 @@
             </view>
           </view>
           <view class="hrow">
-            <view class="hk">🌿 {{item.foodsText}}</view>
-            <view class="hk">🛁 {{item.bathText}}</view>
-            <view class="hk">☀️ {{item.sunText}}</view>
+            <view class="hk"><image class="hk-ic" src="/images/ic-leaf.png" mode="aspectFit"/>{{item.foodsText}}</view>
+            <view class="hk"><image class="hk-ic" src="/images/ic-bath.png" mode="aspectFit"/>{{item.bathText}}</view>
+            <view class="hk"><image class="hk-ic" src="/images/ic-sun.png" mode="aspectFit"/>{{item.sunText}}</view>
           </view>
           <view class="hnote" wx:if="{{item.notes}}">{{item.notes}}</view>
           <view class="hphotos" wx:if="{{item.photos.length}}">

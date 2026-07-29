@@ -16,8 +16,8 @@
           <view class="xc-title" wx:if="{{item.photo && (item.title||item.body)}}">{{item.title||item.body}}</view>
           <view class="xc-meta">{{item.time}} · {{item.chanName}}</view>
           <view class="xc-foot">
-            <text class="xc-like">♥ {{item.likes}}</text>
-            <text class="xc-cmt">💬 {{item.commentCount}}</text>
+            <view class="xc-like"><image class="xc-ic" src="/images/ic-like.png" mode="aspectFit"/>{{item.likes}}</view>
+            <view class="xc-cmt"><image class="xc-ic" src="/images/ic-comment.png" mode="aspectFit"/>{{item.commentCount}}</view>
           </view>
         </view>
       </view>
@@ -33,8 +33,8 @@
           <view class="xc-title" wx:if="{{item.photo && (item.title||item.body)}}">{{item.title||item.body}}</view>
           <view class="xc-meta">{{item.time}} · {{item.chanName}}</view>
           <view class="xc-foot">
-            <text class="xc-like">♥ {{item.likes}}</text>
-            <text class="xc-cmt">💬 {{item.commentCount}}</text>
+            <view class="xc-like"><image class="xc-ic" src="/images/ic-like.png" mode="aspectFit"/>{{item.likes}}</view>
+            <view class="xc-cmt"><image class="xc-ic" src="/images/ic-comment.png" mode="aspectFit"/>{{item.commentCount}}</view>
           </view>
         </view>
       </view>

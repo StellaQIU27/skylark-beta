@@ -24,7 +24,7 @@
   <block wx:if="{{posts.length}}">
     <view class="sh">帖子</view>
     <view class="row" wx:for="{{posts}}" wx:key="id" data-id="{{item.id}}" bindtap="openPost">
-      <view class="bd"><view class="t">{{item.disp}}</view><view class="s">{{item.author}} · ♥ {{item.likes}} · 回复 {{item.cc}}</view></view>
+      <view class="bd"><view class="t">{{item.disp}}</view><view class="s">{{item.author}} · 赞 {{item.likes}} · 回复 {{item.cc}}</view></view>
     </view>
   </block>
   <view class="page-pad"></view>

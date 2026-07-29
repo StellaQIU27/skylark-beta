@@ -4,7 +4,7 @@
     <view class="cnt">{{list.length}} 种 · 中国常见野鸟</view>
     <view class="grid">
       <view class="gcard" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="open">
-        <view class="gimg"><image wx:if="{{item.cc_image}}" src="{{item.cc_image}}" mode="aspectFill"/><text wx:else>🐦</text></view>
+        <view class="gimg"><image wx:if="{{item.cc_image}}" src="{{item.cc_image}}" mode="aspectFill"/><image wx:else class="gph" src="/images/ic-bird.png" mode="aspectFit"/></view>
         <view class="gname">{{item.name_cn}}</view>
         <view class="gsci">{{item.family_cn}}</view>
       </view>

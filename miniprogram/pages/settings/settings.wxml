@@ -25,7 +25,7 @@
       <image wx:if="{{tmpAvatar}}" src="{{tmpAvatar}}" mode="aspectFill"/>
       <text wx:else>{{initial}}</text>
     </view>
-    <view class="ap-cam">📷</view>
+    <view class="ap-cam"><image src="/images/ic-camera.png" mode="aspectFit"/></view>
   </view>
   <view class="ap-hint">点击上传头像</view>
   <view class="fld-l">昵称</view>

@@ -89,7 +89,8 @@
   margin: 0 40rpx 32rpx; padding: 28rpx 32rpx;
   background: var(--cream-warm); border: 2rpx solid var(--beige-border); border-radius: 36rpx;
 }
-.mc-ic { width: 84rpx; height: 84rpx; border-radius: 26rpx; background: var(--paper-dark); font-size: 40rpx; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.mc-ic { width: 84rpx; height: 84rpx; border-radius: 26rpx; background: var(--paper-dark); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.mc-ic image { width: 42rpx; height: 42rpx; }
 .mc-ic.on { background: #F5E0C8; }
 .mc-ic.done { background: var(--sage-tint); }
 .mc-bd { flex: 1; min-width: 0; }
@@ -123,7 +124,8 @@
 .hwv .d { font-size: 22rpx; color: var(--sage-dark); margin-left: 8rpx; }
 .hwv .d.dn { color: var(--terracotta); }
 .hrow { display: flex; flex-wrap: wrap; gap: 20rpx; margin-top: 16rpx; }
-.hk { font-size: 23rpx; color: var(--ink-soft); }
+.hk { font-size: 23rpx; color: var(--ink-soft); display: flex; align-items: center; gap: 8rpx; }
+.hk-ic { width: 26rpx; height: 26rpx; flex-shrink: 0; }
 .hnote {
   margin-top: 16rpx; padding-top: 14rpx; border-top: 2rpx dashed var(--beige-border);
   font-size: 25rpx; color: var(--ink); line-height: 1.5;

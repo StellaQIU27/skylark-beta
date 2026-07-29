@@ -57,7 +57,7 @@
 .ap-cam {
   position: absolute; bottom: 4rpx; right: 4rpx;
   width: 60rpx; height: 60rpx; border-radius: 50%;
-  background: var(--sage-dark); color: #fff; font-size: 26rpx;
+  background: var(--sage-dark);
   display: flex; align-items: center; justify-content: center;
   border: 4rpx solid var(--cream);
 }
@@ -153,3 +153,6 @@
 .fo.on { background: var(--sage-tint); border-color: var(--sage-dark); }
 .fo image { width: 60rpx; height: 60rpx; display: block; margin: 0 auto 8rpx; }
 .fo text { font-size: 21rpx; color: var(--ink-soft); }
+
+.ap-cam image { width: 30rpx; height: 30rpx; }
+.btn-ic { width: 30rpx; height: 30rpx; }

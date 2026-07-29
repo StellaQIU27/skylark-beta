@@ -11,3 +11,5 @@
 .xc-body { padding: 16rpx 22rpx 20rpx; }
 .xc-foot { display: flex; justify-content: flex-end; }
 .xc-like { font-size: 23rpx; color: var(--ink-mute); }
+.xc-like { display: flex; align-items: center; gap: 6rpx; }
+.xc-ic { width: 24rpx; height: 24rpx; flex-shrink: 0; }

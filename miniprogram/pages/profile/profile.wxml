@@ -9,7 +9,7 @@
       <view class="av" bindtap="editProfile">
         <image wx:if="{{user.avatar}}" src="{{user.avatar}}" mode="aspectFill"/>
         <text wx:else>{{initial}}</text>
-        <view class="av-cam">📷</view>
+        <view class="av-cam"><image src="/images/ic-camera.png" mode="aspectFit"/></view>
       </view>
       <view class="pm-info">
         <view class="n">{{user.name}} <text class="lv">Lv.1</text></view>
@@ -56,12 +56,12 @@
 
   <!-- 菜单 -->
   <view class="menu-card">
-    <view class="menu-row" bindtap="goMyPosts"><text class="mi">✎</text><text class="ml">我的动态</text><text class="mc">{{myPostCount}} ›</text></view>
-    <view class="menu-row" bindtap="goFavorites"><text class="mi">★</text><text class="ml">我的收藏</text><text class="mc">›</text></view>
-    <view class="menu-row" bindtap="goDrafts"><text class="mi">📁</text><text class="ml">我的草稿</text><text class="mc">›</text></view>
-    <view class="menu-row" bindtap="openBackup"><text class="mi">☁</text><text class="ml">数据备份</text><text class="mc">›</text></view>
-    <view class="menu-row" bindtap="goHelp"><text class="mi">?</text><text class="ml">帮助与反馈</text><text class="mc">›</text></view>
-    <view class="menu-row" bindtap="about"><text class="mi">ⓘ</text><text class="ml">关于 Skylark · 雀跃</text><text class="mc">{{version}}</text></view>
+    <view class="menu-row" bindtap="goMyPosts"><image class="mi" src="/images/ic-pen.png" mode="aspectFit"/><text class="ml">我的动态</text><text class="mc">{{myPostCount}} ›</text></view>
+    <view class="menu-row" bindtap="goFavorites"><image class="mi" src="/images/ic-star-menu.png" mode="aspectFit"/><text class="ml">我的收藏</text><text class="mc">›</text></view>
+    <view class="menu-row" bindtap="goDrafts"><image class="mi" src="/images/ic-folder.png" mode="aspectFit"/><text class="ml">我的草稿</text><text class="mc">›</text></view>
+    <view class="menu-row" bindtap="openBackup"><image class="mi" src="/images/ic-cloud.png" mode="aspectFit"/><text class="ml">数据备份</text><text class="mc">›</text></view>
+    <view class="menu-row" bindtap="goHelp"><image class="mi" src="/images/ic-help.png" mode="aspectFit"/><text class="ml">帮助与反馈</text><text class="mc">›</text></view>
+    <view class="menu-row" bindtap="about"><image class="mi" src="/images/ic-info.png" mode="aspectFit"/><text class="ml">关于 Skylark · 雀跃</text><text class="mc">{{version}}</text></view>
   </view>
 
   <view class="page-pad"></view>
@@ -77,7 +77,7 @@
       <image wx:if="{{tmpAvatar}}" src="{{tmpAvatar}}" mode="aspectFill"/>
       <text wx:else>{{initial}}</text>
     </view>
-    <view class="ap-cam">📷</view>
+    <view class="ap-cam"><image src="/images/ic-camera.png" mode="aspectFit"/></view>
   </view>
   <view class="ap-hint">点击上传头像</view>
   <view class="fld">

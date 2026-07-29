@@ -35,7 +35,7 @@
       <view class="hr-no">{{index+1}}</view>
       <view class="hr-main">
         <view class="hr-name">{{item.dispTitle}}</view>
-        <view class="hr-meta">♥ {{item.likes}} · 评论 {{item.commentCount}} · {{item.author}}</view>
+        <view class="hr-meta">赞 {{item.likes}} · 评论 {{item.commentCount}} · {{item.author}}</view>
       </view>
       <view class="hr-tag">{{item.chanName}}</view>
     </view>
@@ -52,11 +52,11 @@
       <view class="cq-l">待回答求助</view>
     </view>
     <view class="cq" bindtap="goGuide">
-      <view class="cq-ic">🔍</view>
+      <image class="cq-ic" src="/images/ic-bird.png" mode="aspectFit"/>
       <view class="cq-l">鸟种图鉴</view>
     </view>
     <view class="cq" bindtap="goHome">
-      <view class="cq-ic">📋</view>
+      <image class="cq-ic" src="/images/ic-comment.png" mode="aspectFit"/>
       <view class="cq-l">最新动态</view>
     </view>
   </view>

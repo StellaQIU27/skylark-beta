@@ -19,3 +19,5 @@
 .dsec { margin-top: 32rpx; }
 .dh { font-weight: 700; font-size: 30rpx; margin-bottom: 10rpx; }
 .db { font-size: 28rpx; color: var(--ink-soft); line-height: 1.7; }
+
+.gph { width: 48rpx; height: 48rpx; opacity: .4; }
