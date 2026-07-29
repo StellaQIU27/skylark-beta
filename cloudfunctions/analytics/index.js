@@ -4,8 +4,8 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
 const _ = db.command;
 
-// 只有这些 openid 能查看数据（部署后把你自己的 openid 填进来）
-const ADMINS = [];
+// 只有这些 openid 能查看数据（管理员白名单）
+const ADMINS = ['obfhL3fhV1pnZlo9QyYZwPzD2i4M'];
 
 exports.main = async (event) => {
   const me = cloud.getWXContext().OPENID;

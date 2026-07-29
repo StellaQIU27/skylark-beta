@@ -1,8 +1,9 @@
 const S = require('../../utils/store.js');
+const ADMINS = ['obfhL3fhV1pnZlo9QyYZwPzD2i4M'];
 
 Page({
   data: {
-    version: 'v1.0.0',
+    version: 'v1.0.0', isAdmin: false,
     user: { name: '雀跃用户', avatar: null }, initial: '雀',
     showEdit: false, tmpName: '', tmpAvatar: null
   },
@@ -10,7 +11,8 @@ Page({
   async onShow() {
     await getApp().waitReady();
     const u = S.getState().user || { name: '雀跃用户', avatar: null };
-    this.setData({ user: u, initial: (u.name || '雀')[0] });
+    const oid = getApp().globalData.openid;
+    this.setData({ user: u, initial: (u.name || '雀')[0], isAdmin: ADMINS.indexOf(oid) >= 0 });
   },
 
   editProfile() {
