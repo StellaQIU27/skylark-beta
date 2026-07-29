@@ -6,7 +6,7 @@
 .feed-grid { display: flex; gap: 20rpx; padding: 0 24rpx; align-items: flex-start; }
 .fg-col { flex: 1; min-width: 0; }
 .xcard { background: var(--paper); border: 2rpx solid var(--beige-border); border-radius: 28rpx; overflow: hidden; margin-bottom: 20rpx; }
-.xc-cover image { width: 100%; display: block; }
+.xc-cover image { width: 100%; display: block; max-height: 520rpx; }
 .xc-cover.text { padding: 32rpx 26rpx; min-height: 150rpx; font-size: 29rpx; font-weight: 600; background: linear-gradient(135deg,#F3EEDE,#E9EFE0); }
 .xc-body { padding: 16rpx 22rpx 20rpx; }
 .xc-foot { display: flex; justify-content: flex-end; }

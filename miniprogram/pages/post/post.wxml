@@ -7,8 +7,10 @@
     </swiper-item>
   </swiper>
   <view class="pc-count" wx:if="{{photos.length>1}}">{{cur+1}}/{{photos.length}}</view>
-  <image wx:if="{{photos.length===1}}" class="single-img" src="{{photos[0]}}" mode="widthFix"
-         data-src="{{photos[0]}}" bindtap="previewImg"/>
+  <view class="pc single" wx:if="{{photos.length===1}}">
+    <image class="pc-img" src="{{photos[0]}}" mode="aspectFit"
+           data-src="{{photos[0]}}" bindtap="previewImg"/>
+  </view>
 
   <!-- 正文 -->
   <view class="body-card">
