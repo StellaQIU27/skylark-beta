@@ -11,7 +11,7 @@
   },
   "compileType": "miniprogram",
   "libVersion": "3.5.0",
-  "appid": "",
+  "appid": "wxced3ecf76734f2c7",
   "projectname": "skylark",
   "miniprogramRoot": "miniprogram/",
   "cloudfunctionRoot": "cloudfunctions/"
