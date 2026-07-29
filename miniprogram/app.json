@@ -17,6 +17,7 @@
     "pages/myposts/myposts",
     "pages/selftest/selftest",
     "pages/dashboard/dashboard",
+    "pages/terms/terms",
     "pages/favorites/favorites",
     "pages/drafts/drafts",
     "pages/followers/followers",

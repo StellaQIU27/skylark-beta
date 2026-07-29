@@ -1,0 +1,102 @@
+<view class="page">
+  <view class="tabs">
+    <view class="tb {{tab==='rule'?'on':''}}" bindtap="toRule">社区规范</view>
+    <view class="tb {{tab==='terms'?'on':''}}" bindtap="toTerms">用户协议</view>
+    <view class="tb {{tab==='privacy'?'on':''}}" bindtap="toPrivacy">隐私政策</view>
+  </view>
+
+  <!-- 社区规范 -->
+  <view class="doc" wx:if="{{tab==='rule'}}">
+    <view class="h1">雀跃社区内容规范</view>
+    <view class="upd">更新于 2026-07</view>
+    <view class="p">雀跃是养鸟爱好者交流养护经验的社区。为了让这里保持友善与专业，请在发布内容前阅读以下规范。</view>
+
+    <view class="h2">一、禁止发布的内容</view>
+    <view class="li">1. 违反法律法规的信息，包括但不限于危害国家安全、传播谣言、宣扬违法犯罪的内容。</view>
+    <view class="li">2. 色情、低俗、血腥暴力内容。</view>
+    <view class="li">3. 辱骂、人身攻击、歧视、恶意挑衅他人的言论。</view>
+    <view class="li">4. 广告推广、垃圾信息、诱导分享或关注的内容。</view>
+    <view class="li">5. 侵犯他人肖像权、著作权、隐私的内容（包括未经授权转载他人照片）。</view>
+    <view class="li">6. 涉及野生动物非法捕捉、贩卖、饲养的内容。雀跃仅面向合法饲养的宠物鸟与野外观鸟记录。</view>
+    <view class="li">7. 任何形式的动物交易信息，包括买卖、赠送、求购宠物鸟。</view>
+    <view class="li">8. 虐待动物、伤害鸟类，或传授危险饲养方式的内容。</view>
+
+    <view class="h2">二、关于健康与医疗内容</view>
+    <view class="li">雀跃中的护理知识、官方指南与鸟友经验分享，均为一般性科普参考，不构成兽医诊断或治疗建议。</view>
+    <view class="li">当鸟宝出现异常时，请及时联系具备资质的禽鸟专科兽医。请勿仅依据社区内容自行用药。</view>
+
+    <view class="h2">三、违规处理</view>
+    <view class="li">所有用户发布的文字与图片，将通过微信内容安全接口进行自动检测。</view>
+    <view class="li">违规内容一经发现或被举报核实，我们将删除内容；情节严重或多次违规的账号，将限制其发布功能。</view>
+    <view class="li">如果你发现违规内容，请点击帖子或评论中的「举报」按钮，我们会在收到后尽快处理。</view>
+
+    <view class="h2">四、你的权利</view>
+    <view class="li">你可以随时编辑或删除自己发布的动态与评论。</view>
+    <view class="li">你可以拉黑不想看到的用户，拉黑后将不再看到对方的动态与评论。</view>
+  </view>
+
+  <!-- 用户协议 -->
+  <view class="doc" wx:if="{{tab==='terms'}}">
+    <view class="h1">雀跃用户服务协议</view>
+    <view class="upd">更新于 2026-07</view>
+
+    <view class="h2">一、服务内容</view>
+    <view class="li">雀跃（以下称"本小程序"）为宠物鸟饲养爱好者提供养护记录、知识查询与经验交流服务，包括：为爱鸟建立档案并记录体重、饮食、换羽等日常；查询常见鸟种资料；发布图文动态并与其他用户互动。</view>
+    <view class="li">本小程序不提供任何动物交易、医疗诊断或专业兽医服务。</view>
+
+    <view class="h2">二、账号与身份</view>
+    <view class="li">本小程序通过微信提供的用户标识识别身份，你无需单独注册。你在本小程序中填写的昵称与头像仅用于社区展示。</view>
+
+    <view class="h2">三、用户行为规范</view>
+    <view class="li">你应对自己发布的全部内容负责，并保证内容合法、真实，不侵犯他人合法权益。</view>
+    <view class="li">你同意遵守《雀跃社区内容规范》。违反规范的内容将被删除，账号可能被限制使用。</view>
+
+    <view class="h2">四、内容权利</view>
+    <view class="li">你发布的内容归你所有。你授权本小程序在提供服务所必需的范围内展示这些内容。</view>
+
+    <view class="h2">五、免责声明</view>
+    <view class="li">本小程序提供的养护知识仅供参考，不能替代专业兽医的诊断与治疗。因参考社区内容造成的后果，本小程序不承担责任。</view>
+    <view class="li">用户之间的交流内容不代表本小程序的观点。</view>
+
+    <view class="h2">六、服务变更与终止</view>
+    <view class="li">本小程序处于内测阶段，功能可能调整。如需停止服务，我们会提前公告，并为你保留导出数据的时间。</view>
+  </view>
+
+  <!-- 隐私政策 -->
+  <view class="doc" wx:if="{{tab==='privacy'}}">
+    <view class="h1">雀跃隐私政策</view>
+    <view class="upd">更新于 2026-07</view>
+    <view class="p">我们非常重视你的隐私。本政策说明我们收集哪些信息、如何使用与保护它们。</view>
+
+    <view class="h2">一、我们收集的信息</view>
+    <view class="li"><text class="b">微信用户标识（openid）</text>：用于识别你的身份，使你的记录能在换设备后恢复。我们无法通过它获知你的微信号、手机号或真实姓名。</view>
+    <view class="li"><text class="b">你填写的资料</text>：昵称、头像。仅用于社区中展示。</view>
+    <view class="li"><text class="b">你主动创建的内容</text>：爱鸟档案、每日记录（体重、饮食、日照、洗澡、备注）、照片、发布的动态与评论。</text></view>
+    <view class="li"><text class="b">使用统计</text>：打开小程序、发布内容等行为的匿名统计，仅用于改进产品。不包含你的内容原文。</view>
+
+    <view class="h2">二、我们如何使用这些信息</view>
+    <view class="li">1. 提供记录与同步服务：你的爱鸟档案与记录存储在云端并与你的微信身份绑定，以便换设备后恢复。</view>
+    <view class="li">2. 提供社区服务：展示你发布的动态、评论与互动。</view>
+    <view class="li">3. 内容安全：发布的文字与图片会经由微信内容安全接口检测，以过滤违法违规内容。</view>
+
+    <view class="h2">三、信息的存储与保护</view>
+    <view class="li">所有数据存储于微信云开发（腾讯云）环境中。你的个人记录设置为仅本人可读写，其他用户无法访问。</view>
+    <view class="li">你发布的社区内容对所有用户可见，请勿在其中填写敏感个人信息。</view>
+
+    <view class="h2">四、信息共享</view>
+    <view class="li">我们不会将你的信息出售或提供给第三方，法律法规要求的情形除外。</view>
+
+    <view class="h2">五、你的权利</view>
+    <view class="li">你可以随时修改昵称与头像、编辑或删除自己的记录与内容。</view>
+    <view class="li">你可以在「我的 → 数据备份」中导出你的数据。</view>
+    <view class="li">如需删除全部数据，可通过「帮助与反馈」联系我们。</view>
+
+    <view class="h2">六、未成年人</view>
+    <view class="li">若你未满 14 周岁，请在监护人陪同下阅读本政策并使用本小程序。</view>
+
+    <view class="h2">七、联系我们</view>
+    <view class="li">如对本政策有疑问，可通过「我的 → 帮助与反馈」提交，我们会尽快回复。</view>
+  </view>
+
+  <view class="page-pad"></view>
+</view>

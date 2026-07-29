@@ -6,7 +6,7 @@ Page({
   data: {
     id: null, post: null, photos: [], cur: 0,
     comments: [], initial: '', chanName: '', fieldRows: [],
-    mine: false, bookmarked: false,
+    mine: false, blocked: false, bookmarked: false,
     draft: '', replyTo: null, inputFocus: false
   },
 
@@ -27,7 +27,8 @@ Page({
     const ch = S.CHAN[S.postChannelKey(p)] || { name: '讨论' };
 
     // 评论：顶级 + 其下回复
-    const all = p.comments || [];
+    // 过滤被拉黑用户的评论
+    const all = (p.comments || []).filter(c => !S.isBlocked(c.author_id));
     const tops = all.filter(c => !c.parent_id);
     const flat = [];
     tops.forEach(c => {
@@ -42,6 +43,7 @@ Page({
       comments: flat, initial: (p.author || '友')[0],
       chanName: ch.name, fieldRows,
       mine: S.isMine(p),
+      blocked: S.isBlocked(p.author_id),
       bookmarked: (st.bookmarks || []).some(b => String(b.id) === String(p.id))
     });
   },
@@ -168,6 +170,49 @@ Page({
           wx.showToast({ title: '动态已删除', icon: 'none' });
           setTimeout(() => wx.navigateBack(), 600);
         } catch (e) { wx.showToast({ title: '删除失败', icon: 'none' }); }
+      }
+    });
+  },
+
+  /* ---------- 举报 / 拉黑（UGC 合规） ---------- */
+  REASONS: ['垃圾广告', '色情低俗', '辱骂攻击', '虚假信息', '动物交易', '侵权内容', '其他'],
+
+  reportPost() { this.doReport('post', this.data.post.id); },
+  reportComment(e) { this.doReport('comment', e.currentTarget.dataset.id); },
+  doReport(type, targetId) {
+    const reasons = this.REASONS;
+    wx.showActionSheet({
+      itemList: reasons,
+      success: async (res) => {
+        const reason = reasons[res.tapIndex];
+        wx.showLoading({ title: '提交中' });
+        const ok = await S.reportContent(type, targetId, reason,
+          type === 'post' ? (this.data.post.title || this.data.post.body || '').slice(0, 100) : '');
+        wx.hideLoading();
+        wx.showModal({
+          title: ok ? '举报已提交' : '提交失败',
+          content: ok ? '感谢你的反馈，我们会尽快核实处理。' : '请稍后再试。',
+          showCancel: false
+        });
+      }
+    });
+  },
+
+  blockUser() {
+    const uid = this.data.post.author_id;
+    if (!uid) return;
+    const isBlocked = S.isBlocked(uid);
+    wx.showModal({
+      title: isBlocked ? '取消拉黑' : '拉黑此用户',
+      content: isBlocked
+        ? '取消后你将重新看到 TA 的动态与评论。'
+        : '拉黑后你将不再看到 TA 发布的动态与评论，可在「我的 → 设置」中取消。',
+      success: (r) => {
+        if (!r.confirm) return;
+        const now = S.toggleBlock(uid);
+        this.setData({ blocked: now });
+        wx.showToast({ title: now ? '已拉黑' : '已取消拉黑', icon: 'none' });
+        if (now) setTimeout(() => wx.navigateBack(), 700);
       }
     });
   },

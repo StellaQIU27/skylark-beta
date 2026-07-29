@@ -3,7 +3,7 @@ const ADMINS = ['obfhL3fhV1pnZlo9QyYZwPzD2i4M'];
 
 Page({
   data: {
-    version: 'v1.0.0', isAdmin: false,
+    version: 'v1.0.0', isAdmin: false, blockedCount: 0,
     user: { name: '雀跃用户', avatar: null }, initial: '雀',
     showEdit: false, tmpName: '', tmpAvatar: null
   },
@@ -12,7 +12,11 @@ Page({
     await getApp().waitReady();
     const u = S.getState().user || { name: '雀跃用户', avatar: null };
     const oid = getApp().globalData.openid;
-    this.setData({ user: u, initial: (u.name || '雀')[0], isAdmin: ADMINS.indexOf(oid) >= 0 });
+    this.setData({
+      user: u, initial: (u.name || '雀')[0],
+      isAdmin: ADMINS.indexOf(oid) >= 0,
+      blockedCount: S.blockedList().length
+    });
   },
 
   editProfile() {
@@ -45,6 +49,22 @@ Page({
     wx.showToast({ title: '资料已更新', icon: 'none' });
   },
 
+  goRule() { wx.navigateTo({ url: '/pages/terms/terms?tab=rule' }); },
+  goTerms() { wx.navigateTo({ url: '/pages/terms/terms?tab=terms' }); },
+  goPrivacy() { wx.navigateTo({ url: '/pages/terms/terms?tab=privacy' }); },
+  goBlocked() {
+    const list = S.blockedList();
+    if (!list.length) { wx.showToast({ title: '还没有拉黑任何人', icon: 'none' }); return; }
+    wx.showActionSheet({
+      itemList: list.map((id, i) => `解除拉黑 #${i + 1}（${id.slice(0, 8)}…）`),
+      success: (res) => {
+        const id = list[res.tapIndex];
+        S.toggleBlock(id);
+        this.setData({ blockedCount: S.blockedList().length });
+        wx.showToast({ title: '已解除拉黑', icon: 'none' });
+      }
+    });
+  },
   goNotif() { wx.navigateTo({ url: '/pages/notifications/notifications' }); },
   goHelp() { wx.navigateTo({ url: '/pages/help/help' }); },
   goSelfTest() { wx.navigateTo({ url: '/pages/selftest/selftest' }); },

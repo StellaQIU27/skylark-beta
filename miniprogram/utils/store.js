@@ -50,7 +50,7 @@ function avatarSrc(pet) { return pet.photo || SPECIES_AVATARS[pet.species] || '/
 const LS = 'skylark_state_v1';
 const DEFAULT_STATE = {
   pets: [], activePetId: null, records: {},
-  bookmarks: [], draftList: [], likedComments: [], joinedCircles: [],
+  bookmarks: [], draftList: [], likedComments: [], joinedCircles: [], blocked: [],
   user: { name: '雀跃用户', avatar: null },
   recordDays: 0, streakDays: 0
 };
@@ -129,7 +129,8 @@ async function fetchPosts(limit = 40) {
         time: fmtTime(c.createdAt), likes: c.likes || 0, parent_id: c.parentId || null
       });
     });
-    return (postRes.data || []).map(p => ({
+    const blocked = getState().blocked || [];
+    return (postRes.data || []).filter(p => blocked.indexOf(p._openid) < 0).map(p => ({
       id: p._id, channel: p.channel, domain: p.domain,
       title: p.title || '', body: p.body || '',
       photos: p.photos || [], photo: (p.photos && p.photos[0]) || null,
@@ -248,6 +249,36 @@ async function markNotifsRead() {
   } catch (e) {}
 }
 
+
+/* ---------- 举报 / 拉黑（UGC 合规） ---------- */
+async function reportContent(type, targetId, reason, extra) {
+  try {
+    await db().collection('reports').add({
+      data: {
+        type,                       // 'post' | 'comment' | 'user'
+        targetId: String(targetId),
+        reason: reason || '其他',
+        extra: extra || '',
+        reporterName: (getState().user || {}).name || '雀跃用户',
+        status: 'pending',
+        createdAt: Date.now()
+      }
+    });
+    return true;
+  } catch (e) { console.warn('举报失败', e); return false; }
+}
+
+function blockedList() { return getState().blocked || []; }
+function isBlocked(openid) { return !!openid && blockedList().indexOf(openid) >= 0; }
+function toggleBlock(openid) {
+  const st = getState();
+  if (!st.blocked) st.blocked = [];
+  const i = st.blocked.indexOf(openid);
+  if (i >= 0) st.blocked.splice(i, 1); else st.blocked.push(openid);
+  saveState();
+  return st.blocked.indexOf(openid) >= 0;
+}
+
 /* ---------- 内容安全检测 ---------- */
 // 返回 true 表示可以发布；false 表示被拦截（已提示用户）
 async function checkContent(text, fileID, scene) {
@@ -308,5 +339,6 @@ module.exports = {
   fetchFollows, toggleFollow,
   fetchNotifications, addNotification, markNotifsRead,
   fmtTime, todayISO, isMine,
-  checkContent, track
+  checkContent, track,
+  reportContent, isBlocked, toggleBlock, blockedList
 };

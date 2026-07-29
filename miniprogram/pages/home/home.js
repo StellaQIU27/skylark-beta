@@ -29,6 +29,27 @@ Page({
     await S.restorePersonalFromCloud();
     this.load();
     this.buildTicker();
+    this.checkAgreement();
+  },
+
+  // 首次使用提示同意社区规范（UGC 合规要求）
+  checkAgreement() {
+    let agreed = false;
+    try { agreed = wx.getStorageSync('skylark_agreed_v1'); } catch (e) {}
+    if (agreed) return;
+    wx.showModal({
+      title: '欢迎来到雀跃',
+      content: '使用前请阅读并同意《社区内容规范》《用户协议》与《隐私政策》。\n\n雀跃仅供养鸟经验交流，禁止发布动物交易信息；健康内容仅供参考，请以兽医诊断为准。',
+      confirmText: '同意并使用',
+      cancelText: '查看条款',
+      success: (r) => {
+        if (r.confirm) {
+          try { wx.setStorageSync('skylark_agreed_v1', Date.now()); } catch (e) {}
+        } else {
+          wx.navigateTo({ url: '/pages/terms/terms?tab=rule' });
+        }
+      }
+    });
   },
 
   onPullDownRefresh() { this.load(() => wx.stopPullDownRefresh()); },
