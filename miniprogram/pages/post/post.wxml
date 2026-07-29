@@ -34,18 +34,32 @@
 
   <!-- 操作 -->
   <view class="pd-actions">
-    <view class="pa {{post.likedByMe?'on':''}}" bindtap="toggleLike">♥ {{post.likedByMe?'已赞':'赞'}}{{post.likes?' · '+post.likes:''}}</view>
-    <view class="pa" bindtap="focusInput">💬 评论{{comments.length?' · '+comments.length:''}}</view>
-    <view class="pa" bindtap="sharePost">↗ 分享</view>
-    <view class="pa {{bookmarked?'on':''}}" bindtap="toggleBookmark">★ {{bookmarked?'已藏':'收藏'}}</view>
+    <view class="pa {{post.likedByMe?'on':''}}" bindtap="toggleLike">
+      <image class="pa-ic" src="{{post.likedByMe?'/images/ic-like-on.png':'/images/ic-like.png'}}" mode="aspectFit"/>
+      <text>{{post.likedByMe?'已赞':'赞'}}{{post.likes?' '+post.likes:''}}</text>
+    </view>
+    <view class="pa" bindtap="focusInput">
+      <image class="pa-ic" src="/images/ic-comment.png" mode="aspectFit"/>
+      <text>评论{{comments.length?' '+comments.length:''}}</text>
+    </view>
+    <button class="pa" open-type="share">
+      <image class="pa-ic" src="/images/ic-share.png" mode="aspectFit"/>
+      <text>分享</text>
+    </button>
+    <view class="pa {{bookmarked?'on':''}}" bindtap="toggleBookmark">
+      <image class="pa-ic" src="{{bookmarked?'/images/ic-star-on.png':'/images/ic-star.png'}}" mode="aspectFit"/>
+      <text>{{bookmarked?'已藏':'收藏'}}</text>
+    </view>
   </view>
   <view class="pd-owner" wx:if="{{mine}}">
-    <view class="po" bindtap="editPost">✎ 编辑</view>
-    <view class="po del" bindtap="deletePost">✕ 删除</view>
+    <view class="po" bindtap="editPost">编辑</view>
+    <view class="po del" bindtap="deletePost">删除</view>
   </view>
   <view class="pd-owner" wx:else>
-    <view class="po" bindtap="reportPost">⚑ 举报</view>
-    <view class="po" bindtap="blockUser">🚫 {{blocked ? '已拉黑' : '拉黑此用户'}}</view>
+    <view class="po" bindtap="reportPost">
+      <image class="po-ic" src="/images/ic-report.png" mode="aspectFit"/><text>举报</text>
+    </view>
+    <view class="po" bindtap="blockUser">{{blocked ? '已拉黑' : '拉黑此用户'}}</view>
   </view>
 
   <!-- 评论 -->
