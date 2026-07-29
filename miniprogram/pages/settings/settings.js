@@ -45,6 +45,7 @@ Page({
 
   goNotif() { wx.navigateTo({ url: '/pages/notifications/notifications' }); },
   goHelp() { wx.navigateTo({ url: '/pages/help/help' }); },
+  goSelfTest() { wx.navigateTo({ url: '/pages/selftest/selftest' }); },
   soon() { wx.showToast({ title: '即将推出', icon: 'none' }); },
   clearLocal() {
     wx.showModal({
