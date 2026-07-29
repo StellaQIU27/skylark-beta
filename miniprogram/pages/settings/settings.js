@@ -15,7 +15,7 @@ Page({
     this.setData({
       user: u, initial: (u.name || '雀')[0],
       isAdmin: ADMINS.indexOf(oid) >= 0,
-      blockedCount: S.blockedList().length
+      blockedCount: (typeof S.blockedList === 'function' ? S.blockedList() : []).length
     });
   },
 
@@ -53,14 +53,14 @@ Page({
   goTerms() { wx.navigateTo({ url: '/pages/terms/terms?tab=terms' }); },
   goPrivacy() { wx.navigateTo({ url: '/pages/terms/terms?tab=privacy' }); },
   goBlocked() {
-    const list = S.blockedList();
+    const list = (typeof S.blockedList === 'function' ? S.blockedList() : []);
     if (!list.length) { wx.showToast({ title: '还没有拉黑任何人', icon: 'none' }); return; }
     wx.showActionSheet({
       itemList: list.map((id, i) => `解除拉黑 #${i + 1}（${id.slice(0, 8)}…）`),
       success: (res) => {
         const id = list[res.tapIndex];
         S.toggleBlock(id);
-        this.setData({ blockedCount: S.blockedList().length });
+        this.setData({ blockedCount: S.blockedList().length - 0 });
         wx.showToast({ title: '已解除拉黑', icon: 'none' });
       }
     });

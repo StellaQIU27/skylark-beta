@@ -28,7 +28,8 @@ Page({
 
     // 评论：顶级 + 其下回复
     // 过滤被拉黑用户的评论
-    const all = (p.comments || []).filter(c => !S.isBlocked(c.author_id));
+    const blockedFn = typeof S.isBlocked === 'function' ? S.isBlocked : () => false;
+    const all = (p.comments || []).filter(c => !blockedFn(c.author_id));
     const tops = all.filter(c => !c.parent_id);
     const flat = [];
     tops.forEach(c => {
@@ -43,7 +44,7 @@ Page({
       comments: flat, initial: (p.author || '友')[0],
       chanName: ch.name, fieldRows,
       mine: S.isMine(p),
-      blocked: S.isBlocked(p.author_id),
+      blocked: blockedFn(p.author_id),
       bookmarked: (st.bookmarks || []).some(b => String(b.id) === String(p.id))
     });
   },
