@@ -12,6 +12,14 @@
     <view class="oid-t">当前环境：{{isDevtool ? '开发者工具（与真机不同）' : '真机'}}</view>
   </view>
 
+  <view class="sec">云函数（{{fnOk}}/{{fnTotal}} 就绪）</view>
+  <view class="card">
+    <view class="row" wx:for="{{fns}}" wx:key="name">
+      <text class="k">{{item.name}}</text>
+      <text class="v {{item.ok?'ok':'bad'}}">{{item.msg}}</text>
+    </view>
+  </view>
+
   <view class="sec">数据库集合（{{okCount}}/{{total}} 就绪）</view>
   <view class="card">
     <view class="row" wx:for="{{cols}}" wx:key="name">
