@@ -1,7 +1,7 @@
 .page { min-height: 100vh; background: var(--cream); }
 
 /* 图片 */
-.pc { width: 100%; height: 750rpx; background: #EDE6DA; position: relative; }
+.pc { width: 100%; height: 820rpx; background: #F1EAE0; position: relative; }
 .pc-img { width: 100%; height: 100%; }
 .pc-count {
   position: absolute; top: 24rpx; right: 32rpx; z-index: 5;

@@ -3,7 +3,7 @@
   <swiper wx:if="{{photos.length>1}}" class="pc" indicator-dots indicator-color="rgba(58,62,47,.25)"
           indicator-active-color="#6B7A4C" circular="{{false}}" bindchange="onSwipe">
     <swiper-item wx:for="{{photos}}" wx:key="*this">
-      <image src="{{item}}" mode="aspectFill" class="pc-img" data-src="{{item}}" bindtap="previewImg"/>
+      <image src="{{item}}" mode="aspectFit" class="pc-img" data-src="{{item}}" bindtap="previewImg"/>
     </swiper-item>
   </swiper>
   <view class="pc-count" wx:if="{{photos.length>1}}">{{cur+1}}/{{photos.length}}</view>
