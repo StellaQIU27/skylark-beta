@@ -52,7 +52,7 @@
       <view class="cq-l">待回答求助</view>
     </view>
     <view class="cq" bindtap="goGuide">
-      <image class="cq-ic" src="/images/ic-bird.png" mode="aspectFit"/>
+      <image class="cq-ic" src="/images/ic-guide.png" mode="aspectFit"/>
       <view class="cq-l">鸟种图鉴</view>
     </view>
     <view class="cq" bindtap="goHome">
