@@ -1,6 +1,6 @@
 {
   "description": "项目私有配置文件。此文件中的内容将覆盖 project.config.json 中的相同字段。项目的改动优先同步到此文件中。详见文档：https://developers.weixin.qq.com/miniprogram/dev/devtools/projectconfig.html",
-  "projectname": "%E9%9B%80%E8%B7%83%20-%20%E9%B8%9F%E5%AE%9D%E5%85%BB%E6%8A%A4%E8%AE%B0%E5%BD%95",
+  "projectname": "skylark",
   "setting": {
     "compileHotReLoad": true,
     "urlCheck": false,
@@ -16,7 +16,8 @@
     "showES6CompileOption": false,
     "bigPackageSizeSupport": false,
     "checkInvalidKey": true,
-    "ignoreDevUnusedFiles": true
+    "ignoreDevUnusedFiles": false,
+    "ignoreUploadUnusedFiles": false
   },
   "libVersion": "3.17.0"
 }
