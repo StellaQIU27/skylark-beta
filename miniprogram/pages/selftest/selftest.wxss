@@ -9,6 +9,10 @@
 .v { font-size:24rpx; }
 .v.ok { color:var(--sage-dark); }
 .v.bad { color:var(--terracotta); }
+.oid-box { background:var(--sage-tint); border-radius:24rpx; padding:22rpx 24rpx; margin-top:16rpx; }
+.oid-l { font-size:22rpx; color:var(--sage-dark); font-weight:600; }
+.oid-v { font-size:24rpx; color:var(--ink); word-break:break-all; margin:10rpx 0 8rpx; line-height:1.5; }
+.oid-t { font-size:21rpx; color:var(--ink-soft); }
 .errbox { background:#FBEDE7; border:2rpx solid var(--terracotta-soft); border-radius:24rpx; padding:22rpx; }
 .err { font-size:25rpx; color:var(--terracotta); line-height:1.7; }
 .allok { text-align:center; color:var(--sage-dark); font-size:30rpx; font-weight:700; padding:32rpx; background:var(--sage-tint); border-radius:28rpx; margin-top:20rpx; }

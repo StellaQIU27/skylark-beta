@@ -1,7 +1,14 @@
 const COLS = ['posts','comments','post_likes','follows','notifications','circle_members','pets','feedback'];
 Page({
   data: { envOk:false, envMsg:'检测中…', openidOk:false, openidMsg:'检测中…',
+          openid:'', isDevtool:false,
           cols:[], okCount:0, total:COLS.length, errs:[], done:false },
+  copyOpenid() {
+    wx.setClipboardData({
+      data: this.data.openid,
+      success: () => wx.showToast({ title: '已复制 openid', icon: 'none' })
+    });
+  },
   onLoad() { this.run(); },
   async run() {
     this.setData({ errs:[], done:false, cols: COLS.map(n=>({name:n, ok:false, msg:'检测中…'})) });
@@ -19,8 +26,10 @@ Page({
     // 2. openid（云函数 login）
     await getApp().waitReady();
     const oid = getApp().globalData.openid || '';
+    let isDevtool = false;
+    try { isDevtool = (wx.getSystemInfoSync() || {}).platform === 'devtools'; } catch (e) {}
     if (oid && oid.indexOf('local_') !== 0) {
-      this.setData({ openidOk:true, openidMsg: oid.slice(0,10)+'…' });
+      this.setData({ openidOk:true, openidMsg:'已识别', openid: oid, isDevtool });
     } else {
       this.setData({ openidOk:false, openidMsg:'云函数未部署（使用临时ID）' });
       errs.push('云函数 login 未部署：右键 cloudfunctions/login → 上传并部署');

@@ -4,7 +4,12 @@
 
   <view class="card">
     <view class="row"><text class="k">云环境</text><text class="v {{envOk?'ok':'bad'}}">{{envMsg}}</text></view>
-    <view class="row"><text class="k">用户身份</text><text class="v {{openidOk?'ok':'bad'}}">{{openidMsg}}</text></view>
+    <view class="row"><text class="k">用户身份</text><text class="v {{openidOk?'ok':'bad'}}">{{openidOk?'已识别':openidMsg}}</text></view>
+  </view>
+  <view class="oid-box" wx:if="{{openidOk}}" bindtap="copyOpenid">
+    <view class="oid-l">我的 openid（点击复制）</view>
+    <view class="oid-v">{{openid}}</view>
+    <view class="oid-t">当前环境：{{isDevtool ? '开发者工具（与真机不同）' : '真机'}}</view>
   </view>
 
   <view class="sec">数据库集合（{{okCount}}/{{total}} 就绪）</view>
