@@ -71,7 +71,7 @@
     <view class="h2">一、我们收集的信息</view>
     <view class="li"><text class="b">微信用户标识（openid）</text>：用于识别你的身份，使你的记录能在换设备后恢复。我们无法通过它获知你的微信号、手机号或真实姓名。</view>
     <view class="li"><text class="b">你填写的资料</text>：昵称、头像。仅用于社区中展示。</view>
-    <view class="li"><text class="b">你主动创建的内容</text>：爱鸟档案、每日记录（体重、饮食、日照、洗澡、备注）、照片、发布的动态与评论。</text></view>
+    <view class="li"><text class="b">你主动创建的内容</text>：爱鸟档案、每日记录（体重、饮食、日照、洗澡、备注）、照片、发布的动态与评论。</view>
     <view class="li"><text class="b">使用统计</text>：打开小程序、发布内容等行为的匿名统计，仅用于改进产品。不包含你的内容原文。</view>
 
     <view class="h2">二、我们如何使用这些信息</view>
