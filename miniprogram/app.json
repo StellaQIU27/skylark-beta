@@ -14,6 +14,7 @@
     "pages/album/album",
     "pages/settings/settings",
     "pages/help/help",
+    "pages/myposts/myposts",
     "pages/favorites/favorites",
     "pages/drafts/drafts",
     "pages/followers/followers",

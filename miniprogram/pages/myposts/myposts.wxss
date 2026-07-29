@@ -1,0 +1,15 @@
+.page { min-height: 100vh; background: var(--cream); padding-top: 20rpx; }
+.sum { font-size: 25rpx; color: var(--ink-soft); padding: 0 40rpx 20rpx; }
+.feed-grid { display: flex; gap: 20rpx; padding: 0 24rpx; align-items: flex-start; }
+.fg-col { flex: 1; min-width: 0; }
+.xcard { background: var(--paper); border: 2rpx solid var(--beige-border); border-radius: 28rpx; overflow: hidden; margin-bottom: 20rpx; box-shadow: 0 6rpx 24rpx rgba(107,122,76,.07); }
+.xc-cover { position: relative; }
+.xc-cover image { width: 100%; display: block; }
+.xc-cover.text { padding: 32rpx 26rpx; min-height: 150rpx; font-size: 30rpx; font-weight: 600; color: var(--ink); line-height: 1.45; background: linear-gradient(135deg,#F3EEDE,#E9EFE0); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.xc-cover.text.wild { background: linear-gradient(135deg,#E6EEF1,#DEE9D2); }
+.xc-count { position: absolute; right: 14rpx; bottom: 14rpx; background: rgba(58,62,47,.6); color: #fff; font-size: 21rpx; padding: 2rpx 14rpx; border-radius: 16rpx; }
+.xc-body { padding: 18rpx 22rpx 22rpx; }
+.xc-title { font-size: 27rpx; color: var(--ink); line-height: 1.4; font-weight: 500; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.xc-meta { font-size: 21rpx; color: var(--ink-mute); margin-top: 10rpx; }
+.xc-foot { display: flex; gap: 24rpx; margin-top: 12rpx; }
+.xc-like, .xc-cmt { font-size: 23rpx; color: var(--ink-mute); }

@@ -4,7 +4,7 @@ const VERSION = 'v1.0.0';
 Page({
   data: {
     user: { name: '雀跃用户', avatar: null }, initial: '雀',
-    petCount: 0, albumCount: 0, likesCount: 0, followingCount: 0, followers: 0,
+    petCount: 0, albumCount: 0, likesCount: 0, followingCount: 0, followers: 0, myPostCount: 0,
     streak: 0, dots: [], unread: 0, version: VERSION,
     showEdit: false, tmpName: '', tmpAvatar: null,
     showBackup: false, showPaste: false, pasteText: ''
@@ -40,9 +40,11 @@ Page({
       S.fetchPosts(), S.fetchFollows(), S.fetchNotifications()
     ]);
     const openid = getApp().globalData.openid;
-    const myLikes = posts.filter(p => p.author_id === openid).reduce((s, p) => s + (p.likes || 0), 0);
+    const myPosts = posts.filter(p => p.author_id === openid);
+    const myLikes = myPosts.reduce((s, p) => s + (p.likes || 0), 0);
     this.setData({
       likesCount: myLikes,
+      myPostCount: myPosts.length,
       followingCount: (follows.following || []).length,
       followers: (follows.followers || []).length,
       unread: (notifs || []).filter(n => !n.read).length
@@ -150,17 +152,37 @@ Page({
       success: (r) => {
         if (!r.confirm) return;
         const st = S.getState();
-        st.pets = data.pets || [];
+        st.pets = (data.pets || []).map(p => {
+          // 兼容旧版：确保记录页需要的字段齐全
+          if (!p.color) p.color = S.SPECIES_COLOR[p.species] || '#8BA88B';
+          if (!p.initial) p.initial = (p.name || '鸟')[0];
+          return p;
+        });
         st.records = data.records || {};
+        // 兼容旧版记录里的 foods 字段（早期版本用 foods，后改为 feedings）
+        Object.keys(st.records).forEach(pid => {
+          Object.keys(st.records[pid] || {}).forEach(d => {
+            const r = st.records[pid][d] || {};
+            if (!r.feedings) r.feedings = [];
+            if (!r.photos) r.photos = [];
+            if (r.foods && r.foods.length && !r.feedings.length) {
+              r.feedings = [{ id: Date.now(), time: '08:00', foods: r.foods }];
+            }
+            delete r.foods;
+            delete r.updatedFields;
+          });
+        });
         st.bookmarks = data.bookmarks || [];
         st.draftList = data.draftList || [];
         st.likedComments = data.likedComments || [];
         st.joinedCircles = data.joinedCircles || [];
+        st.recordDays = data.recordDays || 0;
+        st.streakDays = data.streakDays || 0;
         if (data.user && data.user.name) {
           // 旧版头像是 base64，可直接沿用
           st.user = { name: data.user.name, avatar: data.user.avatar || null };
         }
-        st.activePetId = st.pets[0] ? st.pets[0].id : null;
+        st.activePetId = null;   // 进入后先显示爱鸟列表
         S.saveState();
         this.setData({ showPaste: false, showBackup: false });
         wx.showToast({ title: '导入成功', icon: 'success' });
@@ -178,6 +200,7 @@ Page({
   goFollowers() { wx.navigateTo({ url: '/pages/followers/followers' }); },
   goFavorites() { wx.navigateTo({ url: '/pages/favorites/favorites' }); },
   goDrafts() { wx.navigateTo({ url: '/pages/drafts/drafts' }); },
+  goMyPosts() { wx.navigateTo({ url: '/pages/myposts/myposts' }); },
   goHelp() { wx.navigateTo({ url: '/pages/help/help' }); },
   soon() { wx.showToast({ title: '即将推出', icon: 'none' }); },
   about() { wx.showToast({ title: 'Skylark · 雀跃 ' + VERSION, icon: 'none' }); }

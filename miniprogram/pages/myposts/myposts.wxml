@@ -1,0 +1,44 @@
+<view class="page">
+  <view class="sum" wx:if="{{list.length}}">共 {{list.length}} 条动态 · 获赞 {{totalLikes}}</view>
+  <view class="empty-card" wx:if="{{!list.length && !loading}}">
+    <view class="et">还没有发布动态</view>
+    <view class="es">去首页点「＋」发第一条，\n和鸟友们交流吧。</view>
+  </view>
+  <view class="feed-grid" wx:if="{{list.length}}">
+    <view class="fg-col">
+      <view class="xcard" wx:for="{{colA}}" wx:key="id" data-id="{{item.id}}" bindtap="openPost">
+        <view class="xc-cover" wx:if="{{item.photo}}">
+          <image src="{{item.photo}}" mode="widthFix"/>
+          <text class="xc-count" wx:if="{{item.photoCount>1}}">{{item.photoCount}}图</text>
+        </view>
+        <view class="xc-cover text {{item.domain}}" wx:else>{{item.title||item.body||'分享一刻'}}</view>
+        <view class="xc-body">
+          <view class="xc-title" wx:if="{{item.photo && (item.title||item.body)}}">{{item.title||item.body}}</view>
+          <view class="xc-meta">{{item.time}} · {{item.chanName}}</view>
+          <view class="xc-foot">
+            <text class="xc-like">♥ {{item.likes}}</text>
+            <text class="xc-cmt">💬 {{item.commentCount}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="fg-col">
+      <view class="xcard" wx:for="{{colB}}" wx:key="id" data-id="{{item.id}}" bindtap="openPost">
+        <view class="xc-cover" wx:if="{{item.photo}}">
+          <image src="{{item.photo}}" mode="widthFix"/>
+          <text class="xc-count" wx:if="{{item.photoCount>1}}">{{item.photoCount}}图</text>
+        </view>
+        <view class="xc-cover text {{item.domain}}" wx:else>{{item.title||item.body||'分享一刻'}}</view>
+        <view class="xc-body">
+          <view class="xc-title" wx:if="{{item.photo && (item.title||item.body)}}">{{item.title||item.body}}</view>
+          <view class="xc-meta">{{item.time}} · {{item.chanName}}</view>
+          <view class="xc-foot">
+            <text class="xc-like">♥ {{item.likes}}</text>
+            <text class="xc-cmt">💬 {{item.commentCount}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <view class="page-pad"></view>
+</view>
