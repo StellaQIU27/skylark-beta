@@ -10,6 +10,8 @@
     <view class="menu-row" wx:if="{{isAdmin}}" bindtap="goSelfTest"><text class="ml">环境自检</text><text class="mc">›</text></view>
     <view class="menu-row" wx:if="{{isAdmin}}" bindtap="goDashboard"><text class="ml">内测数据</text><text class="mc">›</text></view>
     <view class="menu-row" wx:if="{{isAdmin}}" bindtap="runMigrate"><text class="ml">迁移网页版内测数据</text><text class="mc">›</text></view>
+    <view class="menu-row" wx:if="{{isAdmin}}" bindtap="fixPhotos"><text class="ml">补迁老帖图片</text><text class="mc">›</text></view>
+    <view class="menu-row" wx:if="{{isAdmin}}" bindtap="probeMigrate"><text class="ml">老帖图片诊断</text><text class="mc">›</text></view>
     <view class="menu-row"><text class="ml">关于 Skylark · 雀跃</text><text class="mc">{{version}}</text></view>
   </view>
   <view class="tip">你的爱鸟与记录已随微信号自动同步到云端，换设备登录同一微信即可恢复。</view>

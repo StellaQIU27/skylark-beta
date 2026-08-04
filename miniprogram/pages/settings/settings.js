@@ -71,6 +71,54 @@ Page({
   goDashboard() { wx.navigateTo({ url: '/pages/dashboard/dashboard' }); },
   soon() { wx.showToast({ title: '即将推出', icon: 'none' }); },
 
+  // 只给已迁入但缺图的老帖补图片（管理员）
+  async fixPhotos() {
+    let rounds = 0, got = 0;
+    const logs = [], errs = [];
+    try {
+      while (rounds++ < 30) {
+        wx.showLoading({ title: '补图中 ' + got + ' 张…', mask: true });
+        const res = await wx.cloud.callFunction({ name: 'migrate', data: { fixPhotos: true, max: 1 } });
+        const d = res.result || {};
+        if (!d.ok) { wx.hideLoading(); wx.showModal({ title: '失败', content: d.msg || '', showCancel: false }); return; }
+        if (!d.needTotal) { wx.hideLoading(); wx.showModal({ title: '没有缺图的帖子', content: '所有老帖的图片都已就位。', showCancel: false }); return; }
+        got += d.stat.photos;
+        logs.push.apply(logs, d.log);
+        errs.push.apply(errs, d.stat.errors);
+        if (!d.stat.photos) break;      // 这一轮没进展，避免死循环
+        if (!d.remaining) break;
+      }
+      wx.hideLoading();
+      wx.showModal({
+        title: '补图结束',
+        content: '成功上传 ' + got + ' 张。\n' + logs.join('\n') + (errs.length ? '\n失败：' + errs.slice(0, 4).join('；') : ''),
+        showCancel: false
+      });
+      console.log('fixPhotos', logs, errs);
+    } catch (e) {
+      wx.hideLoading();
+      wx.showModal({ title: '中断', content: e.errMsg || e.message || '', showCancel: false });
+    }
+  },
+
+  // 诊断：看看老站图片字段的真实格式（不写数据）
+  async probeMigrate() {
+    wx.showLoading({ title: '读取中…', mask: true });
+    try {
+      const res = await wx.cloud.callFunction({ name: 'migrate', data: { probe: true } });
+      wx.hideLoading();
+      const rows = (res.result || {}).probe || [];
+      console.log('=== 老站图片诊断 ===', JSON.stringify(rows, null, 2));
+      const txt = rows.map(r => '#' + r.id + ' ' + r.title + ' → ' + r.n + '图' +
+        (r.shape.length ? '\n   ' + r.shape.map(s => s.type + '/' + (s.keys || '-') + ' len' + s.len + ' ' + s.head).join('\n   ') : '')
+      ).join('\n');
+      wx.showModal({ title: '图片字段诊断', content: txt.slice(0, 900) || '无数据', showCancel: false });
+    } catch (e) {
+      wx.hideLoading();
+      wx.showModal({ title: '失败', content: e.errMsg || e.message || '', showCancel: false });
+    }
+  },
+
   // 一次性：把网页内测版的帖子/评论迁进云数据库（管理员）
   async runMigrate() {
     wx.showLoading({ title: '正在核对…', mask: true });

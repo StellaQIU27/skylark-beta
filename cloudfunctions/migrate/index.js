@@ -47,33 +47,50 @@ async function sb(path) {
 
 const EXT = { 'image/jpeg': 'jpg', 'image/jpg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif' };
 
-// 把老站的一张图（data URL 或 http 链接）转存到云存储，返回 fileID
-async function movePhoto(src, tag) {
-  if (typeof src !== 'string' || !src) return null;
-  if (src.indexOf('cloud://') === 0) return src; // 已是云文件
+// 老站一条 photo 记录可能是字符串，也可能是 {url}/{src}/{data} 这样的对象
+function photoStr(x) {
+  if (typeof x === 'string') return x;
+  if (x && typeof x === 'object') {
+    return x.url || x.src || x.data || x.dataUrl || x.base64 || x.path || '';
+  }
+  return '';
+}
+
+// 把老站的一张图转存到云存储，返回 { fileID } 或 { err }
+async function movePhoto(raw, tag) {
+  const src = photoStr(raw);
+  if (!src) return { err: 'empty/' + (typeof raw) };
+  if (src.indexOf('cloud://') === 0) return { fileID: src };
 
   let buf, ext = 'jpg';
-  if (src.indexOf('data:') === 0) {
-    const m = /^data:([^;,]+)(;base64)?,/.exec(src);
-    if (!m) return null;
-    ext = EXT[m[1]] || 'jpg';
-    buf = Buffer.from(src.slice(m[0].length), m[2] ? 'base64' : 'utf8');
-  } else if (/^https?:\/\//.test(src)) {
-    const r = await get(src, {});
-    if (r.status !== 200) return null;
-    buf = r.buf;
-    const t = (src.split('?')[0].split('.').pop() || '').toLowerCase();
-    if (['jpg', 'jpeg', 'png', 'webp', 'gif'].indexOf(t) >= 0) ext = t === 'jpeg' ? 'jpg' : t;
-  } else {
-    return null;
-  }
-  if (!buf || !buf.length) return null;
+  try {
+    if (src.indexOf('data:') === 0) {
+      const m = /^data:([^;,]*)(;base64)?,/.exec(src);
+      if (!m) return { err: 'bad dataurl' };
+      ext = EXT[m[1]] || 'jpg';
+      buf = Buffer.from(src.slice(m[0].length), m[2] ? 'base64' : 'utf8');
+    } else if (/^https?:\/\//.test(src)) {
+      const r = await get(src, {});
+      if (r.status !== 200) return { err: 'http ' + r.status };
+      buf = r.buf;
+      const t = (src.split('?')[0].split('.').pop() || '').toLowerCase();
+      if (['jpg', 'jpeg', 'png', 'webp', 'gif'].indexOf(t) >= 0) ext = t === 'jpeg' ? 'jpg' : t;
+    } else if (/^[A-Za-z0-9+/=\s]{200,}$/.test(src)) {
+      // 裸 base64（没有 data: 前缀）
+      buf = Buffer.from(src.replace(/\s/g, ''), 'base64');
+    } else {
+      return { err: 'unknown scheme: ' + src.slice(0, 30) };
+    }
+    if (!buf || !buf.length) return { err: 'empty buffer' };
 
-  const up = await cloud.uploadFile({
-    cloudPath: 'legacy/' + tag + '-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext,
-    fileContent: buf
-  });
-  return up.fileID;
+    const up = await cloud.uploadFile({
+      cloudPath: 'legacy/' + tag + '-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext,
+      fileContent: buf
+    });
+    return { fileID: up.fileID };
+  } catch (e) {
+    return { err: (e.message || String(e)).slice(0, 120) };
+  }
 }
 
 /* ---------- 主流程 ---------- */
@@ -105,6 +122,49 @@ exports.main = async event => {
 
   const stat = { posts: src.length, skipped: 0, newPosts: 0, newComments: 0, photos: 0, errors: [] };
 
+  // --- 诊断：看看老站的 photos 字段到底长什么样（不写入任何数据） ---
+  if (event.probe) {
+    return {
+      ok: true, probe: src.map(p => ({
+        id: p.id,
+        title: (p.title || p.body || '').slice(0, 12),
+        n: (p.photos || []).length,
+        shape: (p.photos || []).map(x => {
+          const s = photoStr(x);
+          return { type: typeof x, keys: (x && typeof x === 'object') ? Object.keys(x).join(',') : '', len: s.length, head: s.slice(0, 44) };
+        })
+      }))
+    };
+  }
+
+  // --- 补图：只给已迁入但没图的帖子重新上传图片，不重建帖子 ---
+  if (event.fixPhotos) {
+    const fixed = [];
+    const { data: exist } = await db.collection('posts').where({ legacySource: 'web' }).limit(200).get();
+    const need = [];
+    (exist || []).forEach(doc => {
+      const old = src.find(x => String(x.id) === String(doc.legacyId));
+      if (!old) return;
+      const want = (old.photos || []).length;
+      if (want && (doc.photos || []).length < want) need.push({ doc, old, want });
+    });
+    for (const item of need.slice(0, max)) {
+      const photos = [];
+      for (const ph of item.old.photos) {
+        const r = await movePhoto(ph, 'p' + item.old.id);
+        if (r.fileID) { photos.push(r.fileID); stat.photos++; }
+        else stat.errors.push('#' + item.old.id + ' 图: ' + r.err);
+      }
+      if (photos.length) {
+        await db.collection('posts').doc(item.doc._id).update({ data: { photos } });
+        fixed.push('#' + item.old.id + ' 补入 ' + photos.length + '/' + item.want + ' 张');
+      } else {
+        fixed.push('#' + item.old.id + ' 仍失败');
+      }
+    }
+    return { ok: true, fixPhotos: true, stat, log: fixed, remaining: Math.max(0, need.length - Math.min(max, need.length)), needTotal: need.length };
+  }
+
   if (dryRun) {
     src.forEach(p => {
       const c = comments.filter(x => x.post_id === p.id).length;
@@ -128,8 +188,9 @@ exports.main = async event => {
     try {
       const photos = [];
       for (const ph of (p.photos || [])) {
-        const fid = await movePhoto(ph, 'p' + p.id);
-        if (fid) { photos.push(fid); stat.photos++; }
+        const r = await movePhoto(ph, 'p' + p.id);
+        if (r.fileID) { photos.push(r.fileID); stat.photos++; }
+        else stat.errors.push('#' + p.id + ' 图: ' + r.err);
       }
       const owner = OPENID_MAP[p.author_id] || ('legacy_' + (p.author_id || 'unknown'));
       const add = await db.collection('posts').add({
