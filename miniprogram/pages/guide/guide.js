@@ -153,5 +153,18 @@ Page({
       this.setData({ submitting: false });
       wx.showToast({ title: '提交失败，请稍后再试', icon: 'none' });
     }
+  },
+
+  onShareAppMessage() {
+    const d = this.data.detail;
+    return d
+      ? { title: d.name_cn + ' —— 雀跃鸟种图鉴', path: '/pages/guide/guide?id=' + d.id }
+      : { title: '雀跃鸟种图鉴 · 59 种中国常见野鸟', path: '/pages/guide/guide' };
+  },
+  onShareTimeline() {
+    const d = this.data.detail;
+    return d
+      ? { title: d.name_cn + ' —— 雀跃鸟种图鉴', query: 'id=' + d.id }
+      : { title: '雀跃鸟种图鉴 · 59 种中国常见野鸟' };
   }
 });

@@ -203,5 +203,16 @@ Page({
     if (pet) { pet.molt = null; S.saveState(); }
     this.setData({ showMolt: false, moltStart: '', moltEnd: '' });
     this.render();
+  },
+
+  onShareAppMessage() {
+    const p = this.data.pet;
+    return {
+      title: p && p.name ? ('我在雀跃记录 ' + p.name + ' 的每一天') : '雀跃 · 给鸟宝建个养护档案',
+      path: '/pages/home/home'
+    };
+  },
+  onShareTimeline() {
+    return { title: '雀跃 · 给鸟宝建个养护档案，记录体重、喂食与换羽' };
   }
 });

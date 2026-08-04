@@ -160,5 +160,12 @@ Page({
     const k = this.data.knowledge;
     this.setData({ showKnow: false });
     if (F.COMMUNITY) wx.navigateTo({ url: '/pages/circle/circle?key=' + (k.channel || 'carehelp') });
+  },
+
+  onShareAppMessage() {
+    return { title: '雀跃 · 鸟宝养护记录 —— 记录你和鸟宝的每一天', path: '/pages/home/home' };
+  },
+  onShareTimeline() {
+    return { title: '雀跃 · 鸟宝养护记录 —— 记录你和鸟宝的每一天' };
   }
 });

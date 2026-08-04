@@ -575,5 +575,12 @@ Page({
       path: '/pages/home/home',
       imageUrl: this.data.img || ''
     };
+  },
+
+  onShareTimeline() {
+    return {
+      title: this.data.shareTitle || '我家鸟宝的日记',
+      imageUrl: this.data.img || ''
+    };
   }
 });

@@ -224,5 +224,12 @@ Page({
   goGuide() { wx.navigateTo({ url: '/pages/guide/guide' }); },
   goHelp() { wx.navigateTo({ url: '/pages/help/help' }); },
   soon() { wx.showToast({ title: '即将推出', icon: 'none' }); },
-  about() { wx.showToast({ title: 'Skylark · 雀跃 ' + VERSION, icon: 'none' }); }
+  about() { wx.showToast({ title: 'Skylark · 雀跃 ' + VERSION, icon: 'none' }); },
+
+  onShareAppMessage() {
+    return { title: '雀跃 · 鸟宝养护记录 —— 体重、喂食、换羽都能记', path: '/pages/home/home' };
+  },
+  onShareTimeline() {
+    return { title: '雀跃 · 鸟宝养护记录 —— 体重、喂食、换羽都能记' };
+  }
 });
