@@ -1,0 +1,9 @@
+{
+  "name": "migrate",
+  "version": "1.0.0",
+  "description": "一次性：把网页内测版（Supabase）的帖子与评论迁移到云开发数据库",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

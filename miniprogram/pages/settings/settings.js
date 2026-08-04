@@ -70,6 +70,49 @@ Page({
   goSelfTest() { wx.navigateTo({ url: '/pages/selftest/selftest' }); },
   goDashboard() { wx.navigateTo({ url: '/pages/dashboard/dashboard' }); },
   soon() { wx.showToast({ title: '即将推出', icon: 'none' }); },
+
+  // 一次性：把网页内测版的帖子/评论迁进云数据库（管理员）
+  async runMigrate() {
+    wx.showLoading({ title: '正在核对…', mask: true });
+    let pre;
+    try {
+      pre = await wx.cloud.callFunction({ name: 'migrate', data: { dryRun: true } });
+    } catch (e) {
+      wx.hideLoading();
+      wx.showModal({ title: '调用失败', content: '云函数 migrate 可能还没上传。' + (e.errMsg || e.message || ''), showCancel: false });
+      return;
+    }
+    wx.hideLoading();
+    const r = pre.result || {};
+    if (!r.ok) { wx.showModal({ title: '无法迁移', content: r.msg || '未知错误', showCancel: false }); return; }
+    const s = r.stat;
+    wx.showModal({
+      title: '预览（未写入）',
+      content: '待迁入 ' + s.newPosts + ' 条帖子、' + s.newComments + ' 条评论；已存在 ' + s.skipped + ' 条会跳过。\n官方护理指南已内置为置顶，不迁。\n确定开始吗？',
+      confirmText: '开始迁移',
+      success: async m => {
+        if (!m.confirm) return;
+        wx.showLoading({ title: '迁移中，请勿关闭…', mask: true });
+        try {
+          const res = await wx.cloud.callFunction({ name: 'migrate', data: {} });
+          wx.hideLoading();
+          const d = res.result || {};
+          if (!d.ok) { wx.showModal({ title: '失败', content: d.msg || '未知错误', showCancel: false }); return; }
+          const t = d.stat;
+          wx.showModal({
+            title: '迁移完成',
+            content: '新增 ' + t.newPosts + ' 帖 / ' + t.newComments + ' 评论 / ' + t.photos + ' 张图；跳过 ' + t.skipped + ' 条。' + (t.errors.length ? '\n失败：' + t.errors.join('；') : ''),
+            showCancel: false
+          });
+          console.log('migrate log', d.log);
+        } catch (e) {
+          wx.hideLoading();
+          wx.showModal({ title: '失败', content: e.errMsg || e.message || '', showCancel: false });
+        }
+      }
+    });
+  },
+
   clearLocal() {
     wx.showModal({
       title: '清除本地数据', content: '将清除本机缓存（云端数据不受影响，可重新恢复）。确定吗？',
