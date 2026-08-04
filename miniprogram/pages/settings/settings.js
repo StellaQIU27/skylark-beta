@@ -92,22 +92,38 @@ Page({
       confirmText: '开始迁移',
       success: async m => {
         if (!m.confirm) return;
-        wx.showLoading({ title: '迁移中，请勿关闭…', mask: true });
+        // 分批推进：每次云函数只处理 1 篇，避免超时
+        const sum = { newPosts: 0, newComments: 0, photos: 0, skipped: 0, errors: [] };
+        const logs = [];
+        let guard = 0;
         try {
-          const res = await wx.cloud.callFunction({ name: 'migrate', data: {} });
+          while (guard++ < 100) {
+            wx.showLoading({ title: '迁移中 ' + sum.newPosts + '/' + s.newPosts + '…', mask: true });
+            const res = await wx.cloud.callFunction({ name: 'migrate', data: { max: 1 } });
+            const d = res.result || {};
+            if (!d.ok) { wx.hideLoading(); wx.showModal({ title: '失败', content: d.msg || '未知错误', showCancel: false }); return; }
+            sum.newPosts += d.stat.newPosts;
+            sum.newComments += d.stat.newComments;
+            sum.photos += d.stat.photos;
+            sum.skipped = d.stat.skipped;
+            sum.errors = sum.errors.concat(d.stat.errors);
+            logs.push.apply(logs, d.log);
+            if (!d.remaining) break;
+          }
           wx.hideLoading();
-          const d = res.result || {};
-          if (!d.ok) { wx.showModal({ title: '失败', content: d.msg || '未知错误', showCancel: false }); return; }
-          const t = d.stat;
           wx.showModal({
             title: '迁移完成',
-            content: '新增 ' + t.newPosts + ' 帖 / ' + t.newComments + ' 评论 / ' + t.photos + ' 张图；跳过 ' + t.skipped + ' 条。' + (t.errors.length ? '\n失败：' + t.errors.join('；') : ''),
+            content: '新增 ' + sum.newPosts + ' 帖 / ' + sum.newComments + ' 评论 / ' + sum.photos + ' 张图；跳过 ' + sum.skipped + ' 条。' + (sum.errors.length ? '\n失败：' + sum.errors.join('；') : ''),
             showCancel: false
           });
-          console.log('migrate log', d.log);
+          console.log('migrate log', logs);
         } catch (e) {
           wx.hideLoading();
-          wx.showModal({ title: '失败', content: e.errMsg || e.message || '', showCancel: false });
+          wx.showModal({
+            title: '中断',
+            content: (e.errMsg || e.message || '') + '\n已迁入 ' + sum.newPosts + ' 帖。重新点一次会从断点继续。',
+            showCancel: false
+          });
         }
       }
     });

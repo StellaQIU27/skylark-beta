@@ -82,6 +82,7 @@ exports.main = async event => {
   if (ADMINS.indexOf(OPENID) < 0) return { ok: false, msg: '无权限' };
 
   const dryRun = !!event.dryRun;
+  const max = event.max || 1;   // 每次调用最多处理几篇（分批，避免云函数超时）
   const log = [];
 
   let posts, comments;
@@ -119,8 +120,11 @@ exports.main = async event => {
     return { ok: true, dryRun: true, stat, log };
   }
 
-  for (const p of src) {
-    if (done[String(p.id)]) { stat.skipped++; continue; }
+  const todo = src.filter(p => !done[String(p.id)]);
+  stat.skipped = src.length - todo.length;
+  const batch = todo.slice(0, max);
+
+  for (const p of batch) {
     try {
       const photos = [];
       for (const ph of (p.photos || [])) {
@@ -178,5 +182,7 @@ exports.main = async event => {
     }
   }
 
-  return { ok: true, stat, log };
+  // 还剩多少篇没迁 —— 前端据此循环调用
+  const remaining = Math.max(0, todo.length - batch.length);
+  return { ok: true, stat, log, remaining, total: src.length, migrated: src.length - remaining };
 };
