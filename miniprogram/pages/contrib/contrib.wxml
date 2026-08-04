@@ -1,0 +1,44 @@
+<view class="page">
+  <view class="tabs">
+    <view class="tb {{status===item.k?'on':''}}" wx:for="{{tabs}}" wx:key="k"
+          data-k="{{item.k}}" bindtap="switchTab">{{item.n}} {{counts[item.k]||0}}</view>
+  </view>
+
+  <view class="flag {{live?'on':''}}">
+    {{live ? '采纳后的照片已在图鉴生效' : '当前为「只收不发」：采纳后照片暂不上线，等 PHOTO_CONTRIB 开关打开后生效'}}
+  </view>
+
+  <view class="empty" wx:if="{{!list.length && !loading}}">这里还没有投稿</view>
+  <view class="empty" wx:if="{{loading}}">加载中…</view>
+
+  <view class="cc" wx:for="{{list}}" wx:key="_id">
+    <view class="cc-head">
+      <view class="cc-bird">{{item.birdName}}</view>
+      <view class="cc-type {{item.type}}">{{item.typeText}}</view>
+    </view>
+    <view class="cc-meta">{{item.nickname}} · {{item.timeText}}</view>
+
+    <image wx:if="{{item.photo}}" class="cc-img" src="{{item.photo}}" mode="aspectFill"
+           data-src="{{item.photo}}" bindtap="preview"/>
+
+    <view class="cc-row" wx:if="{{item.place || item.shotAt}}">
+      <text class="cc-k">拍摄</text><text class="cc-v">{{item.place}} {{item.shotAt}}</text>
+    </view>
+    <view class="cc-text" wx:if="{{item.text}}">{{item.text}}</view>
+
+    <view class="cc-acts" wx:if="{{item.status==='pending'}}">
+      <view class="ca ghost" data-id="{{item._id}}" bindtap="reject">驳回</view>
+      <view class="ca accent" data-id="{{item._id}}" bindtap="accept">采纳</view>
+    </view>
+    <view class="cc-acts" wx:elif="{{item.status==='accepted'}}">
+      <view class="cc-done">已采纳{{item.type==='photo' ? '，已替换图鉴用图' : ''}}</view>
+      <view class="ca ghost" data-id="{{item._id}}" bindtap="revoke">撤下</view>
+    </view>
+    <view class="cc-acts" wx:else>
+      <view class="cc-done rej">已驳回</view>
+      <view class="ca ghost" data-id="{{item._id}}" bindtap="revoke">恢复待审</view>
+    </view>
+  </view>
+
+  <view class="page-pad"></view>
+</view>

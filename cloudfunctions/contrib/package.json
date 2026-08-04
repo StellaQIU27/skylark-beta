@@ -1,0 +1,9 @@
+{
+  "name": "contrib",
+  "version": "1.0.0",
+  "description": "鸟种图鉴投稿的管理端：列出 / 采纳 / 驳回",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

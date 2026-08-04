@@ -11,6 +11,7 @@
     <view class="menu-row" bindtap="goHelp"><text class="ml">帮助与反馈</text><text class="mc">›</text></view>
     <view class="menu-row" wx:if="{{isAdmin}}" bindtap="goSelfTest"><text class="ml">环境自检</text><text class="mc">›</text></view>
     <view class="menu-row" wx:if="{{isAdmin}}" bindtap="goDashboard"><text class="ml">内测数据</text><text class="mc">›</text></view>
+    <view class="menu-row" wx:if="{{isAdmin}}" bindtap="goContrib"><text class="ml">图鉴投稿审核</text><text class="mc">›</text></view>
     <view class="menu-row" wx:if="{{isAdmin}}" bindtap="runMigrate"><text class="ml">迁移网页版内测数据</text><text class="mc">›</text></view>
     <view class="menu-row" wx:if="{{isAdmin}}" bindtap="fixPhotos"><text class="ml">补迁老帖图片</text><text class="mc">›</text></view>
     <view class="menu-row" wx:if="{{isAdmin}}" bindtap="claimLegacy"><text class="ml">认领老帖（老账号→微信）</text><text class="mc">›</text></view>

@@ -71,6 +71,7 @@ Page({
   goHelp() { wx.navigateTo({ url: '/pages/help/help' }); },
   goSelfTest() { wx.navigateTo({ url: '/pages/selftest/selftest' }); },
   goDashboard() { wx.navigateTo({ url: '/pages/dashboard/dashboard' }); },
+  goContrib() { wx.navigateTo({ url: '/pages/contrib/contrib' }); },
   soon() { wx.showToast({ title: '即将推出', icon: 'none' }); },
 
   // 只给已迁入但缺图的老帖补图片（管理员）

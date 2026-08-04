@@ -13,8 +13,23 @@
 
   <block wx:else>
     <view class="back" bindtap="back">‹ 鸟种图鉴</view>
-    <view class="dimg"><image wx:if="{{detail.cc_image}}" src="{{detail.cc_image}}" mode="aspectFill"/></view>
-    <view class="dattr" wx:if="{{detail.cc_attr}}">{{detail.cc_attr}}</view>
+    <view class="dimg" bindtap="previewImg">
+      <image wx:if="{{photoUrl}}" src="{{photoUrl}}" mode="aspectFill"/>
+      <image wx:elif="{{detail.cc_image}}" src="{{detail.cc_image}}" mode="aspectFill"/>
+      <view class="dimg-by" wx:if="{{photoUrl}}">由鸟友 {{contributor}} 提供</view>
+    </view>
+    <view class="dattr" wx:if="{{!photoUrl && detail.cc_attr}}">{{detail.cc_attr}}</view>
+
+    <!-- 纠错入口 -->
+    <view class="fixbar" bindtap="openContrib">
+      <image class="fx-ic" src="/images/ic-pen.png" mode="aspectFit"/>
+      <view class="fx-main">
+        <view class="fx-t">图片或资料不准确？</view>
+        <view class="fx-s">投稿一张你拍的照片，或指出哪里写错了</view>
+      </view>
+      <view class="fx-go">去纠错 ›</view>
+    </view>
+
     <view class="dname">{{detail.name_cn}}</view>
     <view class="dsci">{{detail.scientific_name}} · {{detail.name_en}}</view>
     <view class="dtags">
@@ -26,4 +41,53 @@
     <view class="dsec"><view class="dh">分布与生境</view><view class="db">{{detail.habitat}}</view></view>
   </block>
   <view class="page-pad"></view>
+</view>
+
+<!-- 纠错投稿 -->
+<view class="mask {{showContrib?'show':''}}" bindtap="closeContrib"></view>
+<view class="sheet {{showContrib?'show':''}}">
+  <view class="sh-handle"></view>
+  <view class="sh-title">帮 {{detail.name_cn}} 纠错</view>
+
+  <view class="ctypes">
+    <view class="ct {{cType===item.key?'on':''}}" wx:for="{{types}}" wx:key="key"
+          data-k="{{item.key}}" bindtap="pickType">{{item.name}}</view>
+  </view>
+  <view class="chint">{{cHint}}</view>
+
+  <block wx:if="{{cType==='photo'}}">
+    <view class="cphoto">
+      <view class="cp-box" wx:if="{{cPhoto}}">
+        <image src="{{cPhoto}}" mode="aspectFill"/>
+        <view class="cp-x" catchtap="removeCPhoto">✕</view>
+      </view>
+      <view class="cp-add" wx:else bindtap="chooseCPhoto">
+        <image class="cp-ic" src="/images/ic-camera.png" mode="aspectFit"/>
+        <text>选择照片</text>
+      </view>
+    </view>
+    <view class="cfld">
+      <view class="cf-l">拍摄地点（选填）</view>
+      <input class="ipt" placeholder="例如 杭州西溪湿地" value="{{cPlace}}" bindinput="onCPlace" maxlength="24"/>
+    </view>
+    <view class="cfld">
+      <view class="cf-l">拍摄日期（选填）</view>
+      <picker mode="date" value="{{cShotAt}}" bindchange="pickShotAt">
+        <view class="ipt pick">{{cShotAt || '选择日期'}}</view>
+      </picker>
+    </view>
+  </block>
+
+  <view class="cfld">
+    <view class="cf-l">{{cType==='photo' ? '补充说明（选填）' : '说明'}}</view>
+    <textarea class="cta" placeholder="{{cType==='photo' ? '例如：原图那只其实是雌鸟' : '写清楚哪里不对、正确的应该是什么'}}"
+              value="{{cText}}" bindinput="onCText" maxlength="300"/>
+  </view>
+
+  <view class="ctip">投稿只有管理员能看到。核对采纳后会替换到图鉴里，并署上你的昵称。请勿上传他人有版权的照片。</view>
+
+  <view class="sh-actions">
+    <view class="btn ghost" bindtap="closeContrib">取消</view>
+    <view class="btn accent {{submitting?'dis':''}}" bindtap="submitContrib">{{submitting?'提交中…':'提交'}}</view>
+  </view>
 </view>

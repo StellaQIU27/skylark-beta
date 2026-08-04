@@ -25,8 +25,18 @@
  *   community / circle / post / notifications / user / myposts /
  *   favorites / drafts / followers / following / likes
  */
+/* PHOTO_CONTRIB：图鉴「鸟友纠错投稿」被采纳后的照片是否在前台生效。
+ *
+ *   false = 只收不发。用户仍可提交纠错与照片（投稿只有管理员看得到，
+ *           属于反馈性质，不构成 UGC），但图鉴仍显示内置图片。
+ *   true  = 采纳后的照片替换图鉴原图，并署名「由鸟友 XX 提供」。
+ *           建议等小程序过审上线之后再打开。
+ *
+ * 投稿的收集通道始终开着，和本开关无关。
+ */
 const FEATURES = {
-  COMMUNITY: false
+  COMMUNITY: false,
+  PHOTO_CONTRIB: false
 };
 
 module.exports = FEATURES;

@@ -9,6 +9,7 @@
     "pages/editor/editor",
     "pages/profile/profile",
     "pages/guide/guide",
+    "pages/contrib/contrib",
     "pages/search/search",
     "pages/notifications/notifications",
     "pages/user/user",
