@@ -137,6 +137,50 @@ exports.main = async event => {
     };
   }
 
+  // --- 认领：把某个老账号（legacyAuthorId 或老昵称）的帖子/评论改归到指定 openid ---
+  if (event.claim) {
+    const { legacyAuthorId, legacyName, openid } = event.claim;
+    if (!openid) return { ok: false, msg: '缺少 openid' };
+    const cond = legacyAuthorId ? { legacyAuthorId } : null;
+    const out = [];
+    let np = 0, nc = 0;
+
+    // 帖子
+    const { data: ps } = await db.collection('posts')
+      .where(cond || { legacySource: 'web' }).limit(200).get();
+    for (const d of (ps || [])) {
+      if (!cond && d.author !== legacyName) continue;
+      await db.collection('posts').doc(d._id).update({ data: { _openid: openid } });
+      np++;
+    }
+
+    // 评论：按老站数据找出该作者的评论 legacyId
+    const ids = comments
+      .filter(c => legacyAuthorId ? c.author_id === legacyAuthorId : c.author === legacyName)
+      .map(c => c.id);
+    if (ids.length) {
+      const { data: cs } = await db.collection('comments')
+        .where({ legacySource: 'web', legacyId: db.command.in(ids) }).limit(200).get();
+      for (const d of (cs || [])) {
+        await db.collection('comments').doc(d._id).update({ data: { _openid: openid } });
+        nc++;
+      }
+    }
+    out.push('认领 ' + np + ' 帖 / ' + nc + ' 评论 → ' + openid.slice(0, 10) + '…');
+    return { ok: true, claim: true, stat: { newPosts: np, newComments: nc, photos: 0, skipped: 0, errors: [] }, log: out };
+  }
+
+  // --- 名单：列出老站作者，方便挑谁来认领 ---
+  if (event.authors) {
+    const m = {};
+    src.forEach(p => {
+      const k = p.author_id || 'unknown';
+      m[k] = m[k] || { id: k, name: p.author, posts: 0 };
+      m[k].posts++;
+    });
+    return { ok: true, authors: Object.keys(m).map(k => m[k]) };
+  }
+
   // --- 补图：只给已迁入但没图的帖子重新上传图片，不重建帖子 ---
   if (event.fixPhotos) {
     const fixed = [];

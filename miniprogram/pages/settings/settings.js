@@ -101,6 +101,55 @@ Page({
     }
   },
 
+  // 认领老帖：把某个老账号的帖子/评论改归到指定 openid
+  async claimLegacy() {
+    wx.showLoading({ title: '读取作者…', mask: true });
+    let list;
+    try {
+      const r = await wx.cloud.callFunction({ name: 'migrate', data: { authors: true } });
+      list = ((r.result || {}).authors || []).filter(a => a.id !== 'official_guide');
+    } catch (e) {
+      wx.hideLoading();
+      wx.showModal({ title: '失败', content: e.errMsg || e.message || '', showCancel: false });
+      return;
+    }
+    wx.hideLoading();
+    if (!list.length) { wx.showToast({ title: '没有老账号', icon: 'none' }); return; }
+
+    wx.showActionSheet({
+      itemList: list.map(a => a.name + '（' + a.posts + '帖）').slice(0, 6),
+      success: res => {
+        const a = list[res.tapIndex];
+        wx.showModal({
+          title: '认领「' + a.name + '」的帖子',
+          editable: true,
+          placeholderText: '粘贴该用户的微信 openid',
+          success: async m => {
+            const oid = (m.content || '').trim();
+            if (!m.confirm || !oid) return;
+            wx.showLoading({ title: '处理中…', mask: true });
+            try {
+              const r = await wx.cloud.callFunction({
+                name: 'migrate',
+                data: { claim: { legacyAuthorId: a.id, openid: oid } }
+              });
+              wx.hideLoading();
+              const d = r.result || {};
+              wx.showModal({
+                title: d.ok ? '完成' : '失败',
+                content: d.ok ? d.log.join('\n') : (d.msg || ''),
+                showCancel: false
+              });
+            } catch (e) {
+              wx.hideLoading();
+              wx.showModal({ title: '失败', content: e.errMsg || e.message || '', showCancel: false });
+            }
+          }
+        });
+      }
+    });
+  },
+
   // 诊断：看看老站图片字段的真实格式（不写数据）
   async probeMigrate() {
     wx.showLoading({ title: '读取中…', mask: true });
