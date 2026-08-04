@@ -6,7 +6,7 @@
   </view>
 
   <!-- 社区规范 -->
-  <view class="doc" wx:if="{{tab==='rule'}}">
+  <view class="doc" wx:if="{{comm && tab==='rule'}}">
     <view class="h1">雀跃社区内容规范</view>
     <view class="upd">更新于 2026-07</view>
     <view class="p">雀跃是养鸟爱好者交流养护经验的社区。为了让这里保持友善与专业，请在发布内容前阅读以下规范。</view>
