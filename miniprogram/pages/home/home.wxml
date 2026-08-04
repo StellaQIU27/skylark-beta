@@ -34,10 +34,11 @@
       <view class="fs">记录成长与健康</view>
       <view class="fi">›</view>
     </view>
-    <view class="fcard fc2" bindtap="{{comm ? 'goCommunity' : 'goGuide'}}">
+    <view class="fcard fc2 {{comm?'':'soon'}}" bindtap="{{comm ? 'goCommunity' : 'commSoonTip'}}">
       <view class="fc-fade"></view>
-      <view class="ft">{{comm ? '社区' : '鸟种图鉴'}}</view>
-      <view class="fs">{{comm ? '交流经验与心得' : '认识身边的鸟'}}</view>
+      <view class="soon-badge" wx:if="{{!comm}}">待开放</view>
+      <view class="ft">社区</view>
+      <view class="fs">交流经验与心得</view>
       <view class="fi">›</view>
     </view>
     <view class="fcard fc3 soon" bindtap="soonTip">
@@ -73,6 +74,16 @@
       <view class="qr-s">{{recHint}}</view>
     </view>
     <view class="qr-go">去记录 ›</view>
+  </view>
+
+  <!-- 记录版：鸟种图鉴入口 -->
+  <view class="quick-rec slim" wx:if="{{!comm}}" bindtap="goGuide">
+    <image class="qr-ic" src="/images/ic-guide.png" mode="aspectFit"/>
+    <view class="qr-main">
+      <view class="qr-t">鸟种图鉴</view>
+      <view class="qr-s">{{birdCount}} 种中国常见野鸟 · 按名称、学名或科查找</view>
+    </view>
+    <view class="qr-arrow">›</view>
   </view>
 
   <block wx:if="{{comm}}">

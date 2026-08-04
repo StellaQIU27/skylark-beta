@@ -1,5 +1,6 @@
 const S = require('../../utils/store.js');
 const F = require('../../utils/features.js');
+const GUIDE = require('../../utils/birds.js');
 
 const DAILY_KNOWLEDGE = [
   { tag: '饮食', title: '瓜子和坚果只适合当奖励', body: '日常主食更建议以配方粮和新鲜蔬菜为主，高脂零食少量给，避免鸟宝挑食和体重失控。', channel: 'carehelp' },
@@ -16,7 +17,8 @@ Page({
     comm: F.COMMUNITY,
     filter: 'all', list: [], colA: [], colB: [],
     loading: true, unread: 0, ticker: null,
-    knowledge: null, showKnow: false, today: '', recHint: ''
+    knowledge: null, showKnow: false, today: '', recHint: '',
+    birdCount: (GUIDE.BIRDS || []).length
   },
 
   onLoad() {
@@ -150,6 +152,7 @@ Page({
   goCommunity() { wx.switchTab({ url: '/pages/community/community' }); },
   goCompose() { wx.navigateTo({ url: '/pages/editor/editor?mode=post' }); },
   soonTip() { wx.showToast({ title: '识鸟功能开发中', icon: 'none' }); },
+  commSoonTip() { wx.showToast({ title: '社区功能开发中', icon: 'none' }); },
 
   openKnowledge() { this.setData({ showKnow: true }); },
   closeKnow() { this.setData({ showKnow: false }); },

@@ -214,3 +214,9 @@
 .qr-s { font-size: 24rpx; color: var(--ink-soft); margin-top: 8rpx; line-height: 1.45; }
 .qr-go { font-size: 25rpx; font-weight: 600; color: #fff; flex-shrink: 0;
   background: var(--sage-dark); padding: 14rpx 28rpx; border-radius: 30rpx; }
+
+.quick-rec.slim { padding: 24rpx 28rpx; }
+.qr-ic { width: 52rpx; height: 52rpx; flex-shrink: 0; opacity: .85; }
+.qr-arrow { font-size: 34rpx; color: var(--ink-mute); flex-shrink: 0; }
+.quick-rec.slim .qr-t { font-size: 28rpx; }
+.quick-rec.slim .qr-s { font-size: 22rpx; margin-top: 6rpx; }
