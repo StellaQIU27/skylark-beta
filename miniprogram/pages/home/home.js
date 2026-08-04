@@ -1,4 +1,5 @@
 const S = require('../../utils/store.js');
+const F = require('../../utils/features.js');
 
 const DAILY_KNOWLEDGE = [
   { tag: '饮食', title: '瓜子和坚果只适合当奖励', body: '日常主食更建议以配方粮和新鲜蔬菜为主，高脂零食少量给，避免鸟宝挑食和体重失控。', channel: 'carehelp' },
@@ -12,16 +13,20 @@ const DAILY_KNOWLEDGE = [
 
 Page({
   data: {
+    comm: F.COMMUNITY,
     filter: 'all', list: [], colA: [], colB: [],
     loading: true, unread: 0, ticker: null,
-    knowledge: null, showKnow: false
+    knowledge: null, showKnow: false, today: '', recHint: ''
   },
 
   onLoad() {
     const d = new Date();
     const start = new Date(d.getFullYear(), 0, 0);
     const day = Math.floor((d - start) / 86400000);
-    this.setData({ knowledge: DAILY_KNOWLEDGE[day % DAILY_KNOWLEDGE.length] });
+    this.setData({
+      knowledge: DAILY_KNOWLEDGE[day % DAILY_KNOWLEDGE.length],
+      today: (d.getMonth() + 1) + '月' + d.getDate() + '日'
+    });
   },
 
   async onShow() {
@@ -29,7 +34,24 @@ Page({
     await S.restorePersonalFromCloud();
     this.load();
     this.buildTicker();
+    this.buildRecHint();
     this.checkAgreement();
+  },
+
+  // 记录版：首页显示今天记录了没
+  buildRecHint() {
+    if (F.COMMUNITY) return;
+    const st = S.getState();
+    const pets = st.pets || [];
+    if (!pets.length) { this.setData({ recHint: '还没有爱鸟档案，先添加一只吧' }); return; }
+    const today = S.todayISO();
+    const doneNames = pets.filter(p => {
+      const r = (st.records[p.id] || {})[today];
+      return r && (r.weight || (r.feedings || []).length || r.notes || (r.photos || []).length);
+    }).map(p => p.name);
+    if (!doneNames.length) this.setData({ recHint: pets.length + ' 只鸟宝今天都还没记录' });
+    else if (doneNames.length === pets.length) this.setData({ recHint: '今天全部记录完成，做得好 🌿'.replace(' 🌿', '') });
+    else this.setData({ recHint: '已记录 ' + doneNames.length + '/' + pets.length + ' 只：' + doneNames.join('、') });
   },
 
   // 首次使用提示同意社区规范（UGC 合规要求）
@@ -39,7 +61,9 @@ Page({
     if (agreed) return;
     wx.showModal({
       title: '欢迎来到雀跃',
-      content: '使用前请阅读并同意《社区内容规范》《用户协议》与《隐私政策》。\n\n雀跃仅供养鸟经验交流，禁止发布动物交易信息；健康内容仅供参考，请以兽医诊断为准。',
+      content: F.COMMUNITY
+        ? '使用前请阅读并同意《社区内容规范》《用户协议》与《隐私政策》。\n\n雀跃仅供养鸟经验交流，禁止发布动物交易信息；健康内容仅供参考，请以兽医诊断为准。'
+        : '使用前请阅读并同意《用户协议》与《隐私政策》。\n\n雀跃用于记录鸟宝的日常养护，所有养护建议仅供参考，鸟宝身体异常请及时就医。',
       confirmText: '同意并使用',
       cancelText: '查看条款',
       success: (r) => {
@@ -55,6 +79,12 @@ Page({
   onPullDownRefresh() { this.load(() => wx.stopPullDownRefresh()); },
 
   async load(done) {
+    if (!F.COMMUNITY) {
+      this.allPosts = [];
+      this.setData({ list: [], colA: [], colB: [], unread: 0, loading: false });
+      if (done) done();
+      return;
+    }
     this.setData({ loading: true });
     const posts = await S.fetchPosts();
     this.allPosts = posts;
@@ -109,13 +139,14 @@ Page({
     const t = this.data.ticker; if (!t) return;
     if (t.act === 'records') wx.switchTab({ url: '/pages/records/records' });
     else if (t.act === 'know') this.openKnowledge();
-    else wx.navigateTo({ url: '/pages/circle/circle?key=carehelp' });
+    else if (F.COMMUNITY) wx.navigateTo({ url: '/pages/circle/circle?key=carehelp' });
   },
 
   openPost(e) { wx.navigateTo({ url: '/pages/post/post?id=' + e.currentTarget.dataset.id }); },
   goSearch() { wx.navigateTo({ url: '/pages/search/search' }); },
   goNotifications() { wx.navigateTo({ url: '/pages/notifications/notifications' }); },
   goRecords() { wx.switchTab({ url: '/pages/records/records' }); },
+  goGuide() { wx.navigateTo({ url: '/pages/guide/guide' }); },
   goCommunity() { wx.switchTab({ url: '/pages/community/community' }); },
   goCompose() { wx.navigateTo({ url: '/pages/editor/editor?mode=post' }); },
   soonTip() { wx.showToast({ title: '识鸟功能开发中', icon: 'none' }); },
@@ -125,6 +156,6 @@ Page({
   knowGo() {
     const k = this.data.knowledge;
     this.setData({ showKnow: false });
-    wx.navigateTo({ url: '/pages/circle/circle?key=' + (k.channel || 'carehelp') });
+    if (F.COMMUNITY) wx.navigateTo({ url: '/pages/circle/circle?key=' + (k.channel || 'carehelp') });
   }
 });

@@ -1,8 +1,8 @@
 <view class="page">
   <view class="sbox">
-    <input class="sinput" placeholder="搜索鸟种 / 帖子 / 用户" value="{{q}}" bindinput="onInput" focus confirm-type="search"/>
+    <input class="sinput" placeholder="{{comm ? '搜索鸟种 / 帖子 / 用户' : '搜索鸟种'}}" value="{{q}}" bindinput="onInput" focus confirm-type="search"/>
   </view>
-  <view class="hint" wx:if="{{!q}}">输入关键词，搜索鸟种、帖子和鸟友</view>
+  <view class="hint" wx:if="{{!q}}">{{comm ? '输入关键词，搜索鸟种、帖子和鸟友' : '输入中文名 / 学名 / 科，搜索鸟种'}}</view>
   <view class="hint" wx:elif="{{!birds.length && !posts.length && !users.length}}">没有找到「{{q}}」相关内容</view>
 
   <block wx:if="{{birds.length}}">
@@ -13,7 +13,7 @@
     </view>
   </block>
 
-  <block wx:if="{{users.length}}">
+  <block wx:if="{{comm && users.length}}">
     <view class="sh">鸟友</view>
     <view class="row" wx:for="{{users}}" wx:key="id" data-id="{{item.id}}" bindtap="openUser">
       <view class="uav">{{item.initial}}</view>
@@ -21,7 +21,7 @@
     </view>
   </block>
 
-  <block wx:if="{{posts.length}}">
+  <block wx:if="{{comm && posts.length}}">
     <view class="sh">帖子</view>
     <view class="row" wx:for="{{posts}}" wx:key="id" data-id="{{item.id}}" bindtap="openPost">
       <view class="bd"><view class="t">{{item.disp}}</view><view class="s">{{item.author}} · 赞 {{item.likes}} · 回复 {{item.cc}}</view></view>

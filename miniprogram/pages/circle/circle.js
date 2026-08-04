@@ -1,3 +1,16 @@
+// 记录版守卫：COMMUNITY 关闭时此页不可用
+const __F = require('../../utils/features.js');
+let __bounced = false;
+function __commGuard() {
+  if (__F.COMMUNITY) return false;
+  if (!__bounced) {
+    __bounced = true;
+    wx.showToast({ title: '该功能暂未开放', icon: 'none' });
+    setTimeout(function () { __bounced = false; wx.switchTab({ url: '/pages/home/home' }); }, 500);
+  }
+  return true;
+}
+
 const S = require('../../utils/store.js');
 
 const PINNED_SOURCE = '内容整理自公开兽医科普资料（VIN / Best Friends / 鹦鹉协会等）· 内测版尚未经执业兽医逐条审核 · 更新于 2026-05';
@@ -30,6 +43,7 @@ Page({
   },
 
   onLoad(opt) {
+    if (__commGuard()) return;
     const key = opt.key || 'daily';
     const group = S.GROUP[key] || S.GROUPS[0];
     const pinned = PINNED_POSTS[key] || [];
@@ -42,6 +56,8 @@ Page({
   },
 
   async onShow() {
+
+    if (__commGuard()) return;
     await getApp().waitReady();
     this.load();
   },

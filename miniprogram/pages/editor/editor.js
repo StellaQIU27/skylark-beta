@@ -1,4 +1,5 @@
 const S = require('../../utils/store.js');
+const F = require('../../utils/features.js');
 
 const CHANNEL_FIELDS = {
   help: [['age', '年龄', '例如 1岁2个月'], ['symptoms', '症状', '例如 精神不振、拉稀'], ['diet', '饮食', '例如 主粮+滋养丸'], ['weightChange', '体重变化', '例如 一周降 3g']],
@@ -34,11 +35,24 @@ Page({
 
   async onLoad(opt) {
     const mode = opt.mode || 'post';
+    // 记录版：社区关闭时不允许进入发帖编辑器
+    if (mode === 'post' && !F.COMMUNITY) {
+      wx.showToast({ title: '该功能暂未开放', icon: 'none' });
+      setTimeout(() => wx.navigateBack(), 600);
+      return;
+    }
     this.setData({ mode });
+
+    // 标题先设，避免冷启动时闪现默认标题
+    wx.setNavigationBarTitle({
+      title: mode === 'post' ? (opt.edit ? '编辑动态' : '发布动态')
+           : mode === 'pet' ? (opt.id ? '编辑爱鸟' : '添加爱鸟')
+           : '每日记录'
+    });
+
     await getApp().waitReady();
 
     if (mode === 'post') {
-      wx.setNavigationBarTitle({ title: opt.edit ? '编辑动态' : '发布动态' });
       const groups = S.GROUPS.map(g => ({ key: g.key, name: g.name }));
       const channel = opt.channel || 'share';
       this.setData({ groups, channel, group: S.GROUP_OF[channel] || 'daily' });

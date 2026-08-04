@@ -1,9 +1,11 @@
 <view class="page">
   <view class="menu-card">
     <view class="menu-row" bindtap="editProfile"><text class="ml">个人资料</text><text class="mc">{{user.name}} ›</text></view>
-    <view class="menu-row" bindtap="goNotif"><text class="ml">通知提醒</text><text class="mc">›</text></view>
-    <view class="menu-row" bindtap="goBlocked"><text class="ml">已拉黑的用户</text><text class="mc">{{blockedCount}} ›</text></view>
-    <view class="menu-row" bindtap="goRule"><text class="ml">社区内容规范</text><text class="mc">›</text></view>
+    <block wx:if="{{comm}}">
+      <view class="menu-row" bindtap="goNotif"><text class="ml">通知提醒</text><text class="mc">›</text></view>
+      <view class="menu-row" bindtap="goBlocked"><text class="ml">已拉黑的用户</text><text class="mc">{{blockedCount}} ›</text></view>
+      <view class="menu-row" bindtap="goRule"><text class="ml">社区内容规范</text><text class="mc">›</text></view>
+    </block>
     <view class="menu-row" bindtap="goTerms"><text class="ml">用户协议</text><text class="mc">›</text></view>
     <view class="menu-row" bindtap="goPrivacy"><text class="ml">隐私政策</text><text class="mc">›</text></view>
     <view class="menu-row" bindtap="goHelp"><text class="ml">帮助与反馈</text><text class="mc">›</text></view>

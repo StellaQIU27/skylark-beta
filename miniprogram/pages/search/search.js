@@ -1,8 +1,13 @@
 const S = require('../../utils/store.js');
 const GUIDE = require('../../utils/birds.js');
+const F = require('../../utils/features.js');
 Page({
-  data: { q: '', birds: [], posts: [], users: [] },
-  async onShow() { await getApp().waitReady(); this.all = await S.fetchPosts(); },
+  data: { comm: F.COMMUNITY, q: '', birds: [], posts: [], users: [] },
+  async onShow() {
+    if (!F.COMMUNITY) { this.all = []; return; }
+    await getApp().waitReady();
+    this.all = await S.fetchPosts();
+  },
   onInput(e) {
     const q = (e.detail.value || '').trim().toLowerCase();
     this.setData({ q });

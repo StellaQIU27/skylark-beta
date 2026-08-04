@@ -1,10 +1,14 @@
 const S = require('../../utils/store.js');
+const F = require('../../utils/features.js');
+const GUIDE = require('../../utils/birds.js');
 const VERSION = 'v1.0.0';
 
 Page({
   data: {
+    comm: F.COMMUNITY,
     user: { name: '雀跃用户', avatar: null }, initial: '雀',
     petCount: 0, albumCount: 0, likesCount: 0, followingCount: 0, followers: 0, myPostCount: 0,
+    recordDays: 0, birdCount: (GUIDE.BIRDS || []).length,
     streak: 0, dots: [], unread: 0, version: VERSION,
     showEdit: false, tmpName: '', tmpAvatar: null,
     showBackup: false, showPaste: false, pasteText: ''
@@ -29,12 +33,21 @@ Page({
 
     const streak = this.calcStreak(st);
 
+    // 记录过的不重复天数
+    const daySet = {};
+    Object.keys(st.records || {}).forEach(pid => {
+      Object.keys(st.records[pid] || {}).forEach(d => { daySet[d] = 1; });
+    });
+
     this.setData({
       user, initial: (user.name || '雀')[0],
       petCount: (st.pets || []).length,
       albumCount: album, streak,
+      recordDays: Object.keys(daySet).length,
       dots: Array(Math.min(10, streak)).fill(1)
     });
+
+    if (!F.COMMUNITY) return;
 
     const [posts, follows, notifs] = await Promise.all([
       S.fetchPosts(), S.fetchFollows(), S.fetchNotifications()
@@ -208,6 +221,7 @@ Page({
   goFavorites() { wx.navigateTo({ url: '/pages/favorites/favorites' }); },
   goDrafts() { wx.navigateTo({ url: '/pages/drafts/drafts' }); },
   goMyPosts() { wx.navigateTo({ url: '/pages/myposts/myposts' }); },
+  goGuide() { wx.navigateTo({ url: '/pages/guide/guide' }); },
   goHelp() { wx.navigateTo({ url: '/pages/help/help' }); },
   soon() { wx.showToast({ title: '即将推出', icon: 'none' }); },
   about() { wx.showToast({ title: 'Skylark · 雀跃 ' + VERSION, icon: 'none' }); }

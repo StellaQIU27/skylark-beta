@@ -1,1 +1,10 @@
-{ "desc": "关于本文件的更多信息，请参考文档 https://developers.weixin.qq.com/miniprogram/dev/framework/sitemap.html", "rules": [{ "action": "allow", "page": "*" }] }
+{
+  "desc": "关于本文件的更多信息，请参考文档 https://developers.weixin.qq.com/miniprogram/dev/framework/sitemap.html",
+  "rules": [
+    { "action": "allow", "page": "pages/home/home" },
+    { "action": "allow", "page": "pages/records/records" },
+    { "action": "allow", "page": "pages/guide/guide" },
+    { "action": "allow", "page": "pages/profile/profile" },
+    { "action": "disallow", "page": "*" }
+  ]
+}

@@ -39,7 +39,6 @@
     "list": [
       { "pagePath": "pages/home/home", "text": "首页", "iconPath": "images/tab-home.png", "selectedIconPath": "images/tab-home-on.png" },
       { "pagePath": "pages/records/records", "text": "记录", "iconPath": "images/tab-record.png", "selectedIconPath": "images/tab-record-on.png" },
-      { "pagePath": "pages/community/community", "text": "社区", "iconPath": "images/tab-community.png", "selectedIconPath": "images/tab-community-on.png" },
       { "pagePath": "pages/profile/profile", "text": "我的", "iconPath": "images/tab-me.png", "selectedIconPath": "images/tab-me-on.png" }
     ]
   },

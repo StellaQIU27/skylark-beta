@@ -3,7 +3,7 @@
   <view class="prof-top">
     <view class="prof-actions">
       <view class="pa-btn" bindtap="goSettings"><image src="/images/icon-settings.png" mode="aspectFit"/></view>
-      <view class="pa-btn {{unread>0?'on':''}}" bindtap="goNotifications"><image src="/images/icon-bell.png" mode="aspectFit"/></view>
+      <view class="pa-btn {{unread>0?'on':''}}" wx:if="{{comm}}" bindtap="goNotifications"><image src="/images/icon-bell.png" mode="aspectFit"/></view>
     </view>
     <view class="prof-me">
       <view class="av" bindtap="editProfile">
@@ -13,11 +13,12 @@
       </view>
       <view class="pm-info">
         <view class="n">{{user.name}} <text class="lv">Lv.1</text></view>
-        <view class="s">
+        <view class="s" wx:if="{{comm}}">
           <text bindtap="goFollowers">{{followers}} 粉丝</text>
           <text class="dot">·</text>
           <text bindtap="goFollowing">关注 {{followingCount}}</text>
         </view>
+        <view class="s" wx:else>已记录 {{recordDays}} 天 · {{petCount}} 只鸟宝</view>
       </view>
     </view>
   </view>
@@ -32,14 +33,26 @@
       <image class="si" src="/images/icon-stat-book.png" mode="aspectFit"/>
       <view class="sv">{{albumCount}}</view><view class="sl">鸟宝相册</view>
     </view>
-    <view class="st" bindtap="goLikes">
-      <image class="si" src="/images/icon-stat-heart.png" mode="aspectFit"/>
-      <view class="sv">{{likesCount}}</view><view class="sl">收到的赞</view>
-    </view>
-    <view class="st" bindtap="goFollowing">
-      <image class="si" src="/images/icon-stat-users.png" mode="aspectFit"/>
-      <view class="sv">{{followingCount}}</view><view class="sl">关注的人</view>
-    </view>
+    <block wx:if="{{comm}}">
+      <view class="st" bindtap="goLikes">
+        <image class="si" src="/images/icon-stat-heart.png" mode="aspectFit"/>
+        <view class="sv">{{likesCount}}</view><view class="sl">收到的赞</view>
+      </view>
+      <view class="st" bindtap="goFollowing">
+        <image class="si" src="/images/icon-stat-users.png" mode="aspectFit"/>
+        <view class="sv">{{followingCount}}</view><view class="sl">关注的人</view>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="st" bindtap="goRecords">
+        <image class="si" src="/images/icon-stat-heart.png" mode="aspectFit"/>
+        <view class="sv">{{recordDays}}</view><view class="sl">记录天数</view>
+      </view>
+      <view class="st" bindtap="goGuide">
+        <image class="si" src="/images/icon-stat-users.png" mode="aspectFit"/>
+        <view class="sv">{{birdCount}}</view><view class="sl">鸟种图鉴</view>
+      </view>
+    </block>
   </view>
 
   <!-- 连续记录 -->
@@ -56,9 +69,12 @@
 
   <!-- 菜单 -->
   <view class="menu-card">
-    <view class="menu-row" bindtap="goMyPosts"><image class="mi" src="/images/ic-pen.png" mode="aspectFit"/><text class="ml">我的动态</text><text class="mc">{{myPostCount}} ›</text></view>
-    <view class="menu-row" bindtap="goFavorites"><image class="mi" src="/images/ic-star-menu.png" mode="aspectFit"/><text class="ml">我的收藏</text><text class="mc">›</text></view>
-    <view class="menu-row" bindtap="goDrafts"><image class="mi" src="/images/ic-folder.png" mode="aspectFit"/><text class="ml">我的草稿</text><text class="mc">›</text></view>
+    <block wx:if="{{comm}}">
+      <view class="menu-row" bindtap="goMyPosts"><image class="mi" src="/images/ic-pen.png" mode="aspectFit"/><text class="ml">我的动态</text><text class="mc">{{myPostCount}} ›</text></view>
+      <view class="menu-row" bindtap="goFavorites"><image class="mi" src="/images/ic-star-menu.png" mode="aspectFit"/><text class="ml">我的收藏</text><text class="mc">›</text></view>
+      <view class="menu-row" bindtap="goDrafts"><image class="mi" src="/images/ic-folder.png" mode="aspectFit"/><text class="ml">我的草稿</text><text class="mc">›</text></view>
+    </block>
+    <view class="menu-row" wx:else bindtap="goGuide"><image class="mi" src="/images/ic-guide.png" mode="aspectFit"/><text class="ml">鸟种图鉴</text><text class="mc">›</text></view>
     <view class="menu-row" bindtap="openBackup"><image class="mi" src="/images/ic-cloud.png" mode="aspectFit"/><text class="ml">数据备份</text><text class="mc">›</text></view>
     <view class="menu-row" bindtap="goHelp"><image class="mi" src="/images/ic-help.png" mode="aspectFit"/><text class="ml">帮助与反馈</text><text class="mc">›</text></view>
     <view class="menu-row" bindtap="about"><image class="mi" src="/images/ic-info.png" mode="aspectFit"/><text class="ml">关于 Skylark · 雀跃</text><text class="mc">{{version}}</text></view>

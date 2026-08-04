@@ -5,10 +5,10 @@
       <image class="hh-logo" src="/images/skylark-logo.png" mode="aspectFill"/>
       <view>
         <view class="hh-title">Skylark<text class="hh-cn">· 雀跃</text></view>
-        <view class="hh-tag">记录 · 分享 · 发现 · 守护</view>
+        <view class="hh-tag">{{comm ? '记录 · 分享 · 发现 · 守护' : '记录 · 陪伴 · 守护'}}</view>
       </view>
     </view>
-    <view class="hh-bell {{unread>0?'on':''}}" bindtap="goNotifications">
+    <view class="hh-bell {{unread>0?'on':''}}" wx:if="{{comm}}" bindtap="goNotifications">
       <image src="/images/icon-bell.png" mode="aspectFit"/>
     </view>
   </view>
@@ -16,7 +16,7 @@
   <!-- 搜索 -->
   <view class="searchbox" bindtap="goSearch">
     <image class="sb-ic" src="/images/ic-search.png" mode="aspectFit"/>
-    <text class="sb-tx">搜索鸟种 / 帖子 / 用户</text>
+    <text class="sb-tx">{{comm ? '搜索鸟种 / 帖子 / 用户' : '搜索鸟种'}}</text>
   </view>
 
   <!-- 滚动通知条 -->
@@ -34,10 +34,10 @@
       <view class="fs">记录成长与健康</view>
       <view class="fi">›</view>
     </view>
-    <view class="fcard fc2" bindtap="goCommunity">
+    <view class="fcard fc2" bindtap="{{comm ? 'goCommunity' : 'goGuide'}}">
       <view class="fc-fade"></view>
-      <view class="ft">社区</view>
-      <view class="fs">交流经验与心得</view>
+      <view class="ft">{{comm ? '社区' : '鸟种图鉴'}}</view>
+      <view class="fs">{{comm ? '交流经验与心得' : '认识身边的鸟'}}</view>
       <view class="fi">›</view>
     </view>
     <view class="fcard fc3 soon" bindtap="soonTip">
@@ -49,6 +49,33 @@
     </view>
   </view>
 
+  <!-- 记录版：每日养鸟小知识 -->
+  <view class="daily" wx:if="{{!comm && knowledge}}" bindtap="openKnowledge">
+    <image class="dk-illu" src="/images/daily-knowledge-bird.png" mode="aspectFit"/>
+    <view class="dk-content">
+      <view class="dk-top">
+        <view class="dk-kicker">每日养鸟小知识</view>
+        <view class="dk-date">{{today}}</view>
+      </view>
+      <view class="dk-title">{{knowledge.title}}</view>
+      <view class="dk-sub">{{knowledge.body}}</view>
+      <view class="dk-actions">
+        <view class="dk-tag">{{knowledge.tag}}</view>
+        <view class="dk-go">查看全文 ›</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 记录版：今日提醒 -->
+  <view class="quick-rec" wx:if="{{!comm}}" bindtap="goRecords">
+    <view class="qr-main">
+      <view class="qr-t">今天的记录</view>
+      <view class="qr-s">{{recHint}}</view>
+    </view>
+    <view class="qr-go">去记录 ›</view>
+  </view>
+
+  <block wx:if="{{comm}}">
   <!-- 频道筛选 -->
   <view class="section-head">
     <view class="h">最新动态</view>
@@ -118,12 +145,13 @@
       </view>
     </view>
   </view>
+  </block>
 
   <view class="page-pad"></view>
 </view>
 
 <!-- 发帖悬浮按钮 -->
-<view class="fab" bindtap="goCompose">＋</view>
+<view class="fab" wx:if="{{comm}}" bindtap="goCompose">＋</view>
 
 <!-- 每日小知识弹窗 -->
 <view class="mask {{showKnow?'show':''}}" bindtap="closeKnow"></view>
@@ -135,6 +163,6 @@
   <view class="dks-src">小知识仅供参考，鸟宝出现异常请及时就医</view>
   <view class="sh-actions">
     <view class="btn ghost" bindtap="closeKnow">关闭</view>
-    <view class="btn accent" bindtap="knowGo">去讨论</view>
+    <view class="btn accent" wx:if="{{comm}}" bindtap="knowGo">去讨论</view>
   </view>
 </view>
