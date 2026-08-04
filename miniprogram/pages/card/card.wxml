@@ -1,0 +1,36 @@
+<view class="page">
+  <!-- 日期选择 -->
+  <scroll-view class="dpick" scroll-x wx:if="{{dates.length>1}}">
+    <view class="dp {{item.iso===date?'on':''}}" wx:for="{{dates}}" wx:key="iso"
+          data-iso="{{item.iso}}" bindtap="pickDate">{{item.label}}</view>
+  </scroll-view>
+
+  <!-- 预览 -->
+  <view class="preview">
+    <view class="ph-skeleton" wx:if="{{busy}}">
+      <view class="sk-bird"><image src="/images/skylark-logo.png" mode="aspectFit"/></view>
+      <view class="sk-tx">正在生成卡片…</view>
+    </view>
+    <image wx:if="{{img && !busy}}" class="ph-img" src="{{img}}" mode="widthFix" show-menu-by-longpress
+           bindtap="previewBig"/>
+  </view>
+
+  <view class="hint" wx:if="{{img && !busy}}">长按图片可直接转发 · 或用下方按钮保存</view>
+
+  <!-- 操作 -->
+  <view class="acts">
+    <button class="act ghost" open-type="share" disabled="{{!img||busy}}">
+      <image class="act-ic" src="/images/ic-share.png" mode="aspectFit"/><text>发给好友</text>
+    </button>
+    <view class="act ghost {{(!img||busy)?'dis':''}}" bindtap="toMoments">
+      <image class="act-ic" src="/images/ic-star.png" mode="aspectFit"/><text>分享图片</text>
+    </view>
+    <view class="act accent {{(!img||busy)?'dis':''}}" bindtap="saveAlbum">保存到相册</view>
+  </view>
+
+  <view class="page-pad"></view>
+</view>
+
+<!-- 离屏画布 -->
+<canvas type="2d" id="cardCanvas" class="offscreen"
+        style="width:{{cw}}px;height:{{ch}}px"></canvas>

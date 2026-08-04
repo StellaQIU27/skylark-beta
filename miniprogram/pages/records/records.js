@@ -176,6 +176,11 @@ Page({
   },
 
   newRecord() { this.keepDetail = true; wx.navigateTo({ url: '/pages/editor/editor?mode=record&date=' + S.todayISO() }); },
+  makeCard() {
+    if (!this.data.records.length) { wx.showToast({ title: '先添加一条记录吧', icon: 'none' }); return; }
+    this.keepDetail = true;
+    wx.navigateTo({ url: '/pages/card/card?pet=' + this.data.pet.id + '&date=' + this.data.records[0].date });
+  },
   openRecord(e) { this.keepDetail = true; wx.navigateTo({ url: '/pages/editor/editor?mode=record&date=' + e.currentTarget.dataset.date }); },
 
   openMolt() { this.setData({ showMolt: true }); },

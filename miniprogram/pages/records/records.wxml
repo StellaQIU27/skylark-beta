@@ -94,6 +94,9 @@
 
     <view class="add-record-box">
       <view class="add-record-btn" bindtap="newRecord">✎ 添加新记录</view>
+      <view class="card-btn {{records.length?'':'dis'}}" bindtap="makeCard">
+        <image class="cb-ic" src="/images/ic-share.png" mode="aspectFit"/><text>生成日记卡片</text>
+      </view>
     </view>
 
     <view class="empty-card" wx:if="{{!records.length}}">

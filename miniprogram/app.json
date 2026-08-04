@@ -5,6 +5,7 @@
     "pages/circle/circle",
     "pages/post/post",
     "pages/records/records",
+    "pages/card/card",
     "pages/editor/editor",
     "pages/profile/profile",
     "pages/guide/guide",

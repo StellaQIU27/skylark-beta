@@ -102,12 +102,20 @@
 .mc-go { color: var(--ink-mute); font-size: 25rpx; }
 
 /* 添加记录 */
-.add-record-box { margin: 4rpx 40rpx 28rpx; }
+.add-record-box { margin: 4rpx 40rpx 28rpx; display: flex; gap: 16rpx; }
 .add-record-btn {
-  display: flex; align-items: center; justify-content: center; gap: 12rpx;
-  padding: 28rpx; border-radius: 32rpx;
+  flex: 1.35; display: flex; align-items: center; justify-content: center; gap: 12rpx;
+  padding: 28rpx 0; border-radius: 32rpx;
   background: var(--sage-dark); color: #fff; font-size: 30rpx; font-weight: 600;
 }
+.card-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 10rpx;
+  padding: 28rpx 0; border-radius: 32rpx;
+  background: var(--cream-warm); border: 2rpx solid var(--beige-border);
+  color: var(--ink-soft); font-size: 27rpx; font-weight: 600;
+}
+.card-btn.dis { opacity: .45; }
+.cb-ic { width: 30rpx; height: 30rpx; flex-shrink: 0; }
 
 /* 日记条目 */
 .hist-list { padding: 0 40rpx; }
