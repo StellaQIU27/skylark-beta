@@ -1,6 +1,6 @@
 .page { min-height: 100vh; background: var(--cream); padding: 24rpx 32rpx 0; }
 .sbox { margin-bottom: 16rpx; }
-.sinput { width: 100%; padding: 22rpx 28rpx; font-size: 28rpx; background: #fff; border: 2rpx solid var(--beige-border); border-radius: 32rpx; }
+.sinput { width: 100%; box-sizing: border-box; height: 88rpx; line-height: 84rpx; padding: 0 28rpx; font-size: 28rpx; background: #fff; border: 2rpx solid var(--beige-border); border-radius: 32rpx; }
 .cnt { font-size: 23rpx; color: var(--ink-soft); margin-bottom: 20rpx; }
 .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16rpx; }
 .gcard { background: var(--cream-warm); border: 2rpx solid var(--beige-border); border-radius: 24rpx; overflow: hidden; padding-bottom: 14rpx; }
@@ -89,8 +89,10 @@
 .cfld { margin-bottom: 20rpx; }
 .cf-l { font-size: 24rpx; color: var(--ink-soft); margin-bottom: 12rpx; }
 .ipt {
+  width: 100%; box-sizing: border-box;
+  height: 88rpx; line-height: 84rpx; padding: 0 26rpx; font-size: 28rpx;
   background: var(--paper); border: 2rpx solid var(--beige-border);
-  border-radius: 24rpx; padding: 20rpx 26rpx; font-size: 28rpx;
+  border-radius: 24rpx;
 }
 .ipt.pick { color: var(--ink); }
 .cta {

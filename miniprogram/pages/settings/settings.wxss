@@ -35,7 +35,8 @@
 .ap-hint { text-align: center; font-size: 22rpx; color: var(--ink-soft); margin-bottom: 28rpx; }
 .fld-l { font-size: 22rpx; color: var(--ink-mute); font-weight: 600; margin-bottom: 12rpx; }
 .ipt {
-  width: 100%; padding: 24rpx 28rpx; font-size: 29rpx;
+  width: 100%; box-sizing: border-box;
+  height: 92rpx; line-height: 88rpx; padding: 0 28rpx; font-size: 29rpx;
   background: var(--cream-warm); border: 2rpx solid var(--beige-border); border-radius: 24rpx;
 }
 .sh-actions { display: flex; gap: 20rpx; margin-top: 28rpx; }

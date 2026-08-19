@@ -3,7 +3,8 @@
 .fld { margin-bottom: 28rpx; }
 .fld-l { font-size: 22rpx; color: var(--ink-mute); font-weight: 600; margin-bottom: 14rpx; letter-spacing: 1rpx; }
 .ipt {
-  width: 100%; padding: 24rpx 28rpx; font-size: 29rpx;
+  width: 100%; box-sizing: border-box;
+  height: 92rpx; line-height: 88rpx; padding: 0 28rpx; font-size: 29rpx;
   background: var(--cream-warm); border: 2rpx solid var(--beige-border); border-radius: 24rpx;
 }
 .txt {
@@ -142,7 +143,7 @@
   display: flex; align-items: center; justify-content: center;
 }
 .st-val { display: flex; align-items: baseline; gap: 8rpx; }
-.st-val input { width: 180rpx; text-align: center; font-size: 60rpx; font-weight: 700; color: var(--sage-dark); }
+.st-val input { width: 180rpx; height: 84rpx; line-height: 84rpx; text-align: center; font-size: 60rpx; font-weight: 700; color: var(--sage-dark); }
 .st-val .u { font-size: 26rpx; color: var(--ink-soft); }
 
 .food-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16rpx; }

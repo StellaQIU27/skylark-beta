@@ -34,7 +34,10 @@
  *
  * 投稿的收集通道始终开着，和本开关无关。
  */
+/* VERSION：显示在「我的」「设置」底部，并随「帮助与反馈」一起提交，
+ * 方便定位用户是在哪个版本上遇到的问题。每次提交审核前改这里一处即可。 */
 const FEATURES = {
+  VERSION: 'v1.1.0',
   COMMUNITY: false,
   PHOTO_CONTRIB: false
 };

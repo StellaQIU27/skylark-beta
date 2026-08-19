@@ -15,7 +15,7 @@
 .ty.on { background: var(--sage-dark); color: #fff; border-color: var(--sage-dark); font-weight: 600; }
 .fb-input { width: 100%; min-height: 200rpx; padding: 24rpx; font-size: 28rpx; line-height: 1.6; background: var(--paper); border: 2rpx solid var(--beige-border); border-radius: 24rpx; }
 .fb-count { text-align: right; font-size: 21rpx; color: var(--ink-mute); margin-top: 8rpx; }
-.fb-contact { width: 100%; padding: 22rpx 24rpx; font-size: 27rpx; background: var(--paper); border: 2rpx solid var(--beige-border); border-radius: 24rpx; margin-top: 12rpx; }
+.fb-contact { width: 100%; box-sizing: border-box; height: 88rpx; line-height: 84rpx; padding: 0 24rpx; font-size: 27rpx; background: var(--paper); border: 2rpx solid var(--beige-border); border-radius: 24rpx; margin-top: 12rpx; }
 
 .my-fb { background: var(--cream-warm); border: 2rpx solid var(--beige-border); border-radius: 28rpx; padding: 24rpx 28rpx; margin-bottom: 16rpx; }
 .mf-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12rpx; }

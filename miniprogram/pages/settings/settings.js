@@ -5,7 +5,7 @@ const ADMINS = ['obfhL3fhV1pnZlo9QyYZwPzD2i4M'];
 Page({
   data: {
     comm: F.COMMUNITY,
-    version: 'v1.0.0', isAdmin: false, blockedCount: 0,
+    version: F.VERSION, isAdmin: false, blockedCount: 0,
     user: { name: '雀跃用户', avatar: null }, initial: '雀',
     showEdit: false, tmpName: '', tmpAvatar: null
   },

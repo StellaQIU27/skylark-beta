@@ -93,8 +93,9 @@
 .rh-x { color: var(--ink-mute); padding: 0 10rpx; }
 .cb-row { display: flex; gap: 16rpx; align-items: center; }
 .cb-input {
-  flex: 1; border: 2rpx solid var(--beige-border); background: var(--cream-warm);
-  border-radius: 26rpx; padding: 18rpx 28rpx; font-size: 28rpx;
+  flex: 1; box-sizing: border-box; height: 80rpx; line-height: 76rpx;
+  border: 2rpx solid var(--beige-border); background: var(--cream-warm);
+  border-radius: 26rpx; padding: 0 28rpx; font-size: 28rpx;
 }
 .cb-send {
   padding: 18rpx 34rpx; border-radius: 26rpx; flex-shrink: 0;

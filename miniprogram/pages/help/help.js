@@ -24,7 +24,7 @@ const FAQS = F.COMMUNITY ? BASE_FAQS.concat(COMMUNITY_FAQS) : BASE_FAQS;
 Page({
   data: {
     faqs: FAQS, types: ['功能建议', '使用问题', '内容纠错', '其他'],
-    type: '功能建议', text: '', contact: '', mine: [], version: 'v1.0.0'
+    type: '功能建议', text: '', contact: '', mine: [], version: F.VERSION
   },
 
   async onShow() {

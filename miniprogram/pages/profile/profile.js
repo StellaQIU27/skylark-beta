@@ -1,7 +1,7 @@
 const S = require('../../utils/store.js');
 const F = require('../../utils/features.js');
 const GUIDE = require('../../utils/birds.js');
-const VERSION = 'v1.0.0';
+const VERSION = F.VERSION;
 
 Page({
   data: {
