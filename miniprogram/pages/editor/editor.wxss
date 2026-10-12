@@ -99,8 +99,16 @@
 
 .feed-row { display: flex; align-items: center; gap: 16rpx; padding: 16rpx 0; border-top: 2rpx solid var(--beige-border); margin-top: 14rpx; }
 .fr-time { font-size: 25rpx; color: var(--sage-dark); font-weight: 600; flex-shrink: 0; }
-.fr-foods { flex: 1; font-size: 25rpx; color: var(--ink-soft); }
+.fr-foods { flex: 1; min-width: 0; word-break: break-all; font-size: 25rpx; color: var(--ink-soft); }
 .fr-del { color: var(--terracotta); font-size: 26rpx; padding: 0 10rpx; }
+.med-note { font-size: 23rpx; color: var(--ink-mute); margin-top: 6rpx; overflow-wrap: break-word; }
+.med-opts { display: flex; gap: 14rpx; flex-wrap: wrap; }
+.med-opt {
+  flex: 1; text-align: center; padding: 24rpx 12rpx; border-radius: 22rpx;
+  background: var(--paper); border: 2rpx solid var(--beige-border);
+  font-size: 27rpx; color: var(--ink-soft);
+}
+.med-opt.on { background: var(--sage-tint); border-color: var(--sage-dark); color: var(--sage-dark); font-weight: 600; }
 
 .sun-opts, .bath-opts { display: flex; gap: 14rpx; margin-top: 18rpx; flex-wrap: wrap; }
 .so, .bo {

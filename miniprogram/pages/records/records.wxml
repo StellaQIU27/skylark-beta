@@ -120,6 +120,7 @@
             <view class="hk"><image class="hk-ic" src="/images/ic-bath.png" mode="aspectFit"/>{{item.bathText}}</view>
             <view class="hk"><image class="hk-ic" src="/images/ic-sun.png" mode="aspectFit"/>{{item.sunText}}</view>
           </view>
+          <view class="hmed" wx:if="{{item.medicationsText}}">药品与补充 · {{item.medicationsText}}</view>
           <view class="hnote" wx:if="{{item.notes}}">{{item.notes}}</view>
           <view class="hphotos" wx:if="{{item.photos.length}}">
             <image wx:for="{{item.photos}}" wx:for-item="ph" wx:key="*this" src="{{ph}}" mode="aspectFill"/>

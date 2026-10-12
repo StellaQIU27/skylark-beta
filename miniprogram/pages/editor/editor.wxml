@@ -127,6 +127,23 @@
     <view class="add-mini" bindtap="openFeeding">＋ 添加一次喂食</view>
   </view>
 
+  <!-- 药品与补充 -->
+  <view class="rec-block">
+    <view class="rb-top">
+      <view class="rt">药品与补充记录</view>
+      <view class="rv sm">{{rec.medications.length}} 次</view>
+    </view>
+    <view class="feed-row" wx:for="{{rec.medications}}" wx:key="id">
+      <view class="fr-time">{{item.time}}</view>
+      <view class="fr-foods">
+        <view>{{item.itemsText}}</view>
+        <view class="med-note" wx:if="{{item.note}}">{{item.note}}</view>
+      </view>
+      <view class="fr-del" data-i="{{index}}" catchtap="removeMedication">✕</view>
+    </view>
+    <view class="add-mini" bindtap="openMedication">＋ 添加药品或补充</view>
+  </view>
+
   <!-- 日照 -->
   <view class="rec-block">
     <view class="rb-top">
@@ -210,6 +227,34 @@
   <view class="sh-actions">
     <view class="btn ghost" bindtap="closeFeeding">取消</view>
     <view class="btn accent" bindtap="saveFeeding">保存</view>
+  </view>
+</view>
+
+<!-- 药品与补充弹窗 -->
+<view class="mask {{showMedication?'show':''}}" bindtap="closeMedication"></view>
+<view class="sheet {{showMedication?'show':''}}">
+  <view class="sh-handle"></view>
+  <view class="sh-title">添加药品或补充</view>
+  <view class="fld">
+    <view class="fld-l">时间</view>
+    <picker mode="time" value="{{medicationTime}}" bindchange="pickMedicationTime">
+      <view class="ipt">{{medicationTime}}</view>
+    </picker>
+  </view>
+  <view class="fld">
+    <view class="fld-l">药品或补充（可多选）</view>
+    <view class="med-opts">
+      <view class="med-opt {{item.on?'on':''}}" wx:for="{{medicationOpts}}" wx:key="key"
+            data-key="{{item.key}}" bindtap="toggleMedication">{{item.key}}</view>
+    </view>
+  </view>
+  <view class="fld">
+    <view class="fld-l">用量 / 备注（选填）</view>
+    <input class="ipt" placeholder="记录本次用量或其他备注" value="{{medicationNote}}" bindinput="onMedicationNote" maxlength="80"/>
+  </view>
+  <view class="sh-actions">
+    <view class="btn ghost" bindtap="closeMedication">取消</view>
+    <view class="btn accent" bindtap="saveMedication">添加</view>
   </view>
 </view>
 

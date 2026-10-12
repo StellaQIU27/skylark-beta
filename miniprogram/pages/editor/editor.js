@@ -16,6 +16,7 @@ const FOODS = [
   { key: '菌菇', img: '/images/food-mushroom.png' }, { key: '饮品', img: '/images/food-drink.png' }
 ];
 const WD = ['日', '一', '二', '三', '四', '五', '六'];
+const MEDICATIONS = ['益生菌', '电解质', '肝精'];
 
 Page({
   data: {
@@ -27,9 +28,10 @@ Page({
     petName: '', petBirth: '', petGender: 'm', petPhoto: null, custom: false, petId: null,
     // 记录
     date: '', dateLabel: '', pet: {}, hasSaved: false,
-    rec: { weight: 0, feedings: [], sunMinutes: 0, bath: '', notes: '', photos: [] },
+    rec: { weight: 0, feedings: [], medications: [], sunMinutes: 0, bath: '', notes: '', photos: [] },
     showWeight: false, weightInput: '90.0',
     showFeeding: false, feedTime: '08:00', foodOpts: [],
+    showMedication: false, medicationTime: '', medicationOpts: [], medicationNote: '',
     showDate: false
   },
 
@@ -263,6 +265,7 @@ Page({
     const rec = {
       weight: raw.weight || 0,
       feedings: (raw.feedings || []).map(f => Object.assign({}, f, { foodsText: (f.foods || []).join('、') })),
+      medications: (raw.medications || []).map(m => Object.assign({}, m, { itemsText: (m.items || []).join('、') })),
       sunMinutes: raw.sunMinutes || 0, bath: raw.bath || '',
       notes: raw.notes || '', photos: raw.photos || []
     };
@@ -340,6 +343,38 @@ Page({
     this.setData({ 'rec.feedings': feedings });
   },
 
+  openMedication() {
+    const now = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    this.setData({
+      showMedication: true,
+      medicationTime: `${pad(now.getHours())}:${pad(now.getMinutes())}`,
+      medicationOpts: MEDICATIONS.map(key => ({ key, on: false })),
+      medicationNote: ''
+    });
+  },
+  closeMedication() { this.setData({ showMedication: false }); },
+  pickMedicationTime(e) { this.setData({ medicationTime: e.detail.value }); },
+  toggleMedication(e) {
+    const key = e.currentTarget.dataset.key;
+    this.setData({ medicationOpts: this.data.medicationOpts.map(m => m.key === key ? Object.assign({}, m, { on: !m.on }) : m) });
+  },
+  onMedicationNote(e) { this.data.medicationNote = e.detail.value; },
+  saveMedication() {
+    const items = this.data.medicationOpts.filter(m => m.on).map(m => m.key);
+    if (!items.length) { wx.showToast({ title: '请至少选择一项', icon: 'none' }); return; }
+    const medications = this.data.rec.medications.concat([{
+      id: Date.now(), time: this.data.medicationTime, items, itemsText: items.join('、'),
+      note: this.data.medicationNote.trim()
+    }]);
+    this.setData({ 'rec.medications': medications, showMedication: false });
+  },
+  removeMedication(e) {
+    const medications = this.data.rec.medications.slice();
+    medications.splice(e.currentTarget.dataset.i, 1);
+    this.setData({ 'rec.medications': medications });
+  },
+
   pickSun(e) { this.setData({ 'rec.sunMinutes': +e.currentTarget.dataset.v }); },
   pickBath(e) { this.setData({ 'rec.bath': e.currentTarget.dataset.v }); },
   onNotes(e) { this.data.rec.notes = e.detail.value; },
@@ -380,6 +415,7 @@ Page({
     st.records[pet.id][this.data.date] = {
       weight: r.weight || 0,
       feedings: (r.feedings || []).map(f => ({ id: f.id, time: f.time, foods: f.foods })),
+      medications: (r.medications || []).map(m => ({ id: m.id, time: m.time, items: m.items, note: m.note || '' })),
       sunMinutes: r.sunMinutes || 0, bath: r.bath || '',
       notes: r.notes || '', photos: r.photos || [],
       savedAt: S.fmtTime(Date.now())

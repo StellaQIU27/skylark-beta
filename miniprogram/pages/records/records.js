@@ -83,10 +83,15 @@ Page({
       const today = S.todayISO();
       const dayLabel = d === today ? '今天' : (d === daysBefore(today, 1) ? '昨天' : `${dd.getMonth() + 1}月${dd.getDate()}日`);
       const fc = (rec.feedings || []).length;
+      const medicationItems = [];
+      (rec.medications || []).forEach(m => (m.items || []).forEach(item => {
+        if (medicationItems.indexOf(item) < 0) medicationItems.push(item);
+      }));
       return {
         date: d, monthHead, dayLabel, weekday: WD[dd.getDay()],
         weight: rec.weight ? rec.weight.toFixed(1) : '', delta, deltaDown,
         foodsText: fc ? `${fc} 次喂食` : '—',
+        medicationsText: medicationItems.join('、'),
         bathText: rec.bath ? BATH_MAP[rec.bath] : '—',
         sunText: rec.sunMinutes ? rec.sunMinutes + ' 分钟' : '—',
         notes: rec.notes || '', photos: rec.photos || []
